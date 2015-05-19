@@ -1,0 +1,18 @@
+# Android Studio
+*.iml
+.idea
+#.idea/workspace.xml - remove # and delete .idea if it better suit your needs.
+#/.idea/libraries
+.gradle
+build/
+captures/
+
+#built application files
+*.apk
+*.ap_
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# OSX files
+.DS_Store
