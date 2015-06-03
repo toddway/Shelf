@@ -1,1 +1,1 @@
-include ':app', ':shelf'
+include ':app', ':shelf', ':shelf-gson'

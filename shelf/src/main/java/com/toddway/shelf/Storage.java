@@ -6,15 +6,17 @@ import java.util.List;
 
 public interface Storage {
 
-    public String get(String key) throws IOException;
+    <T> T get(String key, Class<T> type);
 
-    public boolean put(String key, String value) throws IOException;
+    <T> List<T> getList(String key, Class<T> type);
 
-    public boolean delete(String key) throws IOException;
+    <T> void put(String key, T value);
 
-    public boolean contains(String key);
+    boolean delete(String key);
 
-    public long lastModified(String key);
+    boolean contains(String key);
 
-    public List<String> keys(String startsWith);
+    long lastModified(String key);
+
+    List<String> keys(String startsWith);
 }
