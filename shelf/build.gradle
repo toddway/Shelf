@@ -1,9 +1,27 @@
-apply plugin: 'java'
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.1"
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 23
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+}
+
+configurations {
+    optional
+    compile.extendsFrom optional
+}
 
 dependencies {
     testCompile 'junit:junit:4.12'
+    optional 'com.google.code.gson:gson:2.4'
+    optional 'io.reactivex:rxjava:1.1.0'
 }
 
-jar {
-    from sourceSets.main.allSource //this adds source to the compiled jar
-}

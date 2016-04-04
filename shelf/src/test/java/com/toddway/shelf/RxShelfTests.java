@@ -1,7 +1,5 @@
 package com.toddway.shelf;
 
-import com.fordcredit.paypermile.RxShelf;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,21 +11,21 @@ import rx.Observable;
 import rx.functions.Action1;
 import rx.observers.TestSubscriber;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 /**
  * Created by tway on 3/12/16.
  */
 public class RxShelfTests {
 
-    RxShelf.Cacheable<String> cacheable;
+    Shelf.Cacheable<String> cacheable;
     TestSubscriber<String> testSubscriber;
-    RxShelf shelf;
+    Shelf shelf;
     String string = "new value";
 
     @Before
     public void beforeEach() {
-        shelf = new RxShelf(new GsonFileStorage(new File("/tmp"))).setMaxAge(5000);
+        shelf = new Shelf(new GsonFileStorage(new File("/tmp"))).setMaxAge(5000);
         cacheable = shelf.cacheable("MyString", String.class, observable());
     }
 

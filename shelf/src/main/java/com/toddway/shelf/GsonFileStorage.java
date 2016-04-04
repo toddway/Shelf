@@ -17,6 +17,7 @@ public class GsonFileStorage extends FileStorage {
 
     public GsonFileStorage(File dir) {
         super(dir);
+        ShelfUtils.checkGson();
     }
 
     @Override
