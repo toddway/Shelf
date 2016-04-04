@@ -1,18 +1,4 @@
-apply plugin: 'com.android.library'
-
-android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
-
-    defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 23
-    }
-
-    lintOptions {
-        abortOnError false
-    }
-}
+apply plugin: 'java'
 
 configurations {
     optional
