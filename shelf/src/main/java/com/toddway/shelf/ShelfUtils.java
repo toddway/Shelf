@@ -5,7 +5,7 @@ package com.toddway.shelf;
  */
 public class ShelfUtils {
 
-    static boolean hasRxOnClasspath() {
+    public static boolean hasRxOnClasspath() {
         try {
             Class.forName("rx.Observable");
             return true;
@@ -25,7 +25,7 @@ public class ShelfUtils {
         }
     }
 
-    static boolean hasGsonOnClasspath() {
+    public static boolean hasGsonOnClasspath() {
         try {
             Class.forName("com.google.gson.Gson");
             return true;

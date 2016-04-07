@@ -1,5 +1,8 @@
 package com.toddway.shelf;
 
+import com.toddway.shelf.storage.FileStorage;
+import com.toddway.shelf.storage.Storage;
+
 import java.io.File;
 import java.util.List;
 import java.util.WeakHashMap;
@@ -14,7 +17,7 @@ public class Shelf {
     long maxAge = TimeUnit.MINUTES.toMillis(1);
 
     public Shelf(File dir) {
-        this(ShelfUtils.hasGsonOnClasspath() ? new GsonFileStorage(dir) : new FileStorage(dir));
+        this(new FileStorage(dir));
     }
 
     public Shelf(Storage storage) {
@@ -61,7 +64,7 @@ public class Shelf {
         return c;
     }
 
-    public static class Cacheable<T> extends RxCacheable<T>  {
+    public static class Cacheable<T> extends RxCacheable<T> {
         Shelf shelf;
         String name;
         Class<T> type;

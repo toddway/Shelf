@@ -1,14 +1,14 @@
-package com.toddway.shelf;
+package com.toddway.shelf.storage;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import com.toddway.shelf.ShelfUtils;
+import com.toddway.shelf.serializer.GsonSerializer;
+import com.toddway.shelf.serializer.JavaSerializer;
+import com.toddway.shelf.serializer.Serializer;
+
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.ObjectInput;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutput;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,31 +16,48 @@ public class FileStorage implements Storage {
 
     File dir;
     static String EXT = ".obj";
+    Serializer serializer;
 
     public FileStorage(File dir) {
         this.dir = dir;
         dir.mkdir();
+        serializer = ShelfUtils.hasGsonOnClasspath() ? new GsonSerializer() : new JavaSerializer();
+    }
+
+    public FileStorage(File dir, Serializer serializer) {
+        this(dir);
+        this.serializer = serializer;
     }
 
     protected File file(String key) {
         return new File(dir, key + EXT); //Getting a file within the dir
     }
 
-    @Override
-    public <T> T get(String key, Class<T> type) {
-        if (!file(key).exists()) return null;
-        return deserialize(file(key), type);
+    protected FileInputStream inputStream(String key) {
+        try {
+            return new FileInputStream(file(key));
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+    protected FileOutputStream outputStream(String key) {
+        try {
+            return new FileOutputStream(file(key));
+        } catch (FileNotFoundException e) {
+            return null;
+        }
     }
 
     @Override
-    public <T> List<T> getList(String key, Class<T> type) {
+    public <T> T get(String key, Class<T> type) {
         if (!file(key).exists()) return null;
-        return deserializeList(file(key), type);
+        return serializer.deserialize(inputStream(key), type);
     }
 
     @Override
     public synchronized <T> void put(String key, T value) {
-        serialize(file(key), value);
+        serializer.serialize(outputStream(key), value);
     }
 
     @Override
@@ -70,29 +87,5 @@ public class FileStorage implements Storage {
             }
         }
         return keys;
-    }
-
-    protected <T> T deserialize(File file, Class<T> type)  {
-        try {
-            ObjectInput input = new ObjectInputStream(new BufferedInputStream(new FileInputStream(file)));
-            return type.cast(input.readObject());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    protected <T> void serialize(File file, T object) {
-        try {
-            ObjectOutput output = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-            output.writeObject(object);
-            output.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    protected <T> List<T> deserializeList(File file, Class<T> type) {
-        return deserialize(file, List.class);
     }
 }

@@ -1,6 +1,7 @@
 package com.toddway.shelf;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -25,7 +26,7 @@ public class RxShelfTests {
 
     @Before
     public void beforeEach() {
-        shelf = new Shelf(new GsonFileStorage(new File("/tmp"))).setMaxAge(5000);
+        shelf = new Shelf(new File("/tmp")).setMaxAge(5000);
         cacheable = shelf.cacheable("MyString", String.class, observable());
     }
 
@@ -89,7 +90,7 @@ public class RxShelfTests {
     }
 
 
-
+    @Ignore
     @Test
     public void testObserveCacheThenPollNew() {
         givenInvalidCache();

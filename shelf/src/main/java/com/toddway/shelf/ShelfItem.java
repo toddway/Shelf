@@ -1,7 +1,8 @@
 package com.toddway.shelf;
 
+import com.toddway.shelf.storage.Storage;
+
 import java.util.Date;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 
@@ -29,12 +30,6 @@ public class ShelfItem<T> {
         if (item != null) return (T) item;
         if (!exists()) return null;
         return storage.get(key, type);
-    }
-
-    public <T> List<T> getListOf(Class<T> type) {
-        if (item != null) return (List<T>) item;
-        if (!exists()) return null;
-        return storage.getList(key, type);
     }
 
     public boolean isOlderThan(long value, TimeUnit unit) {

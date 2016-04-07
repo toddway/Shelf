@@ -1,46 +1,46 @@
 package com.toddway.shelf;
 
 
+import com.toddway.shelf.serializer.JacksonSerializer;
+import com.toddway.shelf.storage.ClassLoaderStorage;
+import com.toddway.shelf.storage.FileStorage;
+
 import org.junit.Before;
 import org.junit.Test;
 
-
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-
 public class ShelfTest {
 
-    String itemKey = "item key";
-    String itemValue = "item value";
+    String key = "item key";
+    String string = "item value";
     Shelf shelf;
 
     @Before
     public void setUp() throws Exception {
-        shelf = new Shelf(new File("/tmp"));
+        shelf = new Shelf(new FileStorage(new File("/tmp"), new JacksonSerializer()));
         shelf.clear("");
     }
 
     @Test
     public void testGetString() throws Exception {
-        shelf.item(itemKey).put(itemValue);
-
-        assertEquals(shelf.item(itemKey).get(String.class), itemValue);
+        shelf.item(key).put(string);
+        assertEquals(shelf.item(key).get(String.class), string);
     }
 
     @Test
     public void testIsOlderThan() throws Exception {
-        shelf.item(itemKey).put(itemValue);
-
+        shelf.item(key).put(string);
         TimeUnit.SECONDS.sleep(5);
-
-        assertTrue(shelf.item(itemKey).isOlderThan(1, TimeUnit.SECONDS));
-        assertTrue(!shelf.item(itemKey).isOlderThan(100, TimeUnit.SECONDS));
+        assertTrue(shelf.item(key).isOlderThan(1, TimeUnit.SECONDS));
+        assertTrue(!shelf.item(key).isOlderThan(100, TimeUnit.SECONDS));
     }
 
     @Test
@@ -48,11 +48,11 @@ public class ShelfTest {
         Pojo pojo = Pojo.create();
 
         long start = System.currentTimeMillis();
-        shelf.item(itemKey).put(pojo);
+        shelf.item(key).put(pojo);
         System.out.println("put time:" + (System.currentTimeMillis() - start));
 
         start = System.currentTimeMillis();
-        pojo = shelf.item(itemKey).get(Pojo.class);
+        pojo = shelf.item(key).get(Pojo.class);
         System.out.println("get time:" + (System.currentTimeMillis() - start));
 
         Integer i = pojo.integerArrayList.iterator().next();
@@ -61,22 +61,24 @@ public class ShelfTest {
         assertEquals(pojo.num, 5);
     }
 
-//    @Test
-//    public void testGetMap() throws Exception {
-//        HashMap<String, Pojo> map = new HashMap<>();
-//        map.put(itemKey, initPojo());
-//
-//        shelf.item(itemKey).put(map);
-//
-//        map = shelf.item(itemKey).get(HashMap.class);
-//
-//        System.out.println("first item: " + map.get(itemKey).strings.iterator().next());
-//
-//    }
+    @Test
+    public void testClassLoader() throws Exception {
+        shelf = new Shelf(new ClassLoaderStorage());
+        Pojo pojo = shelf.item("pojo.json").get(Pojo.class);
+        assertEquals((int) pojo.integerArrayList.iterator().next(), 1);
+    }
 
-    static class Pojo implements Serializable {
+    @Test
+    public void testArray() throws Exception {
+        List<Pojo> list = Arrays.asList(Pojo.create(), Pojo.create());
+        shelf.item(key).put(list.toArray());
+        list = Arrays.asList(shelf.item(key).get(Pojo[].class));
+        assertEquals((int) list.get(0).integerArrayList.iterator().next(), 0);
+    }
+
+    static class Pojo {
         public ArrayList<Integer> integerArrayList;
-        public int num = 5;
+        public int num;
 
         static Pojo create() {
             Pojo pojo = new Pojo();
@@ -85,7 +87,9 @@ public class ShelfTest {
                 list.add(i);
             }
             pojo.integerArrayList = list;
+            pojo.num = 5;
             return pojo;
         }
     }
+
 }
