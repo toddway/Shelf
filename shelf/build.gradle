@@ -1,21 +1,5 @@
 apply plugin: 'java'
 
-apply plugin: 'com.jfrog.bintray'
-
-bintray {
-    user = System.getenv('BINTRAY_USER')
-    key = System.getenv('BINTRAY_KEY')
-    pkg {
-        repo = 'generic'
-        name = 'gradle-project'
-        userOrg = 'bintray_user'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/bintray/gradle-bintray-plugin.git'
-    }
-}
-
-
-
 configurations {
     optional
     compile.extendsFrom optional
@@ -26,8 +10,4 @@ dependencies {
     optional 'com.google.code.gson:gson:2.4'
     optional 'io.reactivex:rxjava:1.1.0'
     optional 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
-
 }
-
-//apply from: 'https://raw.githubusercontent.com/attwellBrian/JCenter/master/installv1.gradle'
-//apply from: 'https://raw.githubusercontent.com/attwellBrian/JCenter/master/bintrayv1.gradle'

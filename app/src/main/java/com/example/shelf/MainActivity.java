@@ -15,9 +15,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        String s = new Shelf(getCacheDir()).cacheable("test", String.class, Observable.just("it works!")).observeNew().toBlocking().first();
+        String s = new Shelf(getCacheDir())
+                .cacheable("test", String.class, Observable.just("it works!"))
+                .observeNew()
+                .toBlocking()
+                .first();
         ((TextView) findViewById(R.id.textview)).setText(s);
-        //Toast.makeText(this, s + "...", Toast.LENGTH_SHORT).show();
 
     }
 }
