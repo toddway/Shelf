@@ -11,22 +11,25 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class FileStorage implements Storage {
 
     File dir;
     static String EXT = ".obj";
     Serializer serializer;
+    long defaultLifetime;
 
     public FileStorage(File dir) {
-        this.dir = dir;
-        dir.mkdir();
-        serializer = ShelfUtils.hasGsonOnClasspath() ? new GsonSerializer() : new JavaSerializer();
+        this(dir, ShelfUtils.defaultSerializer(), ShelfUtils.defaultLifetime());
     }
 
-    public FileStorage(File dir, Serializer serializer) {
-        this(dir);
+    public FileStorage(File dir, Serializer serializer, long defaultLifetime) {
+        this.dir = dir;
         this.serializer = serializer;
+        this.defaultLifetime = defaultLifetime;
+
+        dir.mkdir();
     }
 
     protected File file(String key) {
@@ -73,6 +76,11 @@ public class FileStorage implements Storage {
     @Override
     public long lastModified(String key) {
         return file(key).lastModified();
+    }
+
+    @Override
+    public long defaultLifetime() {
+        return defaultLifetime;
     }
 
     @Override

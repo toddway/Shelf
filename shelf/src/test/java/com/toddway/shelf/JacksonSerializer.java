@@ -1,6 +1,7 @@
-package com.toddway.shelf.serializer;
+package com.toddway.shelf;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.toddway.shelf.serializer.Serializer;
 
 import java.io.IOException;
 import java.io.InputStream;

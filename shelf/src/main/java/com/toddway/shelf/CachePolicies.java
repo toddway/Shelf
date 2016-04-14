@@ -10,11 +10,11 @@ import rx.functions.Func1;
 /**
  * Created by tway on 3/10/16.
  */
-public abstract class RxCacheable<T> {
+public abstract class CachePolicies<T> {
 
     private Observable<T> observeNew;
 
-    public RxCacheable(Observable<T> observeNew) {
+    public CachePolicies(Observable<T> observeNew) {
         this.observeNew = observeNew;
     }
 

@@ -1,8 +1,6 @@
 package com.toddway.shelf.storage;
 
 import com.toddway.shelf.ShelfUtils;
-import com.toddway.shelf.serializer.GsonSerializer;
-import com.toddway.shelf.serializer.JavaSerializer;
 import com.toddway.shelf.serializer.Serializer;
 
 import java.io.InputStream;
@@ -17,12 +15,11 @@ public class ClassLoaderStorage implements Storage {
     Serializer serializer;
 
     public ClassLoaderStorage() {
-        this.classLoader = getClass().getClassLoader();
-        this.serializer = ShelfUtils.hasGsonOnClasspath() ? new GsonSerializer() : new JavaSerializer();
+        this(ShelfUtils.defaultSerializer());
     }
 
     public ClassLoaderStorage(Serializer serializer) {
-        this();
+        this.classLoader = getClass().getClassLoader();
         this.serializer = serializer;
     }
 
@@ -35,7 +32,7 @@ public class ClassLoaderStorage implements Storage {
         return serializer.deserialize(inputStream(key), type);
     }
 
-    @Override
+    @Override @Deprecated
     public <T> void put(String key, T value) {
         //read only
     }
@@ -53,6 +50,11 @@ public class ClassLoaderStorage implements Storage {
 
     @Override
     public long lastModified(String key) {
+        return 0;
+    }
+
+    @Override
+    public long defaultLifetime() {
         return 0;
     }
 

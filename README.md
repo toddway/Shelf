@@ -1,81 +1,59 @@
 # Shelf
 Local object storage for Java and Android.  Includes...
 
-- Simple, fluent API, for key-value access
+- Simple & fluent API for key-value storage
 - Convenient timestamp evaluation
-- Optional Gson serialization
-- Pluggable storage options (Default is java serialized files. Roll your own - DiskLRUCache, Shared Preferences, SQLite, etc.)
+- Canned cache policies with RxJava Observables
+- Pluggable storage interface (Default is flat file storage. Roll your own- DiskLRUCache, Shared Preferences, SQLite,  etc.)
+- Pluggable serialization interface (Default is Gson.  Roll your own - Jackson, Kryo, etc.)
+ 
 
 
 ## How to use
 Initialize:
 
-    //with no external dependencies
-    Shelf myShelf = new Shelf(new File("/tmp/myshelf"));
+    //with defaults
+    Shelf shelf = new Shelf(new File("/tmp/shelf"));
 
-
-    //with optional Gson module dependency
-    Shelf myShelf = new Shelf(new GsonFileStorage(new File("/tmp/myshelf")));
-
-
-    //with Gson and Android dependencies
-    Shelf myShelf = new Shelf(new GsonFileStorage(getContext().getDir("myshelf", Context.MODE_PRIVATE)));
+    //with customizations
+    Shelf shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
 
 
 Store any object:
 
-    myShelf.item("myObject").put(new Pojo());
+    shelf.item("my pojo").put(new Pojo());
 
 Get any object:
 
-    Pojo myPojo = myShelf.item("myPojo").get(Pojo.class);
+    Pojo pojo = shelf.item("my pojo").get(Pojo.class);
 
-Get any list:
+Get any list of objects:
 
-    List<Pojo> list = myShelf.item(key).getListOf(Pojo.class);
-
+    List<Pojo> list = Arrays.asList(shelf.item(key).get(Pojo[].class));
 
 Check the age of an item:
 
-    myShelf.item("myPojo").isOlderThan(10, TimeUnit.MINUTES) //true if item is older than 10 min or does not exist, false otherwise
+    shelf.item(key).isOlderThan(10, TimeUnit.MINUTES) //true if item is older than 10 min or does not exist, false otherwise
+
+
 
 Bulk delete items by prefix:
 
-    myShelf.clear("pojo_");
+    shelf.clear("pojo_"); //deletes all items with keys starting pojo_
+    shelf.clear("") //deletes all items
 
 
-Write time-based caching policies:
-
-    ShelfItem<MyObject> item = myShelf.item("myObject");
-    if (item.isOlderThan(10, TimeUnit.MINUTES)) {
-        myObject = fetchRemoteObject(...);
-        item.put(myObject);
-    }
-    MyObject myObject = item.get(MyObject.class);
 
 
-Combine with RxJava for async policies:
-
-    Observable<MyObject> ob = Observable.create((subscriber) -> {
-        ShelfItem<MyObject> item = myShelf.item("myObject");
-        if (item.exists()) {
-            subscriber.onNext(item.get(MyObject.class);
-        }
-        MyObject myObject = fetchNetworkObject(...);
-        subscriber.onNext(myObject);
-        subscriber.onCompleted();
-        item.put(myObject);
-    });
-
-
-Clear items on version changes:
-
-    int version = BuildConfig.VERSION_CODE;
-    ...
-    if (myShelf.item("version").get() != version)
-        myShelf.clear("");
-        myShelf.item("version").put(version);
-    }
+Canned cache policies with RxJava
+ 
+    shelf.item(key).put("cached value");
+    shelf.item(key)
+            .policies(String.class, Observable.fromCallable(() -> return "new value"))
+            .observeCacheThenNew()
+            .subscribe((s) -> System.out.println(s)) //prints "cached value" then "new value" 
+    
+    
 
 
 Implement your own storage options:

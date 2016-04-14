@@ -15,5 +15,7 @@ public interface Storage {
 
     long lastModified(String key);
 
+    long defaultLifetime();
+
     List<String> keys(String startsWith);
 }

@@ -1,11 +1,12 @@
 package com.toddway.shelf;
 
 
-import com.toddway.shelf.serializer.JacksonSerializer;
+import com.toddway.shelf.serializer.GsonSerializer;
 import com.toddway.shelf.storage.ClassLoaderStorage;
 import com.toddway.shelf.storage.FileStorage;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
@@ -15,70 +16,79 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class ShelfTest {
 
-    String key = "item key";
-    String string = "item value";
+    static String key = "an example key";
     Shelf shelf;
 
     @Before
     public void setUp() throws Exception {
-        shelf = new Shelf(new FileStorage(new File("/tmp"), new JacksonSerializer()));
+        shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
         shelf.clear("");
     }
 
     @Test
-    public void testGetString() throws Exception {
-        shelf.item(key).put(string);
-        assertEquals(shelf.item(key).get(String.class), string);
+    public void testGetPojo() throws Exception {
+        Pojo pojo1 = Pojo.create();
+        shelf.item(key).put(pojo1);
+        Pojo pojo2 = shelf.item(key).get(Pojo.class);
+
+        assertEquals(pojo1.integer, pojo2.integer);
+        assertEquals(pojo1.getFirstFromList(), pojo2.getFirstFromList());
     }
 
     @Test
     public void testIsOlderThan() throws Exception {
-        shelf.item(key).put(string);
-        TimeUnit.SECONDS.sleep(5);
-        assertTrue(shelf.item(key).isOlderThan(1, TimeUnit.SECONDS));
-        assertTrue(!shelf.item(key).isOlderThan(100, TimeUnit.SECONDS));
+        ShelfItem shelfItem = shelf.item(key)
+                        .put(Pojo.create())
+                        .setLifetime(TimeUnit.SECONDS.toMillis(1));
+
+        TimeUnit.SECONDS.sleep(2);
+
+        assertTrue(shelfItem.isOlderThanLifetime());
+        assertTrue(shelfItem.isOlderThan(1, TimeUnit.SECONDS));
+        assertTrue(!shelfItem.isOlderThan(100, TimeUnit.SECONDS));
     }
 
-    @Test
-    public void testGetPojo() throws Exception{
-        Pojo pojo = Pojo.create();
-
-        long start = System.currentTimeMillis();
-        shelf.item(key).put(pojo);
-        System.out.println("put time:" + (System.currentTimeMillis() - start));
-
-        start = System.currentTimeMillis();
-        pojo = shelf.item(key).get(Pojo.class);
-        System.out.println("get time:" + (System.currentTimeMillis() - start));
-
-        Integer i = pojo.integerArrayList.iterator().next();
-        System.out.println("first item: " + i);
-        assertEquals((int) i, 0);
-        assertEquals(pojo.num, 5);
-    }
-
+    @Ignore
     @Test
     public void testClassLoader() throws Exception {
         shelf = new Shelf(new ClassLoaderStorage());
         Pojo pojo = shelf.item("pojo.json").get(Pojo.class);
-        assertEquals((int) pojo.integerArrayList.iterator().next(), 1);
+        assertEquals((int) pojo.list.iterator().next(), 1);
     }
 
     @Test
-    public void testArray() throws Exception {
-        List<Pojo> list = Arrays.asList(Pojo.create(), Pojo.create());
-        shelf.item(key).put(list.toArray());
-        list = Arrays.asList(shelf.item(key).get(Pojo[].class));
-        assertEquals((int) list.get(0).integerArrayList.iterator().next(), 0);
+    public void testArraysAsList() throws Exception {
+        List<Pojo> pojos1 = Arrays.asList(Pojo.create(), Pojo.create());
+        shelf.item(key).put(pojos1.toArray());
+        List<Pojo> pojos2 = Arrays.asList(shelf.item(key).get(Pojo[].class));
+
+        assertEquals(pojos1.get(0).integer, pojos2.get(0).integer);
+    }
+
+    @Test
+    public void testClear() {
+        ShelfItem shelfItem = shelf.item(key).put(Pojo.create());
+        assertTrue(shelfItem.exists());
+
+        shelf.clear("urelated key");
+        assertTrue(shelfItem.exists());
+
+        shelf.clear("");
+        assertFalse(shelfItem.exists());
     }
 
     static class Pojo {
-        public ArrayList<Integer> integerArrayList;
-        public int num;
+        public List<Integer> list;
+        public int integer;
+
+        public int getFirstFromList() {
+            return list.iterator().next();
+        }
 
         static Pojo create() {
             Pojo pojo = new Pojo();
@@ -86,8 +96,8 @@ public class ShelfTest {
             for (int i = 0; i < 99999; i++) {
                 list.add(i);
             }
-            pojo.integerArrayList = list;
-            pojo.num = 5;
+            pojo.list = list;
+            pojo.integer = 5;
             return pojo;
         }
     }

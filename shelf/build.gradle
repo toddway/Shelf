@@ -1,13 +1,12 @@
 apply plugin: 'java'
 
-configurations {
-    optional
-    compile.extendsFrom optional
-}
 
 dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+
     testCompile 'junit:junit:4.12'
-    optional 'com.google.code.gson:gson:2.4'
-    optional 'io.reactivex:rxjava:1.1.0'
-    optional 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+    testCompile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
+
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'io.reactivex:rxjava:1.1.0'
 }
