@@ -25,13 +25,13 @@ public class Shelf {
     }
 
     public <T> ShelfItem<T> item(String key) {
-        if (items != null && items.containsKey(key)) {
-            return (ShelfItem<T>) items.get(key);
-        } else {
-            ShelfItem<T> item = new ShelfItem<>(storage, key);
-            if (items != null) items.put(key, item);
-            return item;
-        }
+        boolean isInMap = items != null && items.containsKey(key);
+        ShelfItem<T> item = isInMap ? (ShelfItem<T>) items.get(key) : new ShelfItem<T>(storage, key);
+
+        boolean isUsingMap = items != null;
+        if (isUsingMap) items.put(key, item);
+
+        return item;
     }
 
     public List<String> keys(String prefix) {
