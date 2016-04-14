@@ -12,64 +12,47 @@ Local object storage for Java and Android.  Includes...
 ## How to use
 Initialize:
 
-    //with defaults
-    Shelf shelf = new Shelf(new File("/tmp/shelf"));
+```java
+//with defaults
+Shelf shelf = new Shelf(new File("/tmp/shelf"));
 
-    //with customizations
-    Shelf shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
-
+//with customizations
+Shelf shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
+```
 
 Store any object:
-
-    shelf.item("my pojo").put(new Pojo());
-
+```java
+shelf.item("my pojo").put(new Pojo());
+```
 Get any object:
-
-    Pojo pojo = shelf.item("my pojo").get(Pojo.class);
+```java
+Pojo pojo = shelf.item("my pojo").get(Pojo.class);
+```
 
 Get any list of objects:
-
-    List<Pojo> list = Arrays.asList(shelf.item(key).get(Pojo[].class));
+```java
+List<Pojo> list = Arrays.asList(shelf.item(key).get(Pojo[].class));
+```
 
 Check the age of an item:
-
-    shelf.item(key).isOlderThan(10, TimeUnit.MINUTES) //true if item is older than 10 min or does not exist, false otherwise
-
+```java
+shelf.item(key).isOlderThan(10, TimeUnit.MINUTES) //true if item is older than 10 min or does not exist, false otherwise
+```
 
 
 Bulk delete items by prefix:
-
-    shelf.clear("pojo_"); //deletes all items with keys starting pojo_
-    shelf.clear("") //deletes all items
-
+```java
+shelf.clear("pojo_"); //deletes all items with keys starting pojo_
+shelf.clear("") //deletes all items
+```
 
 
 
 Canned cache policies with RxJava
- 
-    shelf.item(key).put("cached value");
-    shelf.item(key)
-            .policies(String.class, Observable.fromCallable(() -> return "new value"))
-            .observeCacheThenNew()
-            .subscribe((s) -> System.out.println(s)) //prints "cached value" then "new value" 
-    
-    
-
-
-Implement your own storage options:
-
-    public interface Storage {
-
-        public String get(String key) throws IOException;
-
-        public boolean put(String key, String value) throws IOException;
-
-        public boolean delete(String key) throws IOException;
-
-        public boolean contains(String key);
-
-        public long lastModified(String key);
-
-        public List<String> keys(String startsWith);
-    }
-
+```java
+shelf.item(key).put("cached value");
+shelf.item(key)
+        .policies(String.class, Observable.fromCallable(() -> return "new value"))
+        .observeCacheThenNew()
+        .subscribe((s) -> System.out.println(s)) //prints "cached value" then "new value" 
+```
