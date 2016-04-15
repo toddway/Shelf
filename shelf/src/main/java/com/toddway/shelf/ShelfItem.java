@@ -65,18 +65,18 @@ public class ShelfItem<T> {
         return storage.delete(key);
     }
 
-    public <T> Policies<T> policies(Class<T> type, Observable<T> observeNew) {
-        Policies c = new Policies<>(observeNew);
+    public <T> Cacheable<T> with(Class<T> type, Observable<T> observeNew) {
+        Cacheable c = new Cacheable<>(observeNew);
         c.item = this;
         c.type = type;
         return c;
     }
 
-    public static class Policies<T> extends CachePolicies<T> {
+    public static class Cacheable<T> extends RxCacheable<T> {
         ShelfItem<T> item;
         Class<T> type;
 
-        public Policies(Observable<T> observeNew) {
+        public Cacheable(Observable<T> observeNew) {
             super(observeNew);
             ShelfUtils.checkRx();
         }

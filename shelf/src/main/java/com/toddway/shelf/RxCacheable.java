@@ -10,11 +10,11 @@ import rx.functions.Func1;
 /**
  * Created by tway on 3/10/16.
  */
-public abstract class CachePolicies<T> {
+public abstract class RxCacheable<T> {
 
     private Observable<T> observeNew;
 
-    public CachePolicies(Observable<T> observeNew) {
+    public RxCacheable(Observable<T> observeNew) {
         this.observeNew = observeNew;
     }
 
@@ -77,11 +77,11 @@ public abstract class CachePolicies<T> {
     }
 
     public Observable<T> observeCacheThenNew() {
-        //return observeCache().concatWith(observeFirstValid());
+        //return observeCache().concatWith(observeCacheOrNew());
         return Observable.concat(observeCache(), observeNewIfCacheNotValid().skipWhile(isNull()));
     }
 
-    public Observable<T> observeFirstValid() {
+    public Observable<T> observeCacheOrNew() {
         return Observable.concat(observeCacheIfValid(), observeNew()).first(isNotNull());
     }
 

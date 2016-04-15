@@ -17,7 +17,11 @@ Initialize:
 Shelf shelf = new Shelf(new File("/tmp/shelf"));
 
 //with customizations
-Shelf shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
+Shelf shelf = new Shelf(
+                    new FileStorage(new File("/tmp"), 
+                    new GsonSerializer(), 
+                    TimeUnit.MINUTES.toMillis(1))
+              );
 ```
 
 Store any object:

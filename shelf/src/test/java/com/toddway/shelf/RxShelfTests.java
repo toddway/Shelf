@@ -21,7 +21,7 @@ import static org.junit.Assert.assertEquals;
  */
 public class RxShelfTests {
 
-    ShelfItem.Policies<String> itemPolicies;
+    ShelfItem.Cacheable<String> itemCacheable;
     ShelfItem<String> item;
     TestSubscriber<String> testSubscriber;
     Shelf shelf;
@@ -31,7 +31,7 @@ public class RxShelfTests {
     public void beforeEach() {
         shelf = new Shelf(new FileStorage(new File("/tmp"), ShelfUtils.defaultSerializer(), 5000));
         item = shelf.item("my string");
-        itemPolicies = item.policies(String.class, observable());
+        itemCacheable = item.with(String.class, observable());
     }
 
     public void givenNoCache() {
@@ -67,29 +67,29 @@ public class RxShelfTests {
     @Test
     public void testObserveCacheThenFirstValid() {
         givenNoCache();
-        itemPolicies.observeCacheThenNew().subscribe(testSubscriber);
+        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
         testSubscriber.assertValues(null, "new value");
-        assertEquals(itemPolicies.getCache(), "new value");
+        assertEquals(itemCacheable.getCache(), "new value");
 
         givenValidCache();
-        itemPolicies.observeCacheThenNew().subscribe(testSubscriber);
+        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache");
-        assertEquals(itemPolicies.getCache(), "initial cache");
+        assertEquals(itemCacheable.getCache(), "initial cache");
 
         givenInvalidCache();
-        itemPolicies.observeCacheThenNew().subscribe(testSubscriber);
+        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache", "new value");
-        assertEquals(itemPolicies.getCache(), "new value");
+        assertEquals(itemCacheable.getCache(), "new value");
 
         givenNoCache();
         givenNoNew();
-        itemPolicies.observeCacheThenNew().subscribe(testSubscriber);
+        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
         testSubscriber.assertValue(null);
-        assertEquals(itemPolicies.getCache(), null);
+        assertEquals(itemCacheable.getCache(), null);
 
         givenNoNew();
         givenInvalidCache();
-        itemPolicies.observeCacheThenNew().subscribe(testSubscriber);
+        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache");
     }
 
@@ -98,7 +98,7 @@ public class RxShelfTests {
     @Test
     public void testObserveCacheThenPollNew() {
         givenInvalidCache();
-        itemPolicies.observeCacheThenPollNew(1, TimeUnit.NANOSECONDS).doOnNext(printString()).subscribe(testSubscriber);
+        itemCacheable.observeCacheThenPollNew(1, TimeUnit.NANOSECONDS).doOnNext(printString()).subscribe(testSubscriber);
         System.out.println(testSubscriber.getOnNextEvents().size() + " - emits");
         testSubscriber.assertValues("initial cache", "new value", "new value");
         //assertTrue(testSubscriber.getOnNextEvents().size() > 2);
