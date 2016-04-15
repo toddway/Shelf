@@ -42,6 +42,10 @@ public class ShelfItem<T> {
         return this;
     }
 
+    public ShelfItem<T> setLifetime(long value, TimeUnit unit) {
+        return setLifetime(unit.toMillis(value));
+    }
+
     public boolean isOlderThanLifetime() {
         return isOlderThan(lifetime);
     }
