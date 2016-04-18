@@ -1,8 +1,6 @@
 package com.toddway.shelf.storage;
 
 import com.toddway.shelf.ShelfUtils;
-import com.toddway.shelf.serializer.GsonSerializer;
-import com.toddway.shelf.serializer.JavaSerializer;
 import com.toddway.shelf.serializer.Serializer;
 
 import java.io.File;
@@ -11,7 +9,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 public class FileStorage implements Storage {
 
@@ -29,7 +26,7 @@ public class FileStorage implements Storage {
         this.serializer = serializer;
         this.defaultLifetime = defaultLifetime;
 
-        dir.mkdir();
+        if (dir != null) dir.mkdir();
     }
 
     protected File file(String key) {
