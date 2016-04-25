@@ -81,6 +81,10 @@ public class ShelfItem {
         };
     }
 
+    public <T> Observable<T> getObservable(final Class<T> type) {
+        return with(type, null).observeCache();
+    }
+
     public <T> Observable.Transformer<T, T> cacheThenNew(final Class<T> type) {
         return Shelfable.cacheThenNew(this, type);
     }
