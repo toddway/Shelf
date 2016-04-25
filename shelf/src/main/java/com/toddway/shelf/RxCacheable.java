@@ -58,7 +58,7 @@ public abstract class RxCacheable<T> {
         });
     }
 
-    public Observable<T> observeNew() {
+    public Observable<T> observeNewOnly() {
         return observeNew.doOnNext(new Action1<T>() {
             @Override
             public void call(T t) {
@@ -71,7 +71,7 @@ public abstract class RxCacheable<T> {
         return Observable.fromCallable(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return isCacheValid() ? null : observeNew().toBlocking().first();
+                return isCacheValid() ? null : observeNewOnly().toBlocking().first();
             }
         });
     }
@@ -82,11 +82,11 @@ public abstract class RxCacheable<T> {
     }
 
     public Observable<T> observeCacheOrNew() {
-        return Observable.concat(observeCacheIfValid(), observeNew()).first(isNotNull());
+        return Observable.concat(observeCacheIfValid(), observeNewOnly()).first(isNotNull());
     }
 
     public Observable<T> pollNew(final long value, final TimeUnit unit) {
-        return observeNew().repeatWhen(interval(value, unit));
+        return observeNewOnly().repeatWhen(interval(value, unit));
     }
 
     public Func1<Observable<? extends Void>, Observable<?>> interval(final long value, final TimeUnit unit) {
@@ -103,6 +103,6 @@ public abstract class RxCacheable<T> {
     }
 
     public Observable<T> observeFirst() {
-        return Observable.concat(observeCache(), observeNew()).first(isNotNull());
+        return Observable.concat(observeCache(), observeNewOnly()).first(isNotNull());
     }
 }

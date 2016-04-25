@@ -6,13 +6,14 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
+import rx.functions.Action1;
 
 
-public class ShelfItem<T> {
+public class ShelfItem {
 
     private String key;
     private Storage storage;
-    private T item;
+
     private long lifetime;
 
     public ShelfItem(Storage storage, String key) {
@@ -25,25 +26,23 @@ public class ShelfItem<T> {
         return storage.contains(key);
     }
 
-    public ShelfItem<T> put(T t) {
-        this.item = t;
-        storage.put(key, t);
+    public ShelfItem put(Object object) {
+        storage.put(key, object);
         return this;
     }
 
     public <T> T get(Class<T> type) {
-        if (item != null) return (T) item;
         if (!exists()) return null;
         return storage.get(key, type);
     }
 
-    public ShelfItem<T> setLifetime(long lifetime) {
+    public ShelfItem lifetime(long lifetime) {
         this.lifetime = lifetime;
         return this;
     }
 
-    public ShelfItem<T> setLifetime(long value, TimeUnit unit) {
-        return setLifetime(unit.toMillis(value));
+    public ShelfItem lifetime(long value, TimeUnit unit) {
+        return lifetime(unit.toMillis(value));
     }
 
     public boolean isOlderThanLifetime() {
@@ -65,43 +64,40 @@ public class ShelfItem<T> {
     }
 
     public boolean clear() {
-        item = null;
         return storage.delete(key);
     }
 
-    public <T> Cacheable<T> with(Class<T> type, Observable<T> observeNew) {
-        Cacheable c = new Cacheable<>(observeNew);
-        c.item = this;
-        c.type = type;
-        return c;
+    public <T> Shelfable<T> with(Class<T> type, Observable<T> observeNew) {
+        return new Shelfable<>(observeNew, this, type);
     }
 
-    public static class Cacheable<T> extends RxCacheable<T> {
-        ShelfItem<T> item;
-        Class<T> type;
+    public Action1<Object> put() {
+        return new Action1<Object>() {
 
-        public Cacheable(Observable<T> observeNew) {
-            super(observeNew);
-            ShelfUtils.checkRx();
-        }
+            @Override
+            public void call(Object t) {
+                put(t);
+            }
+        };
+    }
 
-        public ShelfItem<T> item() {
-            return item;
-        }
+    public <T> Observable.Transformer<T, T> cacheThenNew(final Class<T> type) {
+        return Shelfable.cacheThenNew(this, type);
+    }
 
-        @Override
-        public T getCache() {
-            return item.get(type);
-        }
+    public <T> Observable.Transformer<T, T> cacheOrNew(final Class<T> type) {
+        return Shelfable.cacheOrNew(this, type);
+    }
 
-        @Override
-        public boolean isCacheValid() {
-            return !item.isOlderThanLifetime();
-        }
+    public <T> Observable.Transformer<T, T> newOnly(final Class<T> type) {
+        return Shelfable.newOnly(this, type);
+    }
 
-        @Override
-        public void setCache(T t) {
-            item.put(t);
-        }
+    public <T> Observable.Transformer<T, T> pollNew(final Class<T> type, final long value, final TimeUnit unit) {
+        return Shelfable.pollNew(this, type, value, unit);
+    }
+
+    public <T> Observable.Transformer<T, T> cacheThenPollNew(final Class<T> type, final long value, final TimeUnit unit) {
+        return Shelfable.cacheThenPollNew(this, type, value, unit);
     }
 }

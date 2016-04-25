@@ -20,11 +20,11 @@ public class Shelf {
         this.storage = storage;
     }
 
-    public <T> ShelfItem<T> item(String key) {
+    public ShelfItem item(String key) {
         boolean isUsingMap = map != null;
         boolean isInMap = isUsingMap && map.containsKey(key);
 
-        ShelfItem<T> item = isInMap ? (ShelfItem<T>) map.get(key) : new ShelfItem<T>(storage, key);
+        ShelfItem item = isInMap ? (ShelfItem) map.get(key) : new ShelfItem(storage, key);
         if (isUsingMap && !isInMap) map.put(key, item);
         return item;
     }

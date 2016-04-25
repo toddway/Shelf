@@ -26,7 +26,12 @@ public class ShelfTest {
 
     @Before
     public void setUp() throws Exception {
-        shelf = new Shelf(new FileStorage(new File("/tmp"), new GsonSerializer(), TimeUnit.MINUTES.toMillis(1)));
+        shelf = new Shelf(
+                    new FileStorage(new File("/tmp"),
+                    new GsonSerializer(),
+                    TimeUnit.MINUTES.toMillis(1))
+                );
+
         shelf.clear("");
     }
 
@@ -44,7 +49,7 @@ public class ShelfTest {
     public void testIsOlderThan() throws Exception {
         ShelfItem shelfItem = shelf.item(key)
                         .put(Pojo.create())
-                        .setLifetime(1, TimeUnit.SECONDS);
+                        .lifetime(1, TimeUnit.SECONDS);
 
         TimeUnit.SECONDS.sleep(2);
 
@@ -64,7 +69,7 @@ public class ShelfTest {
     @Test
     public void testArraysAsList() throws Exception {
         List<Pojo> pojos1 = Arrays.asList(Pojo.create(), Pojo.create());
-        shelf.item(key).put(pojos1.toArray());
+        shelf.item(key).put(pojos1);
         List<Pojo> pojos2 = Arrays.asList(shelf.item(key).get(Pojo[].class));
 
         assertEquals(pojos1.get(0).integer, pojos2.get(0).integer);

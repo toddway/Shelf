@@ -7,7 +7,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -21,8 +20,8 @@ import static org.junit.Assert.assertEquals;
  */
 public class RxShelfTests {
 
-    ShelfItem.Cacheable<String> itemCacheable;
-    ShelfItem<String> item;
+
+    ShelfItem shelfItem;
     TestSubscriber<String> testSubscriber;
     Shelf shelf;
     String string = "new value";
@@ -30,24 +29,23 @@ public class RxShelfTests {
     @Before
     public void beforeEach() {
         shelf = new Shelf(new FileStorage(new File("/tmp"), ShelfUtils.defaultSerializer(), 5000));
-        item = shelf.item("my string");
-        itemCacheable = item.with(String.class, observable());
+        shelfItem = shelf.item("string");
     }
 
     public void givenNoCache() {
-        item.clear();
+        shelfItem.clear();
         testSubscriber = new TestSubscriber<>();
     }
 
     public void givenValidCache() {
         givenNoCache();
-        item.put("initial cache");
-        item.setLifetime(5000);
+        shelfItem.put("initial cache");
+        shelfItem.lifetime(5000);
     }
 
     public void givenInvalidCache() {
         givenValidCache();
-        item.setLifetime(0);
+        shelfItem.lifetime(0);
     }
 
     public void givenNoNew() {
@@ -55,41 +53,42 @@ public class RxShelfTests {
         testSubscriber = new TestSubscriber<>();
     }
 
-    public Observable<String> observable() {
-        return Observable.fromCallable(new Callable<String>() {
-            @Override
-            public String call() throws Exception {
-                return string;
-            }
-        });
-    }
-
     @Test
     public void testObserveCacheThenFirstValid() {
         givenNoCache();
-        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelfItem.cacheThenNew(String.class))
+                .subscribe(testSubscriber);
         testSubscriber.assertValues(null, "new value");
-        assertEquals(itemCacheable.getCache(), "new value");
+        assertEquals(shelfItem.get(String.class), "new value");
 
         givenValidCache();
-        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelfItem.cacheThenNew(String.class))
+                .subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache");
-        assertEquals(itemCacheable.getCache(), "initial cache");
+        assertEquals(shelfItem.get(String.class), "initial cache");
 
         givenInvalidCache();
-        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelfItem.cacheThenNew(String.class))
+                .subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache", "new value");
-        assertEquals(itemCacheable.getCache(), "new value");
+        assertEquals(shelfItem.get(String.class), "new value");
 
         givenNoCache();
         givenNoNew();
-        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelfItem.cacheThenNew(String.class))
+                .subscribe(testSubscriber);
         testSubscriber.assertValue(null);
-        assertEquals(itemCacheable.getCache(), null);
+        assertEquals(shelfItem.get(String.class), null);
 
         givenNoNew();
         givenInvalidCache();
-        itemCacheable.observeCacheThenNew().subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelfItem.cacheThenNew(String.class))
+                .subscribe(testSubscriber);
         testSubscriber.assertValues("initial cache");
     }
 
@@ -98,7 +97,11 @@ public class RxShelfTests {
     @Test
     public void testObserveCacheThenPollNew() {
         givenInvalidCache();
-        itemCacheable.observeCacheThenPollNew(1, TimeUnit.NANOSECONDS).doOnNext(printString()).subscribe(testSubscriber);
+        Observable.just(string)
+                .compose(shelf.item("string").cacheThenPollNew(String.class, 1, TimeUnit.NANOSECONDS))
+                .doOnNext(printString())
+                .subscribe(testSubscriber);
+
         System.out.println(testSubscriber.getOnNextEvents().size() + " - emits");
         testSubscriber.assertValues("initial cache", "new value", "new value");
         //assertTrue(testSubscriber.getOnNextEvents().size() > 2);

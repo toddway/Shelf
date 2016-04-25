@@ -54,27 +54,23 @@ shelf.clear("") //deletes all items
 
 Canned cache policies with RxJava:
 ```java
-shelf.item("string")
-	.put("cached value")
-	.setLifetime(1, TimeUnit.MILLIS);
-	
-Observable<String> observeNew = Observable.fromCallable(() -> return "new value");
+shelf.defaultLifetime(1, MILLISECOND);
+shelf.item("myString").put("cached value");
+Observable<String> myObservable = Observable.fromCallable(() -> return "new value");
 
 ...
 
-shelf.item("string")
-     .with(String.class, observeNew)
-     .observeCacheThenNew()
-     .subscribe(s -> System.out.println(s));   
-``` 
-
-Prints `cached value` then prints `new value`.
-
-```java
-shelf.item("string")
-     .with(String.class, observeNew)
-     .observeCacheOrNew()
-     .subscribe(s -> System.out.println(s));     
+//Prints "cached value" then prints "new value".
+myObservable
+    .compose(shelf.item("myString").cacheThenNew(String.class))
+    .subscribe(s -> System.out.println(s));
+     
+...     
+     
+//Prints "new value" if the cache is older than 1 millisecond, otherwise it prints "cached value".
+myObservable
+    .compose(shelf.item("myString").cacheOrNew(String.class))
+    .subscribe(s -> System.out.println(s));     
 ```
 
-Prints `new value` only if the cache is older than 1 millisecond, otherwise it prints `cached value` only.
+
