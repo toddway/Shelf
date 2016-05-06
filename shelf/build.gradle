@@ -1,5 +1,14 @@
 apply plugin: 'java'
+apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.3.4'
+    }
+}
 
 dependencies {
     testCompile 'junit:junit:4.12'
@@ -9,12 +18,15 @@ dependencies {
     compile 'io.reactivex:rxjava:1.1.0'
 }
 
-version = '1.1.0'
 targetCompatibility = '1.7'
 sourceCompatibility = '1.7'
 
 
-task copyJar(type: Copy) {
-    from 'build/libs/'
-    into "jars"
+publish {
+    userOrg = 'toddway'
+    groupId = 'com.toddway'
+    artifactId = 'shelf'
+    publishVersion = '1.1.0'
+    desc = 'Local object storage API for Java and Android'
+    website = 'https://github.com/toddway/Shelf'
 }

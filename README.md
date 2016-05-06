@@ -10,13 +10,28 @@ Local object storage for Java and Android.  Includes...
 
 
 ## How to use
+Install from build.gradle:
+
+```groovy
+    repositories {
+        maven {
+            url  "http://dl.bintray.com/toddway/maven" 
+        }
+    }
+    
+    dependencies {
+        compile 'com.toddway:shelf:1.1.0'
+    }
+```    
+
+
 Initialize:
 
 ```java
 //with defaults
 Shelf shelf = new Shelf(new File("/tmp/shelf"));
 
-//with customizations
+//or with customizations
 Shelf shelf = new Shelf(
                     new FileStorage(new File("/tmp"), 
                     new GsonSerializer(), 
