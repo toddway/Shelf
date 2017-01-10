@@ -24,7 +24,7 @@ Add shelf dependency to the module build.gradle:
 
 ```groovy
     dependencies {
-        compile 'com.toddway:shelf:1.1.0'
+        compile 'com.toddway:shelf:X.X.X'
     }
 ```    
 
