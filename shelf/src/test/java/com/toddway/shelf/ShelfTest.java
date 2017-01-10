@@ -80,10 +80,10 @@ public class ShelfTest {
         ShelfItem shelfItem = shelf.item(key).put(Pojo.create());
         assertTrue(shelfItem.exists());
 
-        shelf.clear("urelated key");
+        shelf.item("urelated key").clear();
         assertTrue(shelfItem.exists());
 
-        shelf.clear("");
+        shelf.item(key).clear();
         assertFalse(shelfItem.exists());
     }
 

@@ -4,7 +4,7 @@ Local object storage for Java and Android.  Includes...
 - Simple & fluent API for key-value storage
 - Convenient timestamp evaluation
 - Canned cache policies with RxJava Observables
-- Pluggable storage interface (Default is flat file storage. Roll your own- DiskLRUCache, Shared Preferences, SQLite,  etc.)
+- Pluggable storage interface (Default is flat file storage. Roll your own - DiskLRUCache, Shared Preferences, SQLite, etc.)
 - Pluggable serialization interface (Default is Gson.  Roll your own - Jackson, Kryo, etc.)
  
 
@@ -13,12 +13,6 @@ Local object storage for Java and Android.  Includes...
 Install from build.gradle:
 
 ```groovy
-    repositories {
-        maven {
-            url  "http://dl.bintray.com/toddway/maven" 
-        }
-    }
-    
     dependencies {
         compile 'com.toddway:shelf:1.1.0'
     }
@@ -69,20 +63,19 @@ shelf.clear("") //deletes all items
 
 Canned cache policies with RxJava:
 ```java
-shelf.defaultLifetime(1, MILLISECOND);
 shelf.item("myString").put("cached value");
-Observable<String> myObservable = Observable.fromCallable(() -> return "new value");
+Observable<String> myObservable = Observable.fromCallable(() -> "new value");
 
 
 //Prints "cached value" then prints "new value".
 myObservable
-    .compose(shelf.item("myString").cacheThenNew(String.class))
+    .compose(shelf.item("myString").lifetime(1, MINUTE).cacheThenNew(String.class))
     .subscribe(s -> System.out.println(s));
      
 
-//Prints "new value" if the cache is older than 1 millisecond, otherwise it prints "cached value".
+//Prints "new value" if the cache is older than 1 minute, otherwise it prints "cached value".
 myObservable
-    .compose(shelf.item("myString").cacheOrNew(String.class))
+    .compose(shelf.item("myString").lifetime(1, MINUTE).cacheOrNew(String.class))
     .subscribe(s -> System.out.println(s));     
 ```
 
