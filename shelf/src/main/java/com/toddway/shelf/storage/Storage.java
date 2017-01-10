@@ -15,7 +15,13 @@ public interface Storage {
 
     long lastModified(String key);
 
+    /**
+     * @deprecated use defaultMaxAge instead
+     */
+    @Deprecated
     long defaultLifetime();
+
+    long defaultMaxAge();
 
     List<String> keys(String startsWith);
 }

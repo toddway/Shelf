@@ -1,12 +1,8 @@
 apply plugin: 'java'
-apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
 buildscript {
     repositories {
         jcenter()
-    }
-    dependencies {
-        classpath 'com.novoda:bintray-release:0.3.4'
     }
 }
 
@@ -20,13 +16,3 @@ dependencies {
 
 targetCompatibility = '1.7'
 sourceCompatibility = '1.7'
-
-
-publish {
-    userOrg = 'toddway'
-    groupId = 'com.toddway'
-    artifactId = 'shelf'
-    publishVersion = '1.1.0'
-    desc = 'Local object storage API for Java and Android'
-    website = 'https://github.com/toddway/Shelf'
-}

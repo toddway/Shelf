@@ -15,16 +15,16 @@ public class FileStorage implements Storage {
     File dir;
     static String EXT = ".obj";
     Serializer serializer;
-    long defaultLifetime;
+    long maxAge;
 
     public FileStorage(File dir) {
         this(dir, ShelfUtils.defaultSerializer(), ShelfUtils.defaultLifetime());
     }
 
-    public FileStorage(File dir, Serializer serializer, long defaultLifetime) {
+    public FileStorage(File dir, Serializer serializer, long maxAge) {
         this.dir = dir;
         this.serializer = serializer;
-        this.defaultLifetime = defaultLifetime;
+        this.maxAge = maxAge;
 
         if (dir != null) dir.mkdir();
     }
@@ -77,7 +77,12 @@ public class FileStorage implements Storage {
 
     @Override
     public long defaultLifetime() {
-        return defaultLifetime;
+        return maxAge;
+    }
+
+    @Override
+    public long defaultMaxAge() {
+        return maxAge;
     }
 
     @Override

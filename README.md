@@ -8,9 +8,19 @@ Local object storage for Java and Android.  Includes...
 - Pluggable serialization interface (Default is Gson.  Roll your own - Jackson, Kryo, etc.)
  
 
+## Install
+Add jitpack to your root build.gradle:
 
-## How to use
-Install from build.gradle:
+```groovy
+    allprojects {
+		repositories {
+			...
+			maven { url 'https://jitpack.io' }
+		}
+	}
+```
+
+Add shelf dependency to the module build.gradle:
 
 ```groovy
     dependencies {
@@ -18,8 +28,9 @@ Install from build.gradle:
     }
 ```    
 
+[![](https://jitpack.io/v/toddway/Shelf.svg)](https://jitpack.io/#toddway/Shelf)
 
-Initialize:
+## Usage
 
 ```java
 //with defaults
@@ -69,13 +80,13 @@ Observable<String> myObservable = Observable.fromCallable(() -> "new value");
 
 //Prints "cached value" then prints "new value".
 myObservable
-    .compose(shelf.item("myString").lifetime(1, MINUTE).cacheThenNew(String.class))
+    .compose(shelf.item("myString").maxAge(1, MINUTE).cacheThenNew(String.class))
     .subscribe(s -> System.out.println(s));
      
 
 //Prints "new value" if the cache is older than 1 minute, otherwise it prints "cached value".
 myObservable
-    .compose(shelf.item("myString").lifetime(1, MINUTE).cacheOrNew(String.class))
+    .compose(shelf.item("myString").maxAge(1, MINUTE).cacheOrNew(String.class))
     .subscribe(s -> System.out.println(s));     
 ```
 

@@ -15,12 +15,12 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        String s = new Shelf(getCacheDir())
-//                .shelfable("test", String.class, Observable.just("it works!"))
-//                .observeNew()
-//                .toBlocking()
-//                .first();
-//        ((TextView) findViewById(R.id.textview)).setText(s);
+        String s = Observable.just("it works!")
+                .compose(new Shelf(getCacheDir()).item("test").cacheThenNew(String.class))
+                .toBlocking()
+                .first();
+
+        ((TextView) findViewById(R.id.textview)).setText(s);
 
     }
 }

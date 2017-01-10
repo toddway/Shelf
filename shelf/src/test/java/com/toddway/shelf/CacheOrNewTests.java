@@ -36,11 +36,11 @@ public class CacheOrNewTests {
     }
 
     private void givenValidCache() {
-        item.lifetime(5000).put(cacheValue);
+        item.maxAge(5000).put(cacheValue);
     }
 
     private void givenInvalidCache() {
-        item.lifetime(0).put(cacheValue);
+        item.maxAge(0).put(cacheValue);
     }
 
     private void givenNoNew() {

@@ -14,12 +14,12 @@ public class ShelfItem {
     private String key;
     private Storage storage;
 
-    private long lifetime;
+    private long maxAge;
 
     public ShelfItem(Storage storage, String key) {
         this.key = key;
         this.storage = storage;
-        this.lifetime = storage.defaultLifetime();
+        this.maxAge = storage.defaultMaxAge();
     }
 
     public boolean exists() {
@@ -36,17 +36,33 @@ public class ShelfItem {
         return storage.get(key, type);
     }
 
-    public ShelfItem lifetime(long lifetime) {
-        this.lifetime = lifetime;
+    /**
+     * @deprecated use maxAge instead
+     */
+    @Deprecated
+    public ShelfItem lifetime(long maxAge) {
+        return maxAge(maxAge);
+    }
+
+    public ShelfItem maxAge(long maxAge) {
+        this.maxAge = maxAge;
         return this;
     }
 
+    /**
+     * @deprecated use maxAge instead
+     */
+    @Deprecated
     public ShelfItem lifetime(long value, TimeUnit unit) {
         return lifetime(unit.toMillis(value));
     }
 
+    public ShelfItem maxAge(long value, TimeUnit unit) {
+        return maxAge(unit.toMillis(value));
+    }
+
     public boolean isOlderThanLifetime() {
-        return isOlderThan(lifetime);
+        return isOlderThan(maxAge);
     }
 
     public boolean isOlderThan(long value, TimeUnit unit) {

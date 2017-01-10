@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
 import rx.observers.TestSubscriber;
@@ -37,11 +38,11 @@ public class CacheThenNewTests {
     }
 
     private void givenValidCache() {
-        item.lifetime(5000).put(cacheValue);
+        item.maxAge(5000).put(cacheValue);
     }
 
     private void givenInvalidCache() {
-        item.lifetime(0).put(cacheValue);
+        item.maxAge(0, TimeUnit.MINUTES).put(cacheValue);
     }
 
     private void givenNoNew() {

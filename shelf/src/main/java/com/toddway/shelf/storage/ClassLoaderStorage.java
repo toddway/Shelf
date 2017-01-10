@@ -59,6 +59,11 @@ public class ClassLoaderStorage implements Storage {
     }
 
     @Override
+    public long defaultMaxAge() {
+        return 0;
+    }
+
+    @Override
     public List<String> keys(String startsWith) {
         return null;
     }
