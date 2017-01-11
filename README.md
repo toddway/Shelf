@@ -7,29 +7,7 @@ Local object storage for Java and Android.  Includes...
 - Pluggable storage interface (Default is flat file storage. Roll your own - DiskLRUCache, Shared Preferences, SQLite, etc.)
 - Pluggable serialization interface (Default is Gson.  Roll your own - Jackson, Kryo, etc.)
  
-
-## Install
-Add jitpack to your root build.gradle:
-
-```groovy
-    allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
-```
-
-Add shelf dependency to the module build.gradle:
-
-```groovy
-    dependencies {
-        compile 'com.toddway:shelf:X.X.X'
-    }
-```    
-
-[![](https://jitpack.io/v/toddway/Shelf.svg)](https://jitpack.io/#toddway/Shelf)
-
+ 
 ## Usage
 
 ```java
@@ -108,6 +86,27 @@ Observable<Pojo> whatever = shelf.item("whatever").getObservable(Pojo.class);
 myObservable.doOnNext(shelf.item("whatever").put());
 
 ```
+
+## Install
+Add jitpack to your root build.gradle:
+
+```groovy
+    allprojects {
+        repositories {
+            maven { url 'https://jitpack.io' }
+        }
+    }
+```
+
+Add shelf dependency to the module build.gradle:
+
+```groovy
+    dependencies {
+        compile 'com.github.toddway:Shelf:X.X.X'
+    }
+```    
+
+[![](https://jitpack.io/v/toddway/Shelf.svg)](https://jitpack.io/#toddway/Shelf)
 
 License
 -------
