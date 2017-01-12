@@ -1,8 +1,11 @@
 package com.toddway.shelf;
 
+import com.toddway.shelf.rx.CacheSubject;
+import com.toddway.shelf.rx.ShelfSubjectFactory;
 import com.toddway.shelf.storage.Storage;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;
@@ -83,8 +86,12 @@ public class ShelfItem {
         return storage.delete(key);
     }
 
-    public <T> Shelfable<T> with(Class<T> type, Observable<T> observeNew) {
-        return new Shelfable<>(observeNew, this, type);
+    public <T> CacheSubject<T> subject(Class<T> type) {
+        return ShelfSubjectFactory.create(this, type);
+    }
+
+    public <T> CacheSubject<List<T>> subjectForList(Class<T[]> type) {
+        return ShelfSubjectFactory.createForList(this, type);
     }
 
     public Action1<Object> put() {
@@ -97,8 +104,12 @@ public class ShelfItem {
         };
     }
 
+    /**
+     * @deprecated use subject() or subjectForList() instead
+     */
+    @Deprecated
     public <T> Observable<T> getObservable(final Class<T> type) {
-        return with(type, null).observeCache();
+        return new Shelfable<>(null, this, type).observeCache();
     }
 
     public <T> Observable.Transformer<T, T> cacheThenNew(final Class<T> type) {

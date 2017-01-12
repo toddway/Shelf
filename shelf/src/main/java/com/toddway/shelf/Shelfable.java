@@ -1,5 +1,7 @@
 package com.toddway.shelf;
 
+import com.toddway.shelf.rx.RxCacheable;
+
 import java.util.concurrent.TimeUnit;
 
 import rx.Observable;

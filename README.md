@@ -91,27 +91,28 @@ myObservable.doOnNext(shelf.item("whatever").put());
 Add jitpack to your root build.gradle:
 
 ```groovy
-    allprojects {
-        repositories {
-            maven { url 'https://jitpack.io' }
-        }
+allprojects {
+    repositories {
+        maven { url 'https://jitpack.io' }
     }
+}
 ```
+[![](https://jitpack.io/v/toddway/Shelf.svg)](https://jitpack.io/#toddway/Shelf)
 
 Add shelf dependency to the module build.gradle:
 
 ```groovy
-    dependencies {
-        compile 'com.github.toddway:Shelf:X.X.X'
-    }
+dependencies {
+    compile 'com.github.toddway:Shelf:X.X.X'
+}
 ```    
 
-[![](https://jitpack.io/v/toddway/Shelf.svg)](https://jitpack.io/#toddway/Shelf)
+
 
 License
 -------
 
-    Copyright 2016 Todd Way
+    Copyright 2016-Present Todd Way
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.

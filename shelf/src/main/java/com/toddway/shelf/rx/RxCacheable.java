@@ -1,4 +1,4 @@
-package com.toddway.shelf;
+package com.toddway.shelf.rx;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
