@@ -1,1 +1,1 @@
-include ':app', ':shelf'
+include ':shelf'
