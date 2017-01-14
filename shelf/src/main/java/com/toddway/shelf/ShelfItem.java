@@ -30,7 +30,8 @@ public class ShelfItem {
     }
 
     public ShelfItem put(Object object) {
-        storage.put(key, object);
+        if (object == null) clear();
+        else storage.put(key, object);
         return this;
     }
 

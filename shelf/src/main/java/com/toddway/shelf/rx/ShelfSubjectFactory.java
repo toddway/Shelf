@@ -25,14 +25,7 @@ public class ShelfSubjectFactory {
 
             @Override
             public Observable<T> write(final T t) {
-                return Observable.fromCallable(new Callable<T>() {
-                    @Override
-                    public T call() throws Exception {
-                        if (t == null) shelfItem.clear();
-                        else shelfItem.put(t);
-                        return t;
-                    }
-                });
+                return observeWrite(shelfItem, t);
             }
         });
     }
@@ -52,13 +45,17 @@ public class ShelfSubjectFactory {
 
             @Override
             public Observable<List<T>> write(final List<T> t) {
-                return Observable.fromCallable(new Callable<List<T>>() {
-                    @Override
-                    public List<T> call() throws Exception {
-                        shelfItem.put(t);
-                        return t;
-                    }
-                });
+                return observeWrite(shelfItem, t);
+            }
+        });
+    }
+
+    private static <T> Observable<T> observeWrite(final ShelfItem shelfItem, final T t) {
+        return Observable.fromCallable(new Callable<T>() {
+            @Override
+            public T call() throws Exception {
+                shelfItem.put(t);
+                return t;
             }
         });
     }

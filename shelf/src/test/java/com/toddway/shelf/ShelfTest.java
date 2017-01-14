@@ -87,6 +87,13 @@ public class ShelfTest {
         assertFalse(shelfItem.exists());
     }
 
+    @Test public void testPutNullHasNoErrors() {
+        shelf.item(key).clear();
+        shelf.item(key).put(null);
+        Pojo s = shelf.item(key).get(Pojo.class);
+        int i = 0;
+    }
+
     static class Pojo {
         public List<Integer> list;
         public int integer;

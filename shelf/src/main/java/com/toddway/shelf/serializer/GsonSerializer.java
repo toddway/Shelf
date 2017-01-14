@@ -33,7 +33,7 @@ public class GsonSerializer implements Serializer {
     @Override
     public <T> void serialize(OutputStream outputStream, T object) {
         JsonWriter writer = new JsonWriter(new OutputStreamWriter(outputStream));
-        gson.toJson(object, object.getClass(), writer);
+        gson.toJson(object, object == null ? Object.class : object.getClass(), writer);
         try {
             writer.close();
         } catch (IOException e) {
