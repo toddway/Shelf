@@ -3,7 +3,7 @@ Local object storage for Java and Android.  Includes...
 
 - Simple & fluent API for key-value storage
 - Convenient timestamp evaluation
-- Canned cache policies with RxJava Observables
+- RxJava Subjects to observe/update
 - Pluggable storage interface (Default is flat file storage. Roll your own - DiskLRUCache, Shared Preferences, SQLite, etc.)
 - Pluggable serialization interface (Default is Gson.  Roll your own - Jackson, Kryo, etc.)
  
