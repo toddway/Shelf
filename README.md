@@ -51,7 +51,7 @@ shelf.clear("") //deletes all items
 
 Create RxJava-based CacheSubjects to observe and update shelf items:
 ```java
-CacheSubject<Pojo> pojoCache = shelf.item("pojo").subject(Pojo.class);
+CacheSubject<Pojo> pojoSubject = shelf.item("pojo").subject(Pojo.class);
 pojoSubject.subscribe( /* respond to shelf changes here */ );
 pojoSubject.onNext(new Pojo()); 
 ```
