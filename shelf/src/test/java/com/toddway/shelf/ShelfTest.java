@@ -49,7 +49,7 @@ public class ShelfTest {
     public void testIsOlderThan() throws Exception {
         ShelfItem shelfItem = shelf.item(key)
                         .put(Pojo.create())
-                        .lifetime(1, TimeUnit.SECONDS);
+                        .maxAge(1, TimeUnit.SECONDS);
 
         TimeUnit.SECONDS.sleep(2);
 

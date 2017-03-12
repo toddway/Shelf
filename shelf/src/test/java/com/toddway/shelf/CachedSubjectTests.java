@@ -14,8 +14,8 @@ import rx.observers.TestSubscriber;
 
 public class CachedSubjectTests extends BaseTest {
 
-    CacheSubject<String> subject;
-    CacheSubject<String[]> listSubject;
+    CacheSubject<String> itemCache;
+    CacheSubject<String[]> listCache;
     TestSubscriber<String[]> listSubscriber;
     ShelfItem listItem;
 
@@ -23,23 +23,23 @@ public class CachedSubjectTests extends BaseTest {
     public void beforeEach() {
         super.beforeEach();
         listItem = shelf.item("list");
-        subject = item.subject(String.class);
-        listSubject = listItem.subject(String[].class);
+        itemCache = item.subject(String.class);
+        listCache = listItem.subject(String[].class);
         listSubscriber = new TestSubscriber<>();
     }
 
 
     @Test public void testNoCache() {
         givenNoCache();
-        subject.subscribe(subscriber);
+        itemCache.subscribe(subscriber);
 
         subscriber.assertValue(null);
 
-        subject.onNext(newValue);
+        itemCache.onNext(newValue);
 
         subscriber.assertValues(null, newValue);
 
-        subject.onNext(newValue);
+        itemCache.onNext(newValue);
 
         subscriber.assertValues(null, newValue, newValue);
 
@@ -49,15 +49,15 @@ public class CachedSubjectTests extends BaseTest {
 
     @Test public void testWithCache() {
         givenInvalidCache();
-        subject.subscribe(subscriber);
+        itemCache.subscribe(subscriber);
 
         subscriber.assertValue(cacheValue);
 
-        subject.onNext(newValue);
+        itemCache.onNext(newValue);
 
         subscriber.assertValues(cacheValue, newValue);
 
-        subject.onNext(newValue);
+        itemCache.onNext(newValue);
 
         subscriber.assertValues(cacheValue, newValue, newValue);
 
@@ -68,18 +68,18 @@ public class CachedSubjectTests extends BaseTest {
         listItem.clear();
         listSubscriber.assertNoValues();
 
-        listSubject.subscribe(listSubscriber);
+        listCache.subscribe(listSubscriber);
         listSubscriber.assertValue(null);
 
-        //subject.onError(new RuntimeException("test"));
+        //itemCache.onError(new RuntimeException("test"));
 
         String[] array = {"asfdf", "Asdfasdf", "adsfsadf"};
-        listSubject.onNext(array);
+        listCache.onNext(array);
         listSubscriber.assertValues(null, array);
 
         beforeEach(); //reinit
 
-        listSubject.subscribe(listSubscriber);
+        listCache.subscribe(listSubscriber);
         listSubscriber.assertValueCount(1);
 
         System.out.println("\nlist values...");

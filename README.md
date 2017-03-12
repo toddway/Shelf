@@ -11,7 +11,7 @@ Local object storage for Java and Android.  Includes...
 ## Usage
 
 ```java
-//with defaults
+//using defaults
 Shelf shelf = new Shelf(new File("/tmp/shelf"));
 
 //or with customizations
@@ -49,42 +49,11 @@ shelf.clear("") //deletes all items
 ```
 
 
-
-Canned cache policies with RxJava:
+Create RxJava-based CacheSubjects to observe and update shelf items:
 ```java
-shelf.item("myString").put("cached value");
-Observable<String> myObservable = Observable.fromCallable(() -> "new value");
-
-
-//Prints "cached value" then prints "new value".
-myObservable
-    .compose(shelf.item("myString").maxAge(1, MINUTE).cacheThenNew(String.class))
-    .subscribe(s -> System.out.println(s));
-     
-
-//Prints "new value" if the cache is older than 1 minute, otherwise it prints "cached value".
-myObservable
-    .compose(shelf.item("myString").maxAge(1, MINUTE).cacheOrNew(String.class))
-    .subscribe(s -> System.out.println(s));     
-```
-
-Supported policies:
-- cacheThenNew
-- cacheOrNew
-- newOnly
-- pollNew
-- cacheThenPollNew
-
-"get" from Shelf as an Observable stream: 
-```java
-
-Observable<Pojo> whatever = shelf.item("whatever").getObservable(Pojo.class);
-```
-
-"put" to Shelf for Observable streams:
-```java
-myObservable.doOnNext(shelf.item("whatever").put());
-
+CacheSubject<Pojo> pojoCache = shelf.item("pojo").subject(Pojo.class);
+pojoSubject.subscribe( /* respond to shelf changes here */ );
+pojoSubject.onNext(new Pojo()); 
 ```
 
 ## Install
