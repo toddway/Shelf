@@ -7,8 +7,8 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.observers.TestSubscriber;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 
 import static org.junit.Assert.assertEquals;
 
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 public class CacheThenNewTests {
 
     ShelfItem item;
-    TestSubscriber<String> subscriber;
+    TestObserver<String> subscriber;
     Shelf shelf;
     String newValue;
     String cacheValue;
@@ -28,7 +28,7 @@ public class CacheThenNewTests {
     public void beforeEach() {
         shelf = new Shelf(new File("/tmp"));
         item = shelf.item("string");
-        subscriber = new TestSubscriber<>();
+        subscriber = new TestObserver<>();
         newValue = "new value";
         cacheValue = "cache value";
     }
@@ -67,7 +67,10 @@ public class CacheThenNewTests {
         subscriber.assertValues(null, newValue);
         assertEquals(item.get(String.class), newValue);
 
-        printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 
     @Test
@@ -77,7 +80,10 @@ public class CacheThenNewTests {
 
         subscriber.assertValues(cacheValue);
         assertEquals(item.get(String.class), cacheValue);
-        printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 
     @Test
@@ -87,7 +93,10 @@ public class CacheThenNewTests {
 
         subscriber.assertValues(cacheValue, newValue);
         assertEquals(item.get(String.class), newValue);
-        printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 
     @Test public void testNoCacheAndNoNew() {
@@ -95,9 +104,12 @@ public class CacheThenNewTests {
         givenNoNew();
         whenCacheThenNewSubscription();
 
-        subscriber.assertValue(null);
+        subscriber.assertValue((String)null);
         assertEquals(item.get(String.class), null);
-        printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 
     @Test public void  testNoNewAndInvalidCache() {
@@ -107,6 +119,9 @@ public class CacheThenNewTests {
 
         subscriber.assertValues(cacheValue);
         assertEquals(item.get(String.class), cacheValue);
-        printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 }

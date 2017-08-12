@@ -13,7 +13,7 @@ public class ShelfUtils {
 
     public static boolean hasRxOnClasspath() {
         try {
-            Class.forName("rx.Observable");
+            Class.forName("io.reactivex.Observable");
             return true;
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
@@ -27,7 +27,7 @@ public class ShelfUtils {
 
     public static void checkRx() {
         if (!hasRxOnClasspath()) {
-            throw new NoClassDefFoundError("RxJava is not on classpath, add it to your dependencies");
+            throw new NoClassDefFoundError("RxJava2 is not on classpath, add it to your dependencies");
         }
     }
 

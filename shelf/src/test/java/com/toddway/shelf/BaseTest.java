@@ -5,7 +5,8 @@ import org.junit.Before;
 import java.io.File;
 import java.util.List;
 
-import rx.observers.TestSubscriber;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.subscribers.TestSubscriber;
 
 /**
  * Created by tway on 1/11/17.
@@ -14,7 +15,7 @@ import rx.observers.TestSubscriber;
 public class BaseTest {
 
     ShelfItem item;
-    TestSubscriber<String> subscriber;
+    TestObserver<String> subscriber;
     Shelf shelf;
     String newValue;
     String cacheValue;
@@ -23,7 +24,7 @@ public class BaseTest {
     public void beforeEach() {
         shelf = new Shelf(new File("/tmp"));
         item = shelf.item("string");
-        subscriber = new TestSubscriber<>();
+        subscriber = new TestObserver<>();
         newValue = "new value";
         cacheValue = "cache value";
     }

@@ -1,18 +1,27 @@
 package com.toddway.shelf.rx;
 
-import rx.Observable;
-import rx.Subscriber;
-import rx.functions.Action1;
-import rx.subjects.BehaviorSubject;
-import rx.subjects.Subject;
+import org.reactivestreams.Subscriber;
 
-public class CacheSubject<T> extends Subject<T, T> {
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.subjects.BehaviorSubject;
+import io.reactivex.subjects.Subject;
+import io.reactivex.subscribers.DisposableSubscriber;
+import io.reactivex.subscribers.ResourceSubscriber;
+
+public class CacheSubject<T> extends Subject<T> {
 
     private Source<T> cacheSource;
     private BehaviorSubject<T> behaviorSubject;
 
-    protected CacheSubject(OnSubscribe<T> onSubscribe, Source<T> cacheSource, BehaviorSubject<T> behaviorSubject) {
-        super(onSubscribe);
+    protected CacheSubject(ObservableEmitter<T> onSubscribe, Source<T> cacheSource, BehaviorSubject<T> behaviorSubject) {
+        //super(onSubscribe);
+        super();
         this.cacheSource = cacheSource;
         this.behaviorSubject = behaviorSubject;
     }
@@ -25,17 +34,29 @@ public class CacheSubject<T> extends Subject<T, T> {
     public static <T> CacheSubject<T> create(final Source<T> source) {
         final BehaviorSubject<T> subject = BehaviorSubject.create();
 
-        OnSubscribe<T> onSubscribe = new OnSubscribe<T>() {
-            @Override
-            public void call(Subscriber<? super T> subscriber) {
+        Observer<T> onSubscribe = new Observer<T>() {
+
+            public void call(Observer<? super T> subscriber) {
                 subject.subscribe(subscriber);
                 if (!subject.hasValue()) {
                     source.read().subscribe(emitOnNext(subject));
                 }
             }
+
+            @Override
+            public void onSubscribe(@NonNull Disposable d) { }
+
+            @Override
+            public void onError(@NonNull Throwable e) { }
+
+            @Override
+            public void onComplete() { }
+
+            @Override
+            public void onNext(@NonNull T t) { }
         };
 
-        return new CacheSubject<>(onSubscribe, source, subject);
+        return new CacheSubject<>((ObservableEmitter) onSubscribe, (Source)source, (BehaviorSubject)subject);
     }
 
     @Override
@@ -44,8 +65,13 @@ public class CacheSubject<T> extends Subject<T, T> {
     }
 
     @Override
-    public void onCompleted() {
-        behaviorSubject.onCompleted();
+    public void onComplete() {
+        behaviorSubject.onComplete();
+    }
+
+    @Override
+    public boolean hasComplete() {
+        return false;
     }
 
     @Override
@@ -58,6 +84,22 @@ public class CacheSubject<T> extends Subject<T, T> {
         updateCache(t).subscribe();
     }
 
+    @Override
+    public void onSubscribe(@NonNull Disposable d) { }
+
+    @Override
+    public Throwable getThrowable() {
+        return null;
+    }
+
+    @Override
+    public boolean hasThrowable() {
+        return false;
+    }
+
+    @Override
+    protected void subscribeActual(Observer<? super T> observer) { }
+
     public T getValue() {
         return behaviorSubject.getValue();
     }
@@ -66,10 +108,10 @@ public class CacheSubject<T> extends Subject<T, T> {
         return cacheSource.write(t).doOnNext(emitOnNext(behaviorSubject));
     }
 
-    private static <T> Action1<T> emitOnNext(final BehaviorSubject<T> behaviorSubject) {
-        return new Action1<T>() {
+    private static <T> Consumer<T> emitOnNext(final BehaviorSubject<T> behaviorSubject) {
+        return new Consumer<T>() {
             @Override
-            public void call(T t) {
+            public void accept(T t) {
                 behaviorSubject.onNext(t);
             }
         };

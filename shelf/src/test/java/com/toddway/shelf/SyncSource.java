@@ -1,6 +1,6 @@
 package com.toddway.shelf;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Created by tway on 1/11/17.
@@ -32,7 +32,7 @@ public class SyncSource<T>  {
 //                        return update(t);
 //                    }
 //                })
-////                .doOnNext(new Action1<T>() {
+////                .doOnNext(new Consumer<T>() {
 ////                    @Override
 ////                    public void call(T t) {
 ////                        timestamp = System.currentTimeMillis();

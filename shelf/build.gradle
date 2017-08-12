@@ -11,7 +11,7 @@ dependencies {
     testCompile 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
 
     compile 'com.google.code.gson:gson:2.4'
-    compile 'io.reactivex:rxjava:1.1.0'
+    compile 'io.reactivex.rxjava2:rxjava:2.1.2'
 }
 
 targetCompatibility = '1.7'

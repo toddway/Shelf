@@ -3,9 +3,17 @@ package com.toddway.shelf.rx;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.functions.Action1;
-import rx.functions.Func1;
+import io.reactivex.Maybe;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableSource;
+import io.reactivex.Single;
+import io.reactivex.SingleObserver;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import io.reactivex.functions.Predicate;
+import io.reactivex.internal.functions.Functions;
 
 /**
  * Created by tway on 3/10/16.
@@ -22,19 +30,19 @@ public abstract class RxCacheable<T> {
     public abstract void setCache(T t);
     public abstract boolean isCacheValid();
 
-    public Func1<T, Boolean> isNotNull() {
-        return new Func1<T, Boolean>() {
+    public Predicate<T> isNotNull() {
+        return new Predicate<T>() {
             @Override
-            public Boolean call(T data) {
+            public boolean test(@NonNull T data) throws Exception {
                 return data != null;
             }
         };
     }
 
-    public Func1<T, Boolean> isNull() {
-        return new Func1<T, Boolean>() {
+    public Predicate<T> isNull() {
+        return new Predicate<T>() {
             @Override
-            public Boolean call(T data) {
+            public boolean test(T data) {
                 return data == null;
             }
         };
@@ -59,9 +67,9 @@ public abstract class RxCacheable<T> {
     }
 
     public Observable<T> observeNewOnly() {
-        return observeNew.doOnNext(new Action1<T>() {
+        return observeNew.doOnNext(new Consumer<T>() {
             @Override
-            public void call(T t) {
+            public void accept(T t) {
                 if (t != null) setCache(t);
             }
         });
@@ -71,7 +79,7 @@ public abstract class RxCacheable<T> {
         return Observable.fromCallable(new Callable<T>() {
             @Override
             public T call() throws Exception {
-                return isCacheValid() ? null : observeNewOnly().toBlocking().first();
+                return isCacheValid() ? null : observeNewOnly().blockingFirst();
             }
         });
     }
@@ -81,28 +89,23 @@ public abstract class RxCacheable<T> {
         return Observable.concat(observeCache(), observeNewIfCacheNotValid().skipWhile(isNull()));
     }
 
-    public Observable<T> observeCacheOrNew() {
-        return Observable.concat(observeCacheIfValid(), observeNewOnly()).first(isNotNull());
+    public Maybe<T> observeCacheOrNew() {
+        return Observable.concat(observeCacheIfValid(), observeNewOnly()).filter(isNotNull()).firstElement();
     }
 
     public Observable<T> pollNew(final long value, final TimeUnit unit) {
         return observeNewOnly().repeatWhen(interval(value, unit));
     }
 
-    public Func1<Observable<? extends Void>, Observable<?>> interval(final long value, final TimeUnit unit) {
-        return new Func1<Observable<? extends Void>, Observable<?>>() {
-            @Override
-            public Observable<?> call(Observable<? extends Void> observable) {
-                return observable.delay(value, unit);
-            }
-        };
+    public Function<Observable<?>, ObservableSource<?>> interval(final long value, final TimeUnit unit) {
+        return observable -> observable.delay(value, unit);
     }
 
     public Observable<T> observeCacheThenPollNew(final long value, final TimeUnit unit) {
         return Observable.concat(observeCache(), pollNew(value, unit));
     }
 
-    public Observable<T> observeFirst() {
-        return Observable.concat(observeCache(), observeNewOnly()).first(isNotNull());
+    public Maybe<T> observeFirst() {
+        return Observable.concat(observeCache(), observeNewOnly()).filter(isNotNull()).firstElement();
     }
 }

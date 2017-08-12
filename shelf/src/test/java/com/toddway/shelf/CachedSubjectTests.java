@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import java.util.Arrays;
 
-import rx.observers.TestSubscriber;
+import io.reactivex.observers.TestObserver;
 
 /**
  * Created by tway on 1/11/17.
@@ -16,7 +16,7 @@ public class CachedSubjectTests extends BaseTest {
 
     CacheSubject<String> itemCache;
     CacheSubject<String[]> listCache;
-    TestSubscriber<String[]> listSubscriber;
+    TestObserver<String[]> listSubscriber;
     ShelfItem listItem;
 
     @Override
@@ -25,15 +25,14 @@ public class CachedSubjectTests extends BaseTest {
         listItem = shelf.item("list");
         itemCache = item.subject(String.class);
         listCache = listItem.subject(String[].class);
-        listSubscriber = new TestSubscriber<>();
+        listSubscriber = new TestObserver<>();
     }
-
 
     @Test public void testNoCache() {
         givenNoCache();
         itemCache.subscribe(subscriber);
 
-        subscriber.assertValue(null);
+        subscriber.assertValue((String)null);
 
         itemCache.onNext(newValue);
 
@@ -43,9 +42,11 @@ public class CachedSubjectTests extends BaseTest {
 
         subscriber.assertValues(null, newValue, newValue);
 
-        //printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
-
 
     @Test public void testWithCache() {
         givenInvalidCache();
@@ -61,7 +62,10 @@ public class CachedSubjectTests extends BaseTest {
 
         subscriber.assertValues(cacheValue, newValue, newValue);
 
-        //printValues(subscriber.getOnNextEvents());
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // printValues(subscriber.getOnNextEvents());
     }
 
     @Test public void testList() {
@@ -69,7 +73,7 @@ public class CachedSubjectTests extends BaseTest {
         listSubscriber.assertNoValues();
 
         listCache.subscribe(listSubscriber);
-        listSubscriber.assertValue(null);
+        listSubscriber.assertValue((String[])null);
 
         //itemCache.onError(new RuntimeException("test"));
 
@@ -83,11 +87,12 @@ public class CachedSubjectTests extends BaseTest {
         listSubscriber.assertValueCount(1);
 
         System.out.println("\nlist values...");
-        for (String[] a : listSubscriber.getOnNextEvents()) {
-            if (a == null)System.out.println("null");
-            else printValues(Arrays.asList(a));
-        }
-
-
+        // TODO New TestObserver does not contain the getOnNextEvents method, nor a clear similar
+        // method.  Call has been commented out to allow compiling, until such time as a replacement
+        // is built into RxJava2.
+        // for (String[] a : listSubscriber.getOnNextEvents()) {
+        //    if (a == null)System.out.println("null");
+        //    else printValues(Arrays.asList(a));
+        //}
     }
 }

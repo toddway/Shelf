@@ -8,8 +8,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import rx.Observable;
-import rx.functions.Action1;
+import io.reactivex.Observable;
+import io.reactivex.ObservableTransformer;
+import io.reactivex.functions.Consumer;
 
 
 public class ShelfItem {
@@ -95,11 +96,11 @@ public class ShelfItem {
         return ShelfSubjectFactory.createForList(this, type);
     }
 
-    public Action1<Object> put() {
-        return new Action1<Object>() {
+    public Consumer<Object> put() {
+        return new Consumer<Object>() {
 
             @Override
-            public void call(Object t) {
+            public void accept(Object t) {
                 put(t);
             }
         };
@@ -113,23 +114,23 @@ public class ShelfItem {
         return new Shelfable<>(null, this, type).observeCache();
     }
 
-    public <T> Observable.Transformer<T, T> cacheThenNew(final Class<T> type) {
+    public <T> ObservableTransformer<T, T> cacheThenNew(final Class<T> type) {
         return Shelfable.cacheThenNew(this, type);
     }
 
-    public <T> Observable.Transformer<T, T> cacheOrNew(final Class<T> type) {
+    public <T> ObservableTransformer<T, T> cacheOrNew(final Class<T> type) {
         return Shelfable.cacheOrNew(this, type);
     }
 
-    public <T> Observable.Transformer<T, T> newOnly(final Class<T> type) {
+    public <T> ObservableTransformer<T, T> newOnly(final Class<T> type) {
         return Shelfable.newOnly(this, type);
     }
 
-    public <T> Observable.Transformer<T, T> pollNew(final Class<T> type, final long value, final TimeUnit unit) {
+    public <T> ObservableTransformer<T, T> pollNew(final Class<T> type, final long value, final TimeUnit unit) {
         return Shelfable.pollNew(this, type, value, unit);
     }
 
-    public <T> Observable.Transformer<T, T> cacheThenPollNew(final Class<T> type, final long value, final TimeUnit unit) {
+    public <T> ObservableTransformer<T, T> cacheThenPollNew(final Class<T> type, final long value, final TimeUnit unit) {
         return Shelfable.cacheThenPollNew(this, type, value, unit);
     }
 }

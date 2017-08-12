@@ -6,8 +6,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
-import rx.Observable;
-import rx.observers.TestSubscriber;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 
 import static org.junit.Assert.assertEquals;
 
@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 public class CacheOrNewTests {
 
     ShelfItem item;
-    TestSubscriber<String> subscriber;
+    TestObserver<String> subscriber;
     Shelf shelf;
     String newValue;
     String cacheValue;
@@ -26,7 +26,7 @@ public class CacheOrNewTests {
     public void beforeEach() {
         shelf = new Shelf(new File("/tmp"));
         item = shelf.item("string");
-        subscriber = new TestSubscriber<>();
+        subscriber = new TestObserver<>();
         newValue = "new value";
         cacheValue = "cache value";
     }
@@ -64,7 +64,7 @@ public class CacheOrNewTests {
 
         subscriber.assertValues(newValue);
         assertEquals(item.get(String.class), newValue);
-        printValues(subscriber.getOnNextEvents());
+        //printValues(subscriber.getOnNextEvents());
     }
 
 
@@ -76,7 +76,7 @@ public class CacheOrNewTests {
         subscriber.assertValues(cacheValue);
         subscriber.assertNoErrors();
         assertEquals(item.get(String.class), cacheValue);
-        printValues(subscriber.getOnNextEvents());
+        //printValues(subscriber.getOnNextEvents());
     }
 
     @Test
@@ -86,7 +86,7 @@ public class CacheOrNewTests {
 
         subscriber.assertValues(newValue);
         assertEquals(item.get(String.class), newValue);
-        printValues(subscriber.getOnNextEvents());
+        //printValues(subscriber.getOnNextEvents());
     }
 
     @Test public void testNoCacheAndNoNew() {
@@ -96,7 +96,7 @@ public class CacheOrNewTests {
 
         subscriber.assertNoValues();
         assertEquals(item.get(String.class), null);
-        printValues(subscriber.getOnNextEvents());
+        //printValues(subscriber.getOnNextEvents());
     }
 
     @Test public void  testNoNewAndInvalidCache() {
@@ -106,6 +106,6 @@ public class CacheOrNewTests {
 
         subscriber.assertNoValues();
         assertEquals(item.get(String.class), cacheValue);
-        printValues(subscriber.getOnNextEvents());
+        //printValues(subscriber.getOnNextEvents());
     }
 }
