@@ -1,8 +1,6 @@
 package com.toddway.shelf.rx
 
 import rx.Observable
-import rx.Observable.OnSubscribe
-import rx.Subscriber
 import rx.functions.Action1
 import rx.subjects.BehaviorSubject
 import rx.subjects.Subject
