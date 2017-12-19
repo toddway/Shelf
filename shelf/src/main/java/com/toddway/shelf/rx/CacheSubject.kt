@@ -2,6 +2,7 @@ package com.toddway.shelf.rx
 
 import rx.Observable
 import rx.Observable.OnSubscribe
+import rx.Subscriber
 import rx.functions.Action1
 import rx.subjects.BehaviorSubject
 import rx.subjects.Subject
@@ -41,7 +42,7 @@ class CacheSubject<T> protected constructor(onSubscribe: Observable.OnSubscribe<
         fun <T> create(source: Source<T>): CacheSubject<T> {
             val subject = BehaviorSubject.create<T>()
 
-            val onSubscribe = OnSubscribe<T> { subscriber ->
+            val onSubscribe = Observable.OnSubscribe<T> { subscriber ->
                 subject.subscribe(subscriber)
                 if (!subject.hasValue()) {
                     source.read().subscribe(emitOnNext(subject))
