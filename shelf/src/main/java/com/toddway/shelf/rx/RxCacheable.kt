@@ -1,61 +1,29 @@
 package com.toddway.shelf.rx
 
-import rx.Observable
-import rx.functions.Func1
-import java.util.concurrent.TimeUnit
+import io.reactivex.Maybe
 
 /**
  * Created by tway on 3/10/16.
+ * updated nschwermann 12/20/17
  */
-abstract class RxCacheable<T>(private val observeNew: Observable<T>) {
+abstract class RxCacheable<T>(private val observeNew: Maybe<T>) {
 
     abstract var cache: T?
     abstract val isCacheValid: Boolean
 
-    val isNotNull: Func1<T, Boolean>
-        get() = Func1 { data -> data != null }
-
-    val isNull: Func1<T, Boolean>
-        get() = Func1 { data -> data == null }
-
-    fun observeCache(): Observable<T> {
-        return Observable.fromCallable { cache }
+    private fun observeCache(): Maybe<T> {
+        return Maybe.defer{ cache?.let { Maybe.just(it) } ?: Maybe.empty() }
     }
 
-    fun observeCacheIfValid(): Observable<T> {
-        return Observable.fromCallable { if (isCacheValid) cache else null }
+    fun observeCacheIfValid(): Maybe<T> {
+        return Maybe.defer { if (isCacheValid) observeCache() else Maybe.empty() }
     }
 
-    fun observeNewOnly(): Observable<T> {
-        return observeNew.doOnNext { t -> if (t != null) cache = t }
+    fun observeNewOnly(): Maybe<T> {
+        return observeNew.doOnSuccess { cache = it }
     }
 
-    fun observeNewIfCacheNotValid(): Observable<T> {
-        return Observable.fromCallable { if (isCacheValid) null else observeNewOnly().toBlocking().first() }
-    }
-
-    fun observeCacheThenNew(): Observable<T> {
-        //return observeCache().concatWith(observeCacheOrNew());
-        return Observable.concat(observeCache(), observeNewIfCacheNotValid().skipWhile(isNull))
-    }
-
-    fun observeCacheOrNew(): Observable<T> {
-        return Observable.concat(observeCacheIfValid(), observeNewOnly()).first(isNotNull)
-    }
-
-    fun pollNew(value: Long, unit: TimeUnit): Observable<T> {
-        return observeNewOnly().repeatWhen(interval(value, unit))
-    }
-
-    fun interval(value: Long, unit: TimeUnit): Func1<Observable<out Void>, Observable<*>> {
-        return Func1 { observable -> observable.delay(value, unit) }
-    }
-
-    fun observeCacheThenPollNew(value: Long, unit: TimeUnit): Observable<T> {
-        return Observable.concat(observeCache(), pollNew(value, unit))
-    }
-
-    fun observeFirst(): Observable<T> {
-        return Observable.concat(observeCache(), observeNewOnly()).first(isNotNull)
+    fun observeCacheOrNew(): Maybe<T> {
+        return observeCacheIfValid().switchIfEmpty(observeNewOnly())
     }
 }
