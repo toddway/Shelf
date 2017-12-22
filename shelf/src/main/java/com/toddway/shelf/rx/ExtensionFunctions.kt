@@ -5,14 +5,13 @@ import io.reactivex.Maybe
 import io.reactivex.Single
 
 /**
- *
- * Created by nschwermann on 12/20/17.
+ * Adds RX functionality to Shelf and Shelf functionality to RX
  */
 
 fun <T> Single<T>.cacheOrNew(item: ShelfItem, type: Class<T>): Single<T> {
-    return compose(Shelfable.cacheOrNew(item, type))
+    return compose(SuccessCacheable.cacheOrNew(item, type))
 }
 
-fun <T> ShelfItem.getObservable(type: Class<T>): Maybe<T> {
-    return Shelfable.observeCache(this, type)
+fun <T> ShelfItem.maybe(type: Class<T>): Maybe<T> {
+    return SuccessCacheable.observeCache(this, type)
 }

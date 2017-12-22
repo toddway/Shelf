@@ -9,7 +9,7 @@ import java.io.File
  * updated nschwermann 12/21/17
  */
 
-open abstract class BaseTest {
+abstract class BaseTest {
 
     lateinit var item: ShelfItem
     lateinit var subscriber: TestObserver<String>

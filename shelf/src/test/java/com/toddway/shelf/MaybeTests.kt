@@ -1,6 +1,6 @@
 package com.toddway.shelf
 
-import com.toddway.shelf.rx.getObservable
+import com.toddway.shelf.rx.maybe
 import org.junit.Test
 
 /**
@@ -10,7 +10,7 @@ import org.junit.Test
 class MaybeTests : BaseTest() {
 
     private fun whenSubscribe(){
-        item.getObservable(String::class.java)
+        item.maybe(String::class.java)
                 .subscribe(subscriber)
     }
 
