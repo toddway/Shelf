@@ -1,17 +1,18 @@
 package com.toddway.shelf
 
+import io.reactivex.observers.TestObserver
 import org.junit.Before
-import rx.observers.TestSubscriber
 import java.io.File
 
 /**
  * Created by tway on 1/11/17.
+ * updated nschwermann 12/21/17
  */
 
-open class BaseTest {
+abstract class BaseTest {
 
     lateinit var item: ShelfItem
-    lateinit var subscriber: TestSubscriber<String>
+    lateinit var subscriber: TestObserver<String>
     lateinit var shelf: Shelf
     var newValue: String? = null
     lateinit var cacheValue: String
@@ -20,7 +21,7 @@ open class BaseTest {
     open fun beforeEach() {
         shelf = Shelf(File("/tmp"))
         item = shelf.item("string")
-        subscriber = TestSubscriber()
+        subscriber = TestObserver()
         newValue = "new value"
         cacheValue = "cache value"
     }
@@ -42,7 +43,6 @@ open class BaseTest {
     }
 
     fun <T> printValues(values: List<T>) {
-        println("values...")
         for (value in values) println("value: " + value)
     }
 
