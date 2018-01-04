@@ -10,19 +10,19 @@ import io.reactivex.SingleTransformer
  */
 
 fun <T> Single<T>.cacheOrNew(item: ShelfItem, type: Class<T>): Single<T> {
-    return compose(SuccessCacheable.cacheOrNew(item, type))
+    return compose(com.toddway.shelf.rx.cacheOrNew(item, type))
 }
 
 fun <T> ShelfItem.maybe(type: Class<T>): Maybe<T> {
-    return SuccessCacheable.observeCache(this, type)
+    return maybeShelf(this, type)
 }
 
 //Java Interface
 
-fun<T> cacheOrNew(item: ShelfItem, type: Class<T>): SingleTransformer<T, T> {
+fun <T> cacheOrNew(item: ShelfItem, type: Class<T>): SingleTransformer<T, T> {
     return SuccessCacheable.cacheOrNew(item, type)
 }
 
-fun<T> maybeShelf(item: ShelfItem, type: Class<T>): Maybe<T> {
+fun <T> maybeShelf(item: ShelfItem, type: Class<T>): Maybe<T> {
     return SuccessCacheable.observeCache(item, type)
 }
