@@ -11,11 +11,11 @@ import io.reactivex.SingleTransformer
 internal class SuccessCacheable<T>(private val observeNew: Single<T>, shelfItem: ShelfItem, type: Class<T>) :
         Cacheable<T> by Shelfable(shelfItem, type){
 
-    fun observeCacheOrNew(): Single<T> {
+    internal fun observeCacheOrNew(): Single<T> {
         return observeCacheIfValid().switchIfEmpty(observeNewOnly())
     }
 
-    fun observeCacheIfValid(): Maybe<T> {
+    internal fun observeCacheIfValid(): Maybe<T> {
         return Maybe.defer { if (isCacheValid) observeCache() else Maybe.empty() }
     }
 

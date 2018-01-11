@@ -17,6 +17,9 @@ internal class Shelfable<T>(internal var item: ShelfItem, internal var type: Cla
     override val isCacheValid: Boolean
         get() = !item.isOlderThanLifetime
 
+    /**
+     * @return The [ShelfItem] containing the cache
+     */
     fun item(): ShelfItem {
         return item
     }
