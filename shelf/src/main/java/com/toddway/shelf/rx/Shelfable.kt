@@ -9,7 +9,12 @@ import com.toddway.shelf.ShelfItem
 internal class Shelfable<T>(internal var item: ShelfItem, internal var type: Class<T>) : Cacheable<T> {
 
     override var cache: T?
-        get() = item.get(type)
+        get() = try{
+            item.get(type)
+        }catch(e : Exception){
+            item.clear()
+            null
+        }
         set(t) {
             item.put(t)
         }
