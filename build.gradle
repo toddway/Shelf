@@ -2,19 +2,30 @@
 
 buildscript {
     repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
     }
+}
+
+plugins {
+    id "com.toddway.buildchecks" version "1.7"
+    id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
 }
 
 allprojects {
     repositories {
+        maven { url "https://kotlin.bintray.com/kotlinx" }
+        google()
         jcenter()
     }
+}
 
-    tasks.withType(Test) {
-        testLogging.showStandardStreams = true
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
