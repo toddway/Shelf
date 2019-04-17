@@ -2,23 +2,34 @@ package com.toddway.shelf
 
 import platform.Foundation.NSDate
 import platform.Foundation.NSUserDefaults
-import platform.Foundation.timeIntervalSinceNow
+import platform.Foundation.timeIntervalSince1970
 
-actual class DiskStorage : Shelf.Storage {
-    override fun age(key: String): Long {
-        return (NSDate().timeIntervalSinceNow() - delegate.doubleForKey(dateKey(key))).toLong()
+actual open class DiskStorage : Shelf.Storage, UserDefaultsStorage()
+
+open class UserDefaultsStorage(private val delegate: NSUserDefaults = NSUserDefaults.standardUserDefaults()) : Shelf.Storage {
+    override fun remove(key: String) {
+        delegate.removeObjectForKey(key.dotShelf())
+        delegate.removeObjectForKey(key.dotDate())
+    }
+
+    override fun keys(): Set<String> {
+        return delegate.dictionaryRepresentation().keys.map { it.toString() }.toShelfKeys()
+    }
+
+    override fun timestamp(key: String): Long? {
+        return delegate.stringForKey(key.dotDate())?.toLong()
     }
 
     override fun get(key: String): String? {
-        return delegate.stringForKey(key)
+        return delegate.stringForKey(key.dotShelf())
     }
 
-    override fun put(key: String, item: String) {
-        delegate.setObject(item, key)
-        delegate.setObject(NSDate().timeIntervalSinceNow(), dateKey(key))
+    override fun put(key: String, value: String, timestamp: Long) {
+        delegate.setObject(value, key.dotShelf())
+        delegate.setObject(timestamp.toString(), key.dotDate())
     }
+}
 
-    private fun dateKey(key : String) = "$key shelfDate"
-
-    private val delegate: NSUserDefaults = NSUserDefaults.standardUserDefaults()
+actual open class Clock actual constructor() {
+    actual open fun now() = NSDate().timeIntervalSince1970.toLong()
 }

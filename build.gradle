@@ -10,12 +10,15 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
+        classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45"
+        //classpath "com.moowork.gradle:gradle-node-plugin:$gradle_node_version"
     }
 }
 
 plugins {
     id "com.toddway.buildchecks" version "1.7"
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
+    id "com.jfrog.bintray" version "1.8.3"
 }
 
 allprojects {
@@ -29,3 +32,10 @@ allprojects {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+buildChecks {
+    jacocoReports = "$projectDir/shelf/build/reports/coverage/coverage.xml"
+    checkstyleReports = "$projectDir/shelf/build/reports/detekt-checkstyle.xml"
+}
+
+printChecks.dependsOn('shelf:check')
