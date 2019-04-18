@@ -1,5 +1,5 @@
 # Shelf
-Kotlin key/value store for Kotlin that can persist any [serializable](https://github.com/Kotlin/kotlinx.serialization) object on multiple kotlin platforms - JVM, JS, Native.  
+Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin/kotlinx.serialization) object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.  
  
 ## Basic usage
 
@@ -9,12 +9,12 @@ Shelf.item("my object").put(MyObj.serializer(), myObj)
 ```
 Get it
 ```kotlin
-val myObj = Shelf.item("my object").get(MyObj.serilaizer())
+Shelf.item("my object").get(MyObj.serilaizer())
 ```
 
 Get, if max age in milliseconds has not expired 
 ```kotlin
-val myObj = Shelf.item("my object").get(MyObj.serilaizer(), maxAge = 1000)
+Shelf.item("my object").get(MyObj.serilaizer(), maxAge = 1000)
 ```
 
 Remove it
@@ -35,20 +35,14 @@ Shelf.all().filter { it.age() > 60000 }.forEach { it.remove() }
 
 
 ## Gradle setup
-For use on a single JVM platform (including Android): 
+
 ```groovy
 repositories {
     jcenter()
 }
-
-dependencies {
-    implementation 'com.toddway.shelf:shelf-jvm:$shelf_version'
-}
 ```    
 
-For multiplatform use:
-
-Common source set
+Common multiplatform source set
 ```groovy
 dependencies {
     implementation 'com.toddway.shelf:shelf:$shelf_version'
@@ -77,25 +71,20 @@ dependencies {
 ```
 
 ## Storage configuration
-For each platform, an implementation of the expected `DiskStorage` class is automatically initialized for shelf storage:
+The `DiskStorage` class relies on delegate objects for each platform.
+By inspecting the code, you can see that 
+for Kotlin/Native targets, the delegate is `NSUserDefaults`,
+for Kotlin/JS targets, it is `LocalStorage`,
+and for Kotlin/JVM it is `File`. 
+On Native and JS platforms it should work without configuration. 
+For JVM environments, you should set the location on the file system that `DiskStorage` will use. 
+For example, on Android, this is often aquired from `Context.getCacheDir()`.
 
 ```kotlin
-Shelf.storage = DiskStorage()
-```  
-
-By reviewing the `DiskStorage` code for each platform, 
-you will see that for Kotlin/Native targets (including iOS), it uses `NSUserDefaults`,
-for Kotlin/JS targets, it uses `LocalStorage`,
-and for Kotlin/JVM it uses the /tmp directory of the file system - `File("/tmp")`. 
-Native and JS platforms should work with no custom initialization. 
-For JVM environments, you will likely want to configure an appropriate directory. 
-For example, on Android, this could be acquired from `Context.getCacheDir()`. 
-
-```kotlin
-Shelf.storage = DiskStorage(context.cacheDir)   
+Shelf.storage = DiskStorage(context.getCacheDir())   
 ```
 
-You can also implement your own `Shelf.Storage`:
+If needed, implement your own `Shelf.Storage`:
 
 ```kotlin
 Shelf.storage = object : Shelf.Storage {
@@ -109,21 +98,23 @@ Shelf.storage = object : Shelf.Storage {
 
 ## Running tests
 The library has common tests that can be run (and should pass) on a local JVM:
- 
+
 ```
 ./gradlew jvmTest
 ```
  
 a local iOS simulator:
-
 ```
 ./gradlew iosTest
 ```
   
 and a local web browser:
-
 ```
-./gradle karma-run-single
+./gradlew karma-run-single
+```
+or all three:
+```
+./gradlew printChecks
 ```
 
 License
