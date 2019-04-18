@@ -5,16 +5,16 @@ Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin
 
 Store an object
 ```kotlin
-Shelf.item("my object").put(MyObj.serializer(), myObj)
+Shelf.item("my object").put(MyObj.serializer(), MyObj(1,2,3))
 ```
 Get it
 ```kotlin
 Shelf.item("my object").get(MyObj.serilaizer())
 ```
 
-Get, if max age in milliseconds has not expired 
+Get, if max age in seconds has not expired 
 ```kotlin
-Shelf.item("my object").get(MyObj.serilaizer(), maxAge = 1000)
+Shelf.item("my object").get(MyObj.serilaizer(), maxAge = 60)
 ```
 
 Remove it
@@ -30,7 +30,7 @@ Shelf.all().forEach { it.remove() }
 Remove only items older than 60 seconds
 ```kotlin
 
-Shelf.all().filter { it.age() > 60000 }.forEach { it.remove() }
+Shelf.all().filter { it.age() > 60 }.forEach { it.remove() }
 ```
 
 
