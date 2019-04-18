@@ -88,11 +88,7 @@ If needed, implement your own `Shelf.Storage`:
 
 ```kotlin
 Shelf.storage = object : Shelf.Storage {
-    override fun get(key: String): String? {}
-    override fun put(key: String, item: String) {}
-    override fun age(key: String): Long {}
-    override fun keys(): Set<String> {}
-    override fun remove(key: String) {}
+    ...
 }
 ```
 
