@@ -5,16 +5,18 @@ Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin
 
 Store an object
 ```kotlin
-Shelf.item("my object").put(MyObj.serializer(), MyObj(1,2,3))
-```
-Get it
-```kotlin
-Shelf.item("my object").get(MyObj.serilaizer())
+val myObj = Obj(...)
+val item = Shelf.item("my object").put(myObj)
 ```
 
-Get, if max age in seconds has not expired 
+Get it
 ```kotlin
-Shelf.item("my object").get(MyObj.serilaizer(), maxAge = 60)
+Shelf.item("my object").get(Obj::class)
+```
+
+Take if age is less than 60 seconds
+```kotlin
+Shelf.item("my object").get(Obj::class).takeIf { it.age() < 60 }
 ```
 
 Remove it
@@ -31,6 +33,52 @@ Remove only items older than 60 seconds
 ```kotlin
 
 Shelf.all().filter { it.age() > 60 }.forEach { it.remove() }
+```
+
+Get a list of objects
+```kotlin
+val list = listOf(MyObj(...), MyOb(...))
+Shelf.item("my object list".put(list)
+Shelf.item("my object list").getList(Obj::class)
+```
+
+## Serialization
+The default serializer for Shelf depends on the [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) library.
+Primitive type classes work automatically.
+For custom classes, annotate with `@Serializable`, and register with Shelf:
+```kotlin
+@Serializable
+data class Obj(...)
+
+@Serializable
+data class Whatever(...)
+
+Shelf.encoder = KotlinxJsonSerializer().apply {
+    register(Obj::class, Obj.serializer())
+    register(Whatever::class, Whatever.serializer())
+}
+```
+
+## Storage
+The `DiskStorage` class depends on delegate objects for each platform.
+By inspecting the code, you can see that
+for Kotlin/Native targets, the delegate is `NSUserDefaults`,
+for Kotlin/JS targets, it is `LocalStorage`,
+and for Kotlin/JVM it is `File`.
+On Native and JS platforms it should work without configuration.
+For JVM environments, you should set the location on the file system that `DiskStorage` will use.
+For example, on Android, this is often acquired from `Context.getCacheDir()`.
+
+```kotlin
+Shelf.storage = DiskStorage(context.getCacheDir())
+```
+
+If needed, implement your own `Shelf.Storage`:
+
+```kotlin
+Shelf.storage = object : Shelf.Storage {
+    ...
+}
 ```
 
 
@@ -70,27 +118,7 @@ dependencies {
 }
 ```
 
-## Storage configuration
-The `DiskStorage` class relies on delegate objects for each platform.
-By inspecting the code, you can see that 
-for Kotlin/Native targets, the delegate is `NSUserDefaults`,
-for Kotlin/JS targets, it is `LocalStorage`,
-and for Kotlin/JVM it is `File`. 
-On Native and JS platforms it should work without configuration. 
-For JVM environments, you should set the location on the file system that `DiskStorage` will use. 
-For example, on Android, this is often aquired from `Context.getCacheDir()`.
 
-```kotlin
-Shelf.storage = DiskStorage(context.getCacheDir())   
-```
-
-If needed, implement your own `Shelf.Storage`:
-
-```kotlin
-Shelf.storage = object : Shelf.Storage {
-    ...
-}
-```
 
 ## Running tests
 The library has common tests that can be run (and should pass) on a local JVM:
