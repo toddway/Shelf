@@ -10,17 +10,17 @@ import kotlin.collections.set
 import kotlin.reflect.KClass
 
 
-class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Encoder {
+class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Serializer {
 
-    override fun <T : Any> encode(value: T): String {
+    override fun <T : Any> serialize(value: T): String {
         return json.stringify(findByValue(value), value)
     }
 
-    override fun <T : Any> decode(string: String, klass: KClass<T>): T {
+    override fun <T : Any> deserialize(string: String, klass: KClass<T>): T {
         return json.parse(findByClass(klass), string)
     }
 
-    override fun <T : Any> decodeList(string: String, klass: KClass<T>): List<T> {
+    override fun <T : Any> deserializeList(string: String, klass: KClass<T>): List<T> {
         return json.parse(findByClass(klass).list, string)
     }
 
@@ -43,7 +43,7 @@ class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Encoder {
     fun <T : Any> findByClass(klass: KClass<T>): KSerializer<T> {
         return serializers[klass]?.let { return it as KSerializer<T> }
             ?: klass.defaultSerializer()
-            ?: throw SerializationException("No registered encoder for: $klass.  Use KotlinxJsonSerializer.register() to add one")
+            ?: throw SerializationException("No registered serializer for: $klass.  Use KotlinxJsonSerializer.register() to add one")
     }
 }
 

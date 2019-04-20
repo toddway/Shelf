@@ -12,7 +12,7 @@ class ShelfTests {
 
     @BeforeTest fun `when_clearing_shelf_then_no_item_or_value_exist`() {
         Shelf.storage = DiskStorage()
-        Shelf.encoder = KotlinxJsonSerializer().apply {
+        Shelf.serializer = KotlinxJsonSerializer().apply {
             register(type, Obj.serializer())
         }
         Shelf.clock = clock
@@ -108,7 +108,7 @@ class ShelfTests {
     }
 
     @Test fun `when_using_CborEncoder_then_returned_values_match_the_stored_values`() {
-        //Shelf.encoder = CborEncoder()
+        //Shelf.serializer = CborEncoder()
         val item = Shelf.item(key).put(value)
 
         assertTrue(item.has(value))
@@ -132,7 +132,7 @@ class ShelfTests {
 
 
     @Test fun `test_lists`() {
-        Shelf.encoder = KotlinxJsonSerializer().apply {
+        Shelf.serializer = KotlinxJsonSerializer().apply {
             register(Obj::class, Obj.serializer())
         }
 
