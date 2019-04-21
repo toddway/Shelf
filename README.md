@@ -42,6 +42,13 @@ Remove only items older than 60 seconds
 Shelf.all().filter { it.ageAtLeast(60) }.forEach { it.remove() }
 ```
 
+Get if age is less than 60 seconds, otherwise fetch from somewhere and put in shelf
+```kotlin
+val cacheOrNew = with(Shelf.item(key)) {
+    ageAtMost(60)?.getList(String::class) ?: fetchRemote().also { put(it) }
+}
+```
+
 
 ## Serialization
 The default serializer for Shelf depends on the [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) library.
