@@ -61,7 +61,7 @@ data class Obj(...)
 @Serializable
 data class Whatever(...)
 
-Shelf.encoder = KotlinxJsonSerializer().apply {
+Shelf.serializer = KotlinxJsonSerializer().apply {
     register(Obj::class, Obj.serializer())
     register(Whatever::class, Whatever.serializer())
 }
