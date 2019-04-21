@@ -45,7 +45,7 @@ Shelf.all().filter { it.ageAtLeast(60) }.forEach { it.remove() }
 Get if age is less than 60 seconds, otherwise fetch from remote and put in shelf
 ```kotlin
 val cacheOrNew = with(Shelf.item(key)) {
-    ageAtMost(60)?.getList(String::class) ?: fetchRemote().also { put(it) }
+    ageAtMost(60)?.get(Obj::class) ?: fetchRemote().also { put(it) }
 }
 ```
 
