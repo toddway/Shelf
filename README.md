@@ -18,7 +18,7 @@ Shelf.item("my object").get(Obj::class)
 
 Take if age is less than 60 seconds
 ```kotlin
-Shelf.item("my object").get(Obj::class).takeIf { it.age() < 60 }
+Shelf.item("my object").ageAtMost(60)?.get(Obj::class)
 ```
 
 Remove it
