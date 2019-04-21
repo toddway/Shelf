@@ -1,6 +1,8 @@
 # Shelf
 Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin/kotlinx.serialization) object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.  
- 
+
+[ ![Download](https://api.bintray.com/packages/toddway/maven/shelf/images/download.svg) ](https://bintray.com/toddway/maven/shelf/_latestVersion)
+
 ## Basic usage
 
 Store an object
