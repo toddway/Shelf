@@ -13,11 +13,11 @@ open class Shelf(var storage : Storage = DiskStorage(), var serializer: Serializ
     class Item(val key: String) {
         fun <T : Any> get(type : KClass<T>) : T? = raw()?.let { serializer.deserialize(it, type) }
         fun <T : Any> getList(type : KClass<T>) : List<T>? = raw()?.let { serializer.deserializeList(it, type) }
-        fun <T : Any> put(value : T) : Item = storage.put(key, serializer.serialize(value), clock.now()).let { return this }
+        fun <T : Any> put(value : T) : T = storage.put(key, serializer.serialize(value), clock.now()).let { return value }
         fun <T : Any> has(value : T) = raw().equals(serializer.serialize(value))
         fun remove() = storage.remove(key)
-        fun age() = storage.timestamp(key)?.let { clock.now() - it } ?: 0
-        private fun raw() = try { storage.get(key) } catch (e : Throwable) { null }
+        fun age() : Long? = try { storage.timestamp(key)?.let { clock.now() - it } } catch (e : Throwable) { null }
+        private fun raw() : String? = try { storage.get(key) } catch (e : Throwable) { null }
     }
 
     interface Storage {
@@ -44,3 +44,9 @@ expect open class Clock() {
 fun Collection<String>.toShelfKeys() = filter { it.endsWith(".shelf") }.map { it.replace(".shelf", "") }.toSet()
 fun String.dotShelf() = "$this.shelf"
 fun String.dotDate() = "$this.date"
+
+fun Shelf.Item.ageAtLeast(seconds: Long) = age()?.atLeast(seconds)?.let { this }
+fun Shelf.Item.ageAtMost(seconds: Long) = age()?.atMost(seconds)?.let { this }
+fun Long.atMost(max: Long) : Long? = takeIf { this <= max }
+fun Long.atLeast(min: Long) : Long? = takeIf { this >= min }
+
