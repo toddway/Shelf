@@ -16,9 +16,14 @@ Get it
 Shelf.item("my object").get(Obj::class)
 ```
 
-Take if age is less than 60 seconds
+Get if age is less than 60 seconds
 ```kotlin
 Shelf.item("my object").ageAtMost(60)?.get(Obj::class)
+```
+
+Get a list of objects
+```kotlin
+Shelf.item("my object list").getList(Obj::class)
 ```
 
 Remove it
@@ -37,12 +42,6 @@ Remove only items older than 60 seconds
 Shelf.all().filter { it.ageAtLeast(60) }.forEach { it.remove() }
 ```
 
-Get a list of objects
-```kotlin
-val list = listOf(MyObj(...), MyOb(...))
-Shelf.item("my object list".put(list)
-Shelf.item("my object list").getList(Obj::class)
-```
 
 ## Serialization
 The default serializer for Shelf depends on the [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) library.
