@@ -23,7 +23,7 @@ Shelf.item("my object").ageAtMost(60)?.get(Obj::class)
 
 Get a list of objects
 ```kotlin
-Shelf.item("my object list").getList(Obj::class)
+Shelf.item("my list").getList(Obj::class)
 ```
 
 Remove it
