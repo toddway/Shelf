@@ -16,11 +16,6 @@ Get it
 Shelf.item("my object").get<Obj>()
 ```
 
-Get if age is less than 60 seconds
-```kotlin
-Shelf.item("my object").ageAtMost(60)?.get<Obj>()
-```
-
 Get a list of objects
 ```kotlin
 Shelf.item("my list").getList<Obj>()
