@@ -39,7 +39,7 @@ Shelf.all().forEach { it.remove() }
 Remove only items older than 60 seconds
 ```kotlin
 
-Shelf.all().filter { it.ageAtLeast(60) }.forEach { it.remove() }
+Shelf.all().filter { age().isGreaterThan(60) }.forEach { it.remove() }
 ```
 
 Get if age is less than 60 seconds, otherwise fetch from remote and put in shelf
