@@ -41,7 +41,6 @@ class KtorThingService {
 
     private val request = HttpRequestBuilder().apply {
         url("https://api.github.com/issues?filter=all&status=open&direction=desc")
-        //header(HttpHeaders.Authorization, "Basic dG9kZHdheTphZjgyMWI2MDI5YzUwZDU4ZTFhMWFiMjI4YWY4Y2I5MGY1NjE3NTA1")
         header(HttpHeaders.CacheControl, "no-cache")
     }
 
