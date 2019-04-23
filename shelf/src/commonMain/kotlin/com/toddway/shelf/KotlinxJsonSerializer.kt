@@ -12,15 +12,15 @@ import kotlin.reflect.KClass
 
 class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Serializer {
 
-    override fun <T : Any> serialize(value: T): String {
+    override fun <T : Any> write(value: T): String {
         return json.stringify(findByValue(value), value)
     }
 
-    override fun <T : Any> deserialize(string: String, klass: KClass<T>): T {
+    override fun <T : Any> read(string: String, klass: KClass<T>): T {
         return json.parse(findByClass(klass), string)
     }
 
-    override fun <T : Any> deserializeList(string: String, klass: KClass<T>): List<T> {
+    override fun <T : Any> readList(string: String, klass: KClass<T>): List<T> {
         return json.parse(findByClass(klass).list, string)
     }
 
@@ -29,6 +29,8 @@ class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Serializer {
     fun register(klass: KClass<*>, serializer: KSerializer<*>) {
         serializers[klass] = serializer
     }
+
+    inline fun <reified T: Any> register(serializer: KSerializer<T>) = register(T::class, serializer)
 
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> findByValue(value: T): KSerializer<T> {

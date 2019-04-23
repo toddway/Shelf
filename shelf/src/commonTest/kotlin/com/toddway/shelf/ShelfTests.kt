@@ -8,13 +8,12 @@ class ShelfTests {
     val key = "aKey"
     var value = Obj(1)
     val clock = ManualClock()
-    val type = Obj::class
 
     @BeforeTest
     fun `when_clearing_shelf_then_no_item_or_value_exist`() {
         Shelf.storage = DiskStorage()
         Shelf.serializer = KotlinxJsonSerializer().apply {
-            register(type, Obj.serializer())
+            register(Obj::class, Obj.serializer())
         }
         Shelf.clock = clock
 
@@ -23,7 +22,7 @@ class ShelfTests {
             Shelf.clear()
 
             assertEquals(emptySet(), Shelf.all(), "Items are cleared")
-            assertNull(get(type), "Value is cleared")
+            assertNull(get(), "Value is cleared")
         }
     }
 
@@ -65,7 +64,7 @@ class ShelfTests {
     @Test
     fun `when_getting_an_item_that_does_not_exist_then_it_returns_null`() {
         with(Shelf.item(key)) {
-            assertNull(get(type))
+            assertNull(get())
 
         }
     }
@@ -75,8 +74,8 @@ class ShelfTests {
         with(Shelf.item(key)) {
             put(value)
 
-            assertTrue(get(type)?.let { has(it) } ?: false)
-
+            assertTrue(has(value))
+            assertTrue(get<Obj>()?.let { has(it) } ?: false)
         }
     }
 
@@ -86,7 +85,7 @@ class ShelfTests {
             put(value)
             clock.forward(5)
 
-            assertNull(takeIf { it.age()!! < 4 }?.get(type))
+            assertNull(takeIf { it.age()!! < 4 }?.get())
         }
     }
 
@@ -96,7 +95,7 @@ class ShelfTests {
             put(value)
             clock.forward(5)
 
-            assertNotNull(takeIf { it.age()!! < 6 }?.get(type))
+            assertNotNull(takeIf { it.age()!! < 6 }?.get<Obj>())
         }
     }
 
@@ -120,7 +119,7 @@ class ShelfTests {
 
             Shelf.storage = MemoryStorage()
 
-            assertNull(get(type))
+            assertNull(get())
         }
     }
 
@@ -145,7 +144,7 @@ class ShelfTests {
             put(value)
             remove()
 
-            assertNull(get(type))
+            assertNull(get())
         }
     }
 
@@ -156,7 +155,7 @@ class ShelfTests {
             put(value)
 
             assertTrue(has(value))
-            assertTrue(get(type)?.let { has(it) } ?: false)
+            assertTrue(get<Obj>()?.let { has(it) } ?: false)
         }
     }
 
@@ -193,26 +192,19 @@ class ShelfTests {
             put(list)
 
             assertTrue(has(list))
-            assertTrue(getList(Obj::class)?.let { has(it) } ?: false)
+            assertTrue(getList<Obj>()?.let { has(it) } ?: false)
 
             val list2 = listOf("ASDfadf")
             put(list2)
 
             assertTrue(has(list2))
-            assertTrue(getList(String::class)?.let { has(it) } ?: false)
+            assertTrue(getList<String>()?.let { has(it) } ?: false)
         }
-
-        //cache or new
-        val v = with(Shelf.item(key)) {
-            ageAtMost(60)?.getList(String::class) ?: fetchRemote().also { put(it) }
-        }
-        println(v)
     }
 
     //todo test not registered
 }
 
-fun fetchRemote() = listOf("remote")
 
 open class MemoryStorage : Shelf.Storage {
     override fun remove(key: String) {
@@ -261,5 +253,4 @@ expect fun runBlocked(block: suspend () -> Unit)
 data class Obj(val v: Int) {
     val nested = mutableListOf(1, 2, v)
 }
-
 

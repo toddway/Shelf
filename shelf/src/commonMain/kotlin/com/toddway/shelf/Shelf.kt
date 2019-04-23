@@ -11,10 +11,10 @@ open class Shelf(var storage : Storage = DiskStorage(), var serializer: Serializ
     @ThreadLocal companion object : Shelf()
 
     class Item(val key: String) {
-        fun <T : Any> get(type : KClass<T>) : T? = raw()?.let { serializer.deserialize(it, type) }
-        fun <T : Any> getList(type : KClass<T>) : List<T>? = raw()?.let { serializer.deserializeList(it, type) }
-        fun <T : Any> put(value : T) : T = storage.put(key, serializer.serialize(value), clock.now()).let { return value }
-        fun <T : Any> has(value : T) = raw().equals(serializer.serialize(value))
+        fun <T : Any> get(type : KClass<T>) : T? = raw()?.let { serializer.read(it, type) }
+        fun <T : Any> getList(type : KClass<T>) : List<T>? = raw()?.let { serializer.readList(it, type) }
+        fun <T : Any> put(value : T) : T = storage.put(key, serializer.write(value), clock.now()).let { return value }
+        fun <T : Any> has(value : T) = raw().equals(serializer.write(value))
         fun remove() = storage.remove(key)
         fun age() : Long? = try { storage.timestamp(key)?.let { clock.now() - it } } catch (e : Throwable) { null }
         private fun raw() : String? = try { storage.get(key) } catch (e : Throwable) { null }
@@ -29,9 +29,9 @@ open class Shelf(var storage : Storage = DiskStorage(), var serializer: Serializ
     }
 
     interface Serializer {
-        fun <T : Any> serialize(value : T) : String
-        fun <T : Any> deserialize(string : String, klass : KClass<T>) : T
-        fun <T : Any> deserializeList(string: String, klass: KClass<T>): List<T>
+        fun <T : Any> write(value : T) : String
+        fun <T : Any> read(string : String, klass : KClass<T>) : T
+        fun <T : Any> readList(string: String, klass: KClass<T>): List<T>
     }
 }
 
@@ -45,8 +45,8 @@ fun Collection<String>.toShelfKeys() = filter { it.endsWith(".shelf") }.map { it
 fun String.dotShelf() = "$this.shelf"
 fun String.dotDate() = "$this.date"
 
-fun Shelf.Item.ageAtLeast(seconds: Long) = age()?.atLeast(seconds)?.let { this }
-fun Shelf.Item.ageAtMost(seconds: Long) = age()?.atMost(seconds)?.let { this }
-fun Long.atMost(max: Long) : Long? = takeIf { this <= max }
-fun Long.atLeast(min: Long) : Long? = takeIf { this >= min }
+fun Long?.isGreaterThan(other : Long) = this?.let { it > other } ?: false
+fun Long?.isLessThan(other : Long) = this?.let { it < other } ?: false
 
+inline fun <reified T : Any> Shelf.Item.get() = get(T::class)
+inline fun <reified T : Any> Shelf.Item.getList() = getList(T::class)

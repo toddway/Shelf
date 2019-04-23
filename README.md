@@ -13,17 +13,17 @@ val item = Shelf.item("my object").put(myObj)
 
 Get it
 ```kotlin
-Shelf.item("my object").get(Obj::class)
+Shelf.item("my object").get<Obj>()
 ```
 
 Get if age is less than 60 seconds
 ```kotlin
-Shelf.item("my object").ageAtMost(60)?.get(Obj::class)
+Shelf.item("my object").ageAtMost(60)?.get<Obj>()
 ```
 
 Get a list of objects
 ```kotlin
-Shelf.item("my list").getList(Obj::class)
+Shelf.item("my list").getList<Obj>()
 ```
 
 Remove it
@@ -45,7 +45,7 @@ Shelf.all().filter { it.ageAtLeast(60) }.forEach { it.remove() }
 Get if age is less than 60 seconds, otherwise fetch from remote and put in shelf
 ```kotlin
 val cacheOrNew = with(Shelf.item(key)) {
-    ageAtMost(60)?.get(Obj::class) ?: fetchRemote().also { put(it) }
+    if (age().isLessThan(60)) getList<Obj>() else fetchRemote().also { put(it) }
 }
 ```
 
@@ -62,8 +62,8 @@ data class Obj(...)
 data class Whatever(...)
 
 Shelf.serializer = KotlinxJsonSerializer().apply {
-    register(Obj::class, Obj.serializer())
-    register(Whatever::class, Whatever.serializer())
+    register(Obj.serializer())
+    register(Whatever.serializer())
 }
 ```
 
