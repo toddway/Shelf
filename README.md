@@ -23,7 +23,7 @@ val things = Shelf.item("things").getList<Thing>()
 
 If item is older than 60 seconds, load new data, then get
 ```kotlin
-val things = Shelf.item(key)
+val things = Shelf.item("things")
     .apply { if (olderThan(60)) put(newListOfThings()) }
     .getList<Thing>()
 ```
