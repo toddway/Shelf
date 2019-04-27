@@ -18,7 +18,7 @@ val thing = Shelf.item("thing").get<Thing>()
 Get a list of objects
 ```kotlin
 Shelf.item("things").put(listOf(Thing(...), Thing(...))
-val things = Shelf.item("list of things").getList<Thing>()
+val things = Shelf.item("things").getList<Thing>()
 ```
 
 If item is older than 60 seconds, load new data, then get
