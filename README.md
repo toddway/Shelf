@@ -15,7 +15,7 @@ Get it
 val thing = Shelf.item("thing").get<Thing>()
 ```
 
-Get a typed list
+Get typed lists
 ```kotlin
 Shelf.item("things").put(listOf(Thing(...), Thing(...))
 val things = Shelf.item("things").getList<Thing>()
