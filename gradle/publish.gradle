@@ -1,0 +1,79 @@
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+group = ARTIFACT_ID
+version = LIBRARY_VERSION_NAME
+
+def pomConfig = {
+    licenses {
+        license {
+            name POM_LICENSE_NAME
+            url POM_LICENSE_URL
+            distribution POM_LICENSE_DIST
+        }
+    }
+    developers {
+        developer {
+            id POM_DEVELOPER_ID
+            name POM_DEVELOPER_NAME
+            organization POM_ORGANIZATION_NAME
+            organizationUrl POM_ORGANIZATION_URL
+        }
+    }
+    scm {
+        url SITE_URL
+    }
+}
+
+bintray {
+    user = project.getProp('BINTRAY_USER')
+    key = project.getProp('BINTRAY_KEY')
+    publish = false
+    override = true // for multi-platform Kotlin/Native publishing
+
+    pkg {
+        repo = BINTRAY_REPOSITORY
+        name = BINTRAY_NAME
+        userOrg = GROUP
+        licenses = ['Apache-2.0']
+        vcsUrl = VCS_URL
+        websiteUrl = SITE_URL
+        issueTrackerUrl = ISSUE_URL
+
+        version {
+            name = LIBRARY_VERSION_NAME
+            vcsTag = LIBRARY_VERSION_NAME
+            released = new Date()
+        }
+    }
+}
+
+afterEvaluate {
+    project.publishing.publications.all {
+        pom.withXml {
+            def root = asNode()
+            root.appendNode('name', project.name)
+            root.appendNode('description', POM_DESCRIPTION)
+            root.appendNode('url', SITE_URL)
+            root.children().last() + pomConfig
+        }
+
+        // rename artifacts
+        groupId = BINTRAY_PACKAGE
+        if (it.name.contains('metadata')) {
+            artifactId = "${project.name}" // metadata is common module. ignore suffix
+        } else {
+            artifactId = "${project.name}-$name"
+        }
+    }
+}
+
+bintrayUpload.doFirst {
+    publications = publishing.publications.collect {
+        it.name
+    }.findAll {
+        it != "kotlinMultiplatform"
+    }
+}
+
+bintrayUpload.dependsOn publishToMavenLocal

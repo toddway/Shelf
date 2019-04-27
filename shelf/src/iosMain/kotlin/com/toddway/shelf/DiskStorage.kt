@@ -4,9 +4,9 @@ import platform.Foundation.NSDate
 import platform.Foundation.NSUserDefaults
 import platform.Foundation.timeIntervalSince1970
 
-actual open class DiskStorage : Shelf.Storage, UserDefaultsStorage()
+actual open class DiskStorage : Shelf.Storage<String>, UserDefaultsStorage()
 
-open class UserDefaultsStorage(private val delegate: NSUserDefaults = NSUserDefaults.standardUserDefaults()) : Shelf.Storage {
+open class UserDefaultsStorage(private val delegate: NSUserDefaults = NSUserDefaults.standardUserDefaults()) : Shelf.Storage<String> {
     override fun remove(key: String) {
         delegate.removeObjectForKey(key.dotShelf())
         delegate.removeObjectForKey(key.dotDate())

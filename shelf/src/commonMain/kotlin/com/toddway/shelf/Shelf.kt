@@ -3,39 +3,40 @@ package com.toddway.shelf
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
-open class Shelf(var storage : Storage = DiskStorage(), var serializer: Serializer = KotlinxJsonSerializer(), var clock : Clock = Clock()) {
+open class Shelf<S>(var storage : Storage<S>, var serializer: Serializer<S>, var clock : Clock = Clock()) {
     fun item(key: String) = Item(key)
     fun all() = storage.keys().map { item(it) }.toSet()
     fun clear() = all().forEach { it.remove() }
 
-    @ThreadLocal companion object : Shelf()
+    @ThreadLocal companion object : Shelf<String>(DiskStorage(), KotlinxJsonSerializer())
 
     class Item(val key: String) {
-        fun <T : Any> get(type : KClass<T>) : T? = raw()?.let { serializer.read(it, type) }
-        fun <T : Any> getList(type : KClass<T>) : List<T>? = raw()?.let { serializer.readList(it, type) }
-        fun <T : Any> put(value : T) : T = storage.put(key, serializer.write(value), clock.now()).let { return value }
-        fun <T : Any> has(value : T) = raw().equals(serializer.write(value))
+        fun <T : Any> get(type : KClass<T>) : T? = getRaw()?.let { serializer.toType(it, type) }
+        fun <T : Any> getList(type : KClass<T>) : List<T>? = getRaw()?.let { serializer.toTypeList(it, type) }
+        fun <T : Any> put(value : T) : T = putRaw(serializer.fromType(value)).let { return value }
+        fun <T : Any> has(value : T) = getRaw().equals(serializer.fromType(value))
         fun remove() = storage.remove(key)
         fun age() : Long? = try { storage.timestamp(key)?.let { clock.now() - it } } catch (e : Throwable) { null }
-        private fun raw() : String? = try { storage.get(key) } catch (e : Throwable) { null }
+        private fun getRaw() : String? = try { storage.get(key) } catch (e : Throwable) { null }
+        private fun putRaw(string : String) = storage.put(key, string, clock.now())
     }
 
-    interface Storage {
-        fun get(key: String): String?
-        fun put(key: String, value: String, timestamp : Long)
+    interface Storage<S> {
+        fun get(key: String): S?
+        fun put(key: String, value: S, timestamp : Long)
         fun timestamp(key: String) : Long?
         fun keys(): Set<String>
         fun remove(key: String)
     }
 
-    interface Serializer {
-        fun <T : Any> write(value : T) : String
-        fun <T : Any> read(string : String, klass : KClass<T>) : T
-        fun <T : Any> readList(string: String, klass: KClass<T>): List<T>
+    interface Serializer<S> {
+        fun <T : Any> fromType(value : T) : S
+        fun <T : Any> toType(string : S, klass : KClass<T>) : T
+        fun <T : Any> toTypeList(string: S, klass: KClass<T>): List<T>
     }
 }
 
-expect open class DiskStorage() : Shelf.Storage
+expect open class DiskStorage() : Shelf.Storage<String>
 
 expect open class Clock() {
     open fun now() : Long
@@ -45,8 +46,7 @@ fun Collection<String>.toShelfKeys() = filter { it.endsWith(".shelf") }.map { it
 fun String.dotShelf() = "$this.shelf"
 fun String.dotDate() = "$this.date"
 
-fun Long?.isGreaterThan(other : Long) = this?.let { it > other } ?: false
-fun Long?.isLessThan(other : Long) = this?.let { it < other } ?: false
+fun Shelf.Item.olderThan(seconds : Long) = age()?.let { it > seconds } ?: true
 
-inline fun <reified T : Any> Shelf.Item.get() = get(T::class)
-inline fun <reified T : Any> Shelf.Item.getList() = getList(T::class)
+inline fun <reified T : Any> Shelf.Item.get() : T? = get(T::class)
+inline fun <reified T : Any> Shelf.Item.getList() : List<T>? = getList(T::class)

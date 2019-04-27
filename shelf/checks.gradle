@@ -32,7 +32,7 @@ task coverage(type: JacocoReport, dependsOn: "jvmTest") {
             dir: "$buildDir/classes/kotlin/jvm/main", excludes: excludes
     )
 
-    sourceDirectories = files(["src/commonMain/kotlin"])
+    sourceDirectories = files(["src/commonMain/kotlin", "src/jvmMain/kotlin"])
     executionData = files("$buildDir/jacoco/jvmTest.exec")
 }
 

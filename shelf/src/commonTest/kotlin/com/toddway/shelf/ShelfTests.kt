@@ -1,6 +1,5 @@
 package com.toddway.shelf
 
-import kotlinx.coroutines.delay
 import kotlinx.serialization.Serializable
 import kotlin.test.*
 
@@ -13,7 +12,7 @@ class ShelfTests {
     fun `when_clearing_shelf_then_no_item_or_value_exist`() {
         Shelf.storage = DiskStorage()
         Shelf.serializer = KotlinxJsonSerializer().apply {
-            register(Obj::class, Obj.serializer())
+            register(Obj.serializer())
         }
         Shelf.clock = clock
 
@@ -149,17 +148,6 @@ class ShelfTests {
     }
 
     @Test
-    fun `when_using_CborEncoder_then_returned_values_match_the_stored_values`() {
-        with(Shelf.item(key)) {
-            //Shelf.serializer = CborEncoder()
-            put(value)
-
-            assertTrue(has(value))
-            assertTrue(get<Obj>()?.let { has(it) } ?: false)
-        }
-    }
-
-    @Test
     fun `when_getting_the_age_of_an_item_that_does_not_exist`() {
         with(Shelf.item(key)) {
             val age = age()
@@ -184,7 +172,7 @@ class ShelfTests {
     @Test
     fun `test_lists`() {
         Shelf.serializer = KotlinxJsonSerializer().apply {
-            register(Obj::class, Obj.serializer())
+            register(Obj.serializer())
         }
 
         with(Shelf.item(key)) {
@@ -205,8 +193,7 @@ class ShelfTests {
     //todo test not registered
 }
 
-
-open class MemoryStorage : Shelf.Storage {
+open class MemoryStorage : Shelf.Storage<String> {
     override fun remove(key: String) {
         map.remove(key)
     }
@@ -221,7 +208,6 @@ open class MemoryStorage : Shelf.Storage {
     private val map: MutableMap<String, String> = mutableMapOf()
 }
 
-
 class ManualClock : Clock() {
 
     var offset: Long = 0
@@ -235,22 +221,21 @@ class ManualClock : Clock() {
     }
 }
 
-//Blocking is slow and doesn't work for JS tests
-class BlockingClock : Clock() {
-
-    fun block(seconds: Long) {
-        runBlocked { delay(seconds * 1000) }
-    }
-
-    fun forward(seconds: Long) {
-        block(seconds)
-    }
-}
-
-expect fun runBlocked(block: suspend () -> Unit)
-
 @Serializable
 data class Obj(val v: Int) {
     val nested = mutableListOf(1, 2, v)
 }
 
+////Blocking is slow and doesn't work for JS tests
+//class BlockingClock : Clock() {
+//
+//    fun block(seconds: Long) {
+//        runBlocked { delay(seconds * 1000) }
+//    }
+//
+//    fun forward(seconds: Long) {
+//        block(seconds)
+//    }
+//}
+//
+//expect fun runBlocked(block: suspend () -> Unit)

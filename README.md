@@ -7,23 +7,23 @@ Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin
 
 Store an object
 ```kotlin
-val myObj = Obj(...)
-val item = Shelf.item("my object").put(myObj)
+val something = Something(...)
+val item = Shelf.item("something").put(something)
 ```
 
 Get it
 ```kotlin
-Shelf.item("my object").get<Obj>()
+Shelf.item("something").get<Something>()
 ```
 
 Get a list of objects
 ```kotlin
-Shelf.item("my list").getList<Obj>()
+Shelf.item("something list").getList<Something>()
 ```
 
 Remove it
 ```kotlin
-Shelf.item("my object").remove()
+Shelf.item("something").remove()
 ```
 
 Remove all
@@ -34,14 +34,14 @@ Shelf.all().forEach { it.remove() }
 Remove only items older than 60 seconds
 ```kotlin
 
-Shelf.all().filter { age().isGreaterThan(60) }.forEach { it.remove() }
+Shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
 ```
 
-Get if age is less than 60 seconds, otherwise fetch from remote and put in shelf
+If item is older than 60 seconds, fetch new data, then get from shelf
 ```kotlin
-val cacheOrNew = with(Shelf.item(key)) {
-    if (age().isLessThan(60)) getList<Obj>() else fetchRemote().also { put(it) }
-}
+Shelf.item(key)
+    .apply { if (olderThan(60)) put(newListOfThings()) }
+    .getList<Thing>()
 ```
 
 
@@ -51,38 +51,33 @@ Primitive type classes work automatically.
 For custom classes, annotate with `@Serializable`, and register with Shelf:
 ```kotlin
 @Serializable
-data class Obj(...)
+data class Something(...)
 
 @Serializable
 data class Whatever(...)
 
 Shelf.serializer = KotlinxJsonSerializer().apply {
-    register(Obj.serializer())
+    register(Something.serializer())
     register(Whatever.serializer())
 }
 ```
 
+For JVM targets, there is also a `MoshiSerializer`.
+
 ## Storage
-The `DiskStorage` class depends on delegate objects for each platform.
+The `DiskStorage` class depends on delegates for each platform.
 By inspecting the code, you can see that
 for Kotlin/Native targets, the delegate is `NSUserDefaults`,
 for Kotlin/JS targets, it is `LocalStorage`,
 and for Kotlin/JVM it is `File`.
-On Native and JS platforms it should work without configuration.
+Native and JS platforms should work without configuration.
 For JVM environments, you should set the location on the file system that `DiskStorage` will use.
-For example, on Android, this is often acquired from `Context.getCacheDir()`.
+For example, on Android, this can be acquired from `Context.getCacheDir()`.
 
 ```kotlin
 Shelf.storage = DiskStorage(context.getCacheDir())
 ```
 
-If needed, implement your own `Shelf.Storage`:
-
-```kotlin
-Shelf.storage = object : Shelf.Storage {
-    ...
-}
-```
 
 
 ## Gradle setup

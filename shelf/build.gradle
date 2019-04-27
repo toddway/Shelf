@@ -19,15 +19,17 @@ kotlin {
             dependencies {
                 implementation "org.jetbrains.kotlin:kotlin-test-common"
                 implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
-                implementation "io.ktor:ktor-client-core:$ktor_version"
-                implementation "io.ktor:ktor-client-json:$ktor_version"
+                //implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-common:$coroutines_version"
+                //implementation "io.ktor:ktor-client-core:$ktor_version"
+                //implementation "io.ktor:ktor-client-json:$ktor_version"
+                //implementation "io.ktor:ktor-client-logging:$ktor_version"
             }
         }
         jvmMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
+                implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
             }
         }
         jvmTest {
@@ -35,20 +37,22 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-test'
                 implementation 'org.jetbrains.kotlin:kotlin-test-junit'
                 implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-                implementation "io.ktor:ktor-client-json-jvm:$ktor_version"
                 implementation "io.ktor:ktor-client-android:$ktor_version"
+                implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"
+                implementation "ch.qos.logback:logback-classic:1.2.3"
             }
         }
         iosMain {
             dependencies {
+                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version"
             }
         }
         iosTest {
             dependencies {
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
-                implementation "io.ktor:ktor-client-ios:$ktor_version"
-                implementation "io.ktor:ktor-client-json-native:$ktor_version"
+                //implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-native:$coroutines_version"
+                //implementation "io.ktor:ktor-client-ios:$ktor_version"
+                //implementation "io.ktor:ktor-client-json-native:$ktor_version"
             }
         }
         jsMain {
@@ -60,8 +64,8 @@ kotlin {
         jsTest {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-test-js'
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutines_version"
-                implementation "io.ktor:ktor-client-js:$ktor_version"
+                //implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core-js:$coroutines_version"
+                //implementation "io.ktor:ktor-client-js:$ktor_version"
             }
         }
     }
@@ -108,3 +112,15 @@ kotlinFrontend {
         proxyUrl = "http://localhost:8080"
     }
 }
+
+
+
+apply plugin: 'com.codingfeline.buildkonfig'
+buildkonfig {
+    packageName = 'com.toddway.shelf'
+    defaultConfigs {
+        buildConfigField 'STRING', 'token', project.getProp('TOKEN')
+        buildConfigField 'STRING', 'url', project.getProp('URL')
+    }
+}
+

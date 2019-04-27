@@ -1,26 +1,24 @@
 package com.toddway.shelf
 
-
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerializationException
 import kotlinx.serialization.internal.defaultSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
+class KotlinxJsonSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer<String> {
 
-class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Serializer {
-
-    override fun <T : Any> write(value: T): String {
-        return json.stringify(findByValue(value), value)
+    override fun <T : Any> fromType(value: T): String {
+        return if (value is String) value
+        else json.stringify(findByValue(value), value)
     }
 
-    override fun <T : Any> read(string: String, klass: KClass<T>): T {
+    override fun <T : Any> toType(string: String, klass: KClass<T>): T {
         return json.parse(findByClass(klass), string)
     }
 
-    override fun <T : Any> readList(string: String, klass: KClass<T>): List<T> {
+    override fun <T : Any> toTypeList(string: String, klass: KClass<T>): List<T> {
         return json.parse(findByClass(klass).list, string)
     }
 
@@ -43,10 +41,12 @@ class KotlinxJsonSerializer(val json: Json = Json.plain) : Shelf.Serializer {
 
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> findByClass(klass: KClass<T>): KSerializer<T> {
+
+        if (klass == List::class || klass == ArrayList::class)
+            throw RuntimeException("For top-level Lists, use Shelf.Item.getList() instead of Shelf.Item.get()")
+
         return serializers[klass]?.let { return it as KSerializer<T> }
             ?: klass.defaultSerializer()
-            ?: throw SerializationException("No registered serializer for: $klass.  Use KotlinxJsonSerializer.register() to add one")
+            ?: throw RuntimeException("No serializer for: $klass.  Use KotlinxJsonSerializer.register() to add one")
     }
 }
-
-

@@ -6,9 +6,9 @@ import org.w3c.dom.set
 import kotlin.browser.localStorage
 import kotlin.js.Date
 
-actual open class DiskStorage : Shelf.Storage, LocalStorage()
+actual open class DiskStorage : Shelf.Storage<String>, LocalStorage()
 
-open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.Storage {
+open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.Storage<String> {
 
     override fun get(key: String): String? {
         return delegate[key.dotShelf()]
@@ -38,3 +38,4 @@ open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.S
 actual open class Clock actual constructor() {
     actual open fun now() = Date.now().toLong() / 1000
 }
+
