@@ -20,6 +20,13 @@ Get a list of objects
 Shelf.item("something list").getList<Something>()
 ```
 
+If item is older than 60 seconds, load new data, then get
+```kotlin
+Shelf.item(key)
+    .apply { if (olderThan(60)) put(newListOfThings()) }
+    .getList<Thing>()
+```
+
 Remove it
 ```kotlin
 Shelf.item("something").remove()
@@ -32,15 +39,7 @@ Shelf.all().forEach { it.remove() }
 
 Remove only items older than 60 seconds
 ```kotlin
-
 Shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
-```
-
-If item is older than 60 seconds, fetch new data, then use shelf
-```kotlin
-Shelf.item(key)
-    .apply { if (olderThan(60)) put(newListOfThings()) }
-    .getList<Thing>()
 ```
 
 
