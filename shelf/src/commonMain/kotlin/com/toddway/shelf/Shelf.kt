@@ -8,7 +8,7 @@ open class Shelf<S>(var storage : Storage<S>, var serializer: Serializer<S>, var
     fun all() = storage.keys().map { item(it) }.toSet()
     fun clear() = all().forEach { it.remove() }
 
-    @ThreadLocal companion object : Shelf<String>(DiskStorage(), KotlinxJsonSerializer())
+    @ThreadLocal companion object : Shelf<String>(DiskStorage(), KotlinxSerializer())
 
     class Item(val key: String) {
         fun <T : Any> get(type : KClass<T>) : T? = getRaw()?.let { serializer.toType(it, type) }

@@ -1,5 +1,5 @@
 # Shelf
-Key/value store for Kotlin. Persist any [serializable](https://github.com/Kotlin/kotlinx.serialization) object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.  
+Key/value object store for Kotlin. Persist any serializable object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.
 
 [ ![Download](https://api.bintray.com/packages/toddway/maven/shelf/images/download.svg) ](https://bintray.com/toddway/maven/shelf/_latestVersion)
 
@@ -56,7 +56,7 @@ data class Something(...)
 @Serializable
 data class Whatever(...)
 
-Shelf.serializer = KotlinxJsonSerializer().apply {
+Shelf.serializer = KotlinxSerializer().apply {
     register(Something.serializer())
     register(Whatever.serializer())
 }

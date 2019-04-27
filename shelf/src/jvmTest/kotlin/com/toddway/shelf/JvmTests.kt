@@ -28,7 +28,7 @@ class JvmTests {
     @BeforeTest
     fun before() {
         Shelf.storage = DiskStorage()
-        Shelf.serializer = KotlinxJsonSerializer().apply {
+        Shelf.serializer = KotlinxSerializer().apply {
             register(ThingSerializer)
         }
         Shelf.clock = clock
@@ -37,7 +37,7 @@ class JvmTests {
 
 
     @Test
-    fun with_ktor() {
+    fun `test_with_ktor`() {
         Shelf.serializer = MoshiSerializer()
 
         runBlocking {

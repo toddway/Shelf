@@ -11,7 +11,7 @@ class ShelfTests {
     @BeforeTest
     fun `when_clearing_shelf_then_no_item_or_value_exist`() {
         Shelf.storage = DiskStorage()
-        Shelf.serializer = KotlinxJsonSerializer().apply {
+        Shelf.serializer = KotlinxSerializer().apply {
             register(Obj.serializer())
         }
         Shelf.clock = clock
@@ -171,7 +171,7 @@ class ShelfTests {
 
     @Test
     fun `test_lists`() {
-        Shelf.serializer = KotlinxJsonSerializer().apply {
+        Shelf.serializer = KotlinxSerializer().apply {
             register(Obj.serializer())
         }
 

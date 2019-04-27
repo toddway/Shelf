@@ -7,7 +7,7 @@ import kotlinx.serialization.list
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
-class KotlinxJsonSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer<String> {
+class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer<String> {
 
     override fun <T : Any> fromType(value: T): String {
         return if (value is String) value
@@ -47,6 +47,6 @@ class KotlinxJsonSerializer(private val json: Json = Json.nonstrict) : Shelf.Ser
 
         return serializers[klass]?.let { return it as KSerializer<T> }
             ?: klass.defaultSerializer()
-            ?: throw RuntimeException("No serializer for: $klass.  Use KotlinxJsonSerializer.register() to add one")
+            ?: throw RuntimeException("No serializer for: $klass.  Use KotlinxSerializer.register() to add one")
     }
 }
