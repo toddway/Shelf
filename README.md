@@ -7,8 +7,7 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 Store an object
 ```kotlin
-val something = Something(...)
-val item = Shelf.item("something").put(something)
+Shelf.item("something").put(Something(...))
 ```
 
 Get it
