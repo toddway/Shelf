@@ -37,7 +37,7 @@ Remove only items older than 60 seconds
 Shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
 ```
 
-If item is older than 60 seconds, fetch new data, then get from shelf
+If item is older than 60 seconds, fetch new data, then use shelf
 ```kotlin
 Shelf.item(key)
     .apply { if (olderThan(60)) put(newListOfThings()) }
