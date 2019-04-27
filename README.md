@@ -80,9 +80,10 @@ For example, on Android, this can be acquired from `Context.getCacheDir()`.
 Shelf.storage = DiskStorage(context.getCacheDir())
 ```
 
+You can also create your own own implementations of `Shelf.Storage` or `Shelf.Serializer`.
 
 
-## Gradle setup
+## Gradle
 
 ```groovy
 repositories {
