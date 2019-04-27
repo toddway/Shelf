@@ -21,11 +21,14 @@ Shelf.item("things").put(listOf(Thing(...), Thing(...))
 val things = Shelf.item("things").getList<Thing>()
 ```
 
-If item is older than 60 seconds, load new data, then get
+If data is older than 60 seconds, load new
 ```kotlin
-val things = Shelf.item("things")
-    .apply { if (olderThan(60)) put(newListOfThings()) }
-    .getList<Thing>()
+fun newListOfThings() : List<Thing> = ...
+
+fun getListOfThings() =
+    Shelf.item("things")
+        .apply { if (olderThan(60)) put(newListOfThings()) }
+        .getList<Thing>()
 ```
 
 Remove it

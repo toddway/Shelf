@@ -118,3 +118,10 @@ data class Thing(val url : String)
 
 @Serializer(forClass = Thing::class)
 object ThingSerializer
+
+fun newListOfThings() : List<Thing> = listOf(Thing("..."))
+
+fun getListOfThings() =
+    Shelf.item("things")
+        .apply { if (olderThan(60)) put(newListOfThings()) }
+        .getList<Thing>()
