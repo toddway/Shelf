@@ -35,7 +35,7 @@ Shelf.item("thing").remove()
 
 Remove all
 ```kotlin
-Shelf.all().forEach { it.remove() }
+Shelf.clear()
 ```
 
 Remove only items older than 60 seconds
