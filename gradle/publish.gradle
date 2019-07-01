@@ -28,7 +28,7 @@ def pomConfig = {
 bintray {
     user = project.getProp('BINTRAY_USER')
     key = project.getProp('BINTRAY_KEY')
-    publish = false
+    publish = true
     override = true // for multi-platform Kotlin/Native publishing
 
     pkg {
