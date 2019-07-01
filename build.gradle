@@ -33,13 +33,6 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 
-buildChecks {
-    jacocoReports = "$projectDir/shelf/build/reports/coverage/coverage.xml"
-    checkstyleReports = "$projectDir/shelf/build/reports/detekt-checkstyle.xml"
-}
-
-printChecks.dependsOn('shelf:check')
-
 def getProp(name) {
     Properties properties = new Properties()
     def propertiesFile = project.rootProject.file('local.properties')
@@ -48,3 +41,15 @@ def getProp(name) {
     }
     return properties.getProperty(name)
 }
+
+
+buildChecks {
+    baseUrl = getProp("baseUrl")
+    authorization = getProp("auth")
+    buildUrl = getProp("buildUrl")
+    jacocoReports = "$projectDir/shelf/build/reports/coverage/coverage.xml"
+    checkstyleReports = "$projectDir/shelf/build/reports/detekt-checkstyle.xml"
+}
+
+printChecks.dependsOn('shelf:check')
+

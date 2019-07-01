@@ -49,4 +49,3 @@ detekt {
 
 check.dependsOn(coverage)
 check.dependsOn(detektCheck)
-check.dependsOn('iosTest')

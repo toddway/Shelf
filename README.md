@@ -140,10 +140,7 @@ and a local web browser:
 ```
 ./gradlew karma-run-single
 ```
-or all three:
-```
-./gradlew printChecks
-```
+
 
 License
 -------
