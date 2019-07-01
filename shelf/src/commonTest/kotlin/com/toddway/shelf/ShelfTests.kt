@@ -7,27 +7,26 @@ class ShelfTests {
     val key = "aKey"
     var value = Obj(1)
     val clock = ManualClock()
+    val shelf = Shelf(
+        DiskStorage(),
+        KotlinxSerializer().apply { register(Obj.serializer()) },
+        clock
+    )
 
     @BeforeTest
     fun `when_clearing_shelf_then_no_item_or_value_exist`() {
-        Shelf.storage = DiskStorage()
-        Shelf.serializer = KotlinxSerializer().apply {
-            register(Obj.serializer())
-        }
-        Shelf.clock = clock
-
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
-            Shelf.clear()
+            shelf.clear()
 
-            assertEquals(emptySet(), Shelf.all(), "Items are cleared")
+            assertEquals(emptySet(), shelf.all(), "Items are cleared")
             assertNull(get(), "Value is cleared")
         }
     }
 
     @Test
     fun `when_an_object_is_put_then_the_stored_value_is_equal_to_the_original`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
 
             assertTrue(has(value))
@@ -36,14 +35,14 @@ class ShelfTests {
 
     @Test
     fun `when_an_object_is_not_put_then_the_stored_value_is_not_equal_to_the_original`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             assertFalse(has(value))
         }
     }
 
     @Test
     fun `when_an_object_changed_after_it_is_put_then_the_stored_value_is_not_equal_to_the_original`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
             value.nested[2] = 22
 
@@ -53,7 +52,7 @@ class ShelfTests {
 
     @Test
     fun `when_an_object_is_put_then_the_stored_value_is_not_equal_to_an_object_with_different_data`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
 
             assertFalse(has(Obj(2)))
@@ -62,7 +61,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_that_does_not_exist_then_it_returns_null`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             assertNull(get())
 
         }
@@ -70,7 +69,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_that_exists_then_it_returns_the_original_value`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
 
             assertTrue(has(value))
@@ -80,7 +79,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_that_has_expired_then_it_returns_null`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
             clock.forward(5)
 
@@ -90,7 +89,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_that_has_not_expired_then_it_returns_a_value`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
             clock.forward(5)
 
@@ -100,9 +99,9 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_after_DiskStorage_is_reset_then_it_still_returns_the_original_value`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
-            Shelf.storage = DiskStorage()
+            shelf.storage = DiskStorage()
 
             assertTrue(has(value))
         }
@@ -110,13 +109,13 @@ class ShelfTests {
 
     @Test
     fun `when_getting_an_item_after_MemoryStorage_is_reset_then_it_returns_null`() {
-        with(Shelf.item(key)) {
-            Shelf.storage = MemoryStorage()
+        with(shelf.item(key)) {
+            shelf.storage = MemoryStorage()
             put(value)
 
             assertTrue(has(value))
 
-            Shelf.storage = MemoryStorage()
+            shelf.storage = MemoryStorage()
 
             assertNull(get())
         }
@@ -124,22 +123,22 @@ class ShelfTests {
 
     @Test
     fun `when_getting_all_items_that_have_been_put_then_a_set_of_all_items_is_returned`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             val keys = setOf(key, "secondKey")
-            keys.forEach { Shelf.item(it).put(value) }
+            keys.forEach { shelf.item(it).put(value) }
 
-            assertEquals(Shelf.all().size, keys.size)
+            assertEquals(shelf.all().size, keys.size)
         }
     }
 
     @Test
     fun `when_no_items_are_put_then_an_empty_set_is_returned`() {
-        assertEquals(0, Shelf.all().size)
+        assertEquals(0, shelf.all().size)
     }
 
     @Test
     fun `when_removing_an_existing_key_then_the_value_no_longer_exists`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
             remove()
 
@@ -149,7 +148,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_the_age_of_an_item_that_does_not_exist`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             val age = age()
 
             assertNull(age, "$age should be null")
@@ -158,7 +157,7 @@ class ShelfTests {
 
     @Test
     fun `when_getting_the_age_after_an_interval_then_the_age_is_equal_to_the_interval`() {
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
             clock.forward(5)
 
@@ -171,11 +170,11 @@ class ShelfTests {
 
     @Test
     fun `test_lists`() {
-        Shelf.serializer = KotlinxSerializer().apply {
+        shelf.serializer = KotlinxSerializer().apply {
             register(Obj.serializer())
         }
 
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             val list = listOf(Obj(1), Obj(2))
             put(list)
 
@@ -193,7 +192,7 @@ class ShelfTests {
     //todo test not registered
 }
 
-open class MemoryStorage : Shelf.Storage<String> {
+open class MemoryStorage : Shelf.Storage {
     override fun remove(key: String) {
         map.remove(key)
     }

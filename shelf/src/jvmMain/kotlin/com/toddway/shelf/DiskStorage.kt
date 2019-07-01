@@ -3,9 +3,9 @@ package com.toddway.shelf
 import java.io.File
 import java.util.*
 
-actual open class DiskStorage : Shelf.Storage<String>, FileStorage()
+actual open class DiskStorage : Shelf.Storage, FileStorage()
 
-open class FileStorage(private val delegate : File = File("/tmp")) : Shelf.Storage<String> {
+open class FileStorage(private val delegate : File = File("/tmp")) : Shelf.Storage {
     init {
         delegate.mkdir()
     }

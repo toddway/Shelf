@@ -17,6 +17,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
+import java.io.File
 import java.util.*
 import kotlin.test.*
 
@@ -24,36 +25,35 @@ class JvmTests {
     val key = "aKey"
     var value = Obj(1)
     val clock = ManualClock()
+    val shelf = Shelf(
+        FileStorage(File("/tmp")),
+        KotlinxSerializer().apply { register(ThingSerializer) },
+        clock
+    )
 
     @BeforeTest
     fun before() {
-        Shelf.storage = DiskStorage()
-        Shelf.serializer = KotlinxSerializer().apply {
-            register(ThingSerializer)
-        }
-        Shelf.clock = clock
-        Shelf.clear()
+        shelf.clear()
     }
-
 
     @Test
     fun `test_with_ktor`() {
-        Shelf.serializer = MoshiSerializer()
+        shelf.serializer = MoshiSerializer()
 
         runBlocking {
-            Shelf.clear()
+            shelf.clear()
             val start = Date().time
-            println(KtorThingService().getThingList())
-            println(KtorThingService().getThingList())
+            println(KtorThingService(shelf).getThingList())
+            println(KtorThingService(shelf).getThingList())
             println(Date().time-start)
         }
     }
 
     @Test
     fun `when_using_MoshiSerializer_then_returned_values_match_the_stored_values`() {
-        Shelf.serializer = MoshiSerializer()
+        shelf.serializer = MoshiSerializer()
 
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             put(value)
 
             assertTrue(has(value))
@@ -63,9 +63,9 @@ class JvmTests {
 
     @Test
     fun `moshi_lists`() {
-        Shelf.serializer = MoshiSerializer()
+        shelf.serializer = MoshiSerializer()
 
-        with(Shelf.item(key)) {
+        with(shelf.item(key)) {
             val list = listOf(Obj(1), Obj(2))
             put(list)
 
@@ -79,12 +79,12 @@ class JvmTests {
             assertTrue(getList<String>()?.let { has(it) } ?: false)
         }
 
-//        Shelf.item("test").put(listOf(Thing("asdfd")))
-//        println(Shelf.item("test").get<List<Thing>>())
+//        shelf.item("test").put(listOf(Thing("asdfd")))
+//        println(shelf.item("test").get<List<Thing>>())
     }
 }
 
-class KtorThingService {
+class KtorThingService(val shelf : Shelf) {
     private val client = HttpClient {
         install(Logging) {
             logger = Logger.DEFAULT
@@ -101,7 +101,7 @@ class KtorThingService {
     suspend fun newThingList() = Json.nonstrict.parse(ThingSerializer.list, newThingList2())
     suspend fun newThingList2() = client.response(request).readText()
     suspend fun getThingList() =
-        Shelf.item(request.url.buildString())
+        shelf.item(request.url.buildString())
             .apply { if (olderThan(60)) put(newThingList2()) }
             .getList<Thing>()
 }
@@ -121,7 +121,7 @@ object ThingSerializer
 
 fun newListOfThings() : List<Thing> = listOf(Thing("..."))
 
-fun getListOfThings() =
-    Shelf.item("things")
+fun getListOfThings(shelf: Shelf) =
+    shelf.item("things")
         .apply { if (olderThan(60)) put(newListOfThings()) }
         .getList<Thing>()

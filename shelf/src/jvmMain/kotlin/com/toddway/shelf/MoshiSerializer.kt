@@ -7,7 +7,7 @@ import java.lang.RuntimeException
 import kotlin.reflect.KClass
 
 class MoshiSerializer(private val moshi : Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()) :
-    Shelf.Serializer<String> {
+    Shelf.Serializer {
 
     override fun <T : Any> fromType(value: T): String {
         return when (value) {

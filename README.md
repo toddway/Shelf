@@ -7,18 +7,19 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 Store an object
 ```kotlin
-Shelf.item("thing").put(Thing(...))
+val shelf = Shelf(FileStorage("/any/file/path"), KotlinxSerializer())
+shelf.item("thing").put(Thing(...))
 ```
 
 Get it
 ```kotlin
-val thing = Shelf.item("thing").get<Thing>()
+val thing = shelf.item("thing").get<Thing>()
 ```
 
 Get typed lists
 ```kotlin
-Shelf.item("things").put(listOf(Thing(...), Thing(...))
-val things = Shelf.item("things").getList<Thing>()
+shelf.item("things").put(listOf(Thing(...), Thing(...))
+val things = shelf.item("things").getList<Thing>()
 ```
 
 If data is older than 60 seconds, load new
@@ -26,24 +27,24 @@ If data is older than 60 seconds, load new
 fun newListOfThings() : List<Thing> = ...
 
 fun getListOfThings() =
-    Shelf.item("things")
+    shelf.item("things")
         .apply { if (olderThan(60)) put(newListOfThings()) }
         .getList<Thing>()
 ```
 
 Remove it
 ```kotlin
-Shelf.item("thing").remove()
+shelf.item("thing").remove()
 ```
 
 Remove all
 ```kotlin
-Shelf.clear()
+shelf.clear()
 ```
 
 Remove only items older than 60 seconds
 ```kotlin
-Shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
+shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
 ```
 
 
@@ -58,7 +59,7 @@ data class Thing(...)
 @Serializable
 data class Whatever(...)
 
-Shelf.serializer = KotlinxSerializer().apply {
+shelf.serializer = KotlinxSerializer().apply {
     register(Thing.serializer())
     register(Whatever.serializer())
 }
@@ -71,17 +72,19 @@ The `DiskStorage` class depends on delegates for each platform.
 By inspecting the code, you can see that
 for Kotlin/Native targets, the delegate is `NSUserDefaults`,
 for Kotlin/JS targets, it is `LocalStorage`,
-and for Kotlin/JVM it is `File`.
+and for Kotlin/JVM it is `File("/tmp")`.
 Native and JS platforms should work without configuration.
-For JVM environments, you should set the location on the file system that `DiskStorage` will use.
+For JVM environments, you should choose an appropriate location on the file system to use.
 For example, on Android, this can be acquired from `Context.getCacheDir()`.
 
 ```kotlin
-Shelf.storage = DiskStorage(context.getCacheDir())
+val shelf = Shelf(FileStorage(context.getCacheDir()))
 ```
 
 You can also create your own own implementations of `Shelf.Storage` or `Shelf.Serializer`.
-
+```kotlin
+val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
+```
 
 ## Gradle
 

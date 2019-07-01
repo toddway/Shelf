@@ -3,40 +3,40 @@ package com.toddway.shelf
 import kotlin.native.concurrent.ThreadLocal
 import kotlin.reflect.KClass
 
-open class Shelf<S>(var storage : Storage<S>, var serializer: Serializer<S>, var clock : Clock = Clock()) {
-    fun item(key: String) = Item(key)
+open class Shelf(var storage : Storage, var serializer: Serializer, var clock : Clock = Clock()) {
+    fun item(key: String) = Item(key, this)
     fun all() = storage.keys().map { item(it) }.toSet()
     fun clear() = all().forEach { it.remove() }
 
-    @ThreadLocal companion object : Shelf<String>(DiskStorage(), KotlinxSerializer())
+    @ThreadLocal companion object : Shelf(DiskStorage(), KotlinxSerializer())
 
-    class Item(val key: String) {
-        fun <T : Any> get(type : KClass<T>) : T? = getRaw()?.let { serializer.toType(it, type) }
-        fun <T : Any> getList(type : KClass<T>) : List<T>? = getRaw()?.let { serializer.toTypeList(it, type) }
-        fun <T : Any> put(value : T) : T = putRaw(serializer.fromType(value)).let { return value }
-        fun <T : Any> has(value : T) = getRaw().equals(serializer.fromType(value))
-        fun remove() = storage.remove(key)
-        fun age() : Long? = try { storage.timestamp(key)?.let { clock.now() - it } } catch (e : Throwable) { null }
-        private fun getRaw() : String? = try { storage.get(key) } catch (e : Throwable) { null }
-        private fun putRaw(string : String) = storage.put(key, string, clock.now())
+    class Item(val key: String, val shelf: Shelf) {
+        fun <T : Any> get(type : KClass<T>) : T? = getRaw()?.let { shelf.serializer.toType(it, type) }
+        fun <T : Any> getList(type : KClass<T>) : List<T>? = getRaw()?.let { shelf.serializer.toTypeList(it, type) }
+        fun <T : Any> put(value : T) : T = putRaw(shelf.serializer.fromType(value)).let { return value }
+        fun <T : Any> has(value : T) = getRaw().equals(shelf.serializer.fromType(value))
+        fun remove() = shelf.storage.remove(key)
+        fun age() : Long? = try { shelf.storage.timestamp(key)?.let { shelf.clock.now() - it } } catch (e : Throwable) { null }
+        private fun getRaw() : String? = try { shelf.storage.get(key) } catch (e : Throwable) { null }
+        private fun putRaw(string : String) = shelf.storage.put(key, string, shelf.clock.now())
     }
 
-    interface Storage<S> {
-        fun get(key: String): S?
-        fun put(key: String, value: S, timestamp : Long)
+    interface Storage {
+        fun get(key: String): String?
+        fun put(key: String, value: String, timestamp : Long)
         fun timestamp(key: String) : Long?
         fun keys(): Set<String>
         fun remove(key: String)
     }
 
-    interface Serializer<S> {
-        fun <T : Any> fromType(value : T) : S
-        fun <T : Any> toType(string : S, klass : KClass<T>) : T
-        fun <T : Any> toTypeList(string: S, klass: KClass<T>): List<T>
+    interface Serializer {
+        fun <T : Any> fromType(value : T) : String
+        fun <T : Any> toType(string : String, klass : KClass<T>) : T
+        fun <T : Any> toTypeList(string: String, klass: KClass<T>): List<T>
     }
 }
 
-expect open class DiskStorage() : Shelf.Storage<String>
+expect open class DiskStorage() : Shelf.Storage
 
 expect open class Clock() {
     open fun now() : Long

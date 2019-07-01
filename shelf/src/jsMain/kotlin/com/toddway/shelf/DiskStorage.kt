@@ -6,9 +6,9 @@ import org.w3c.dom.set
 import kotlin.browser.localStorage
 import kotlin.js.Date
 
-actual open class DiskStorage : Shelf.Storage<String>, LocalStorage()
+actual open class DiskStorage : Shelf.Storage, LocalStorage()
 
-open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.Storage<String> {
+open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.Storage {
 
     override fun get(key: String): String? {
         return delegate[key.dotShelf()]

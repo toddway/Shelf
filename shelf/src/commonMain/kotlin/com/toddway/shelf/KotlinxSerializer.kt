@@ -7,7 +7,7 @@ import kotlinx.serialization.list
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
-class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer<String> {
+class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer {
 
     override fun <T : Any> fromType(value: T): String {
         return if (value is String) value
