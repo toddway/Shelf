@@ -7,7 +7,7 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 Store an object
 ```kotlin
-val shelf = Shelf(FileStorage("/any/file/path"), KotlinxSerializer())
+val shelf = Shelf(FileStorage(File(...)), KotlinxSerializer())
 shelf.item("thing").put(Thing(...))
 ```
 
