@@ -94,7 +94,7 @@ repositories {
 }
 ```    
 
-## Current Version
+Current Version
 ```
 $shelf_version = 2.0.4
 ```
