@@ -94,6 +94,13 @@ repositories {
 }
 ```    
 
+## Current Version
+```
+$shelf_version = 2.0.4
+```
+
+
+
 Common multiplatform source set
 ```groovy
 dependencies {
