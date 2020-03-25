@@ -30,6 +30,7 @@ class JvmTests {
         KotlinxSerializer().apply { register(ThingSerializer) },
         clock
     )
+    val invalidKey = "Here.Is-An\uD83D\uDC4D\uD83C\uDFFDInvalid.:%$&$^:\"File_Name!!!"
 
     @BeforeTest
     fun before() {
@@ -79,8 +80,20 @@ class JvmTests {
             assertTrue(getList<String>()?.let { has(it) } ?: false)
         }
 
-//        shelf.item("test").put(listOf(Thing("asdfd")))
-//        println(shelf.item("test").get<List<Thing>>())
+        shelf.item("test").put(listOf(Thing("asdfd")))
+        println(shelf.item("test").get<List<Thing>>())
+    }
+
+    @Test
+    fun `when_item_is_called_and_the_key_has_invalid_characters_then_each_invalid_character_is_replaced_with_an_underscore`() {
+        val result = File("/tmp").item(invalidKey)
+        assertEquals("Here.Is-An__Invalid.________File_Name___.shelf", result.name)
+    }
+
+    @Test fun `when_item_is_put_and_the_key_has_invalid_characters_then_the_same_invalid_key_can_be_used_to_get_the_value`() {
+        shelf.serializer = MoshiSerializer()
+        shelf.item(invalidKey).put(value)
+        assertEquals(value, shelf.item(invalidKey).get()!!)
     }
 }
 

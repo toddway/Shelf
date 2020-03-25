@@ -32,7 +32,7 @@ open class FileStorage(private val delegate : File = File("/tmp")) : Shelf.Stora
     }
 }
 
-fun File.item(key : String) = File(this, key.replace("[^a-z0-9.]+".toRegex(), "_").dotShelf())
+fun File.item(key : String) = File(this, key.replace("[^a-zA-Z0-9.-]".toRegex(), "_").dotShelf())
 
 actual open class Clock {
     actual open fun now(): Long = (Date().time / 1000)
