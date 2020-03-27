@@ -1,9 +1,10 @@
 package com.toddway.shelf
 
+import kotlinx.serialization.ImplicitReflectionSerializer
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.internal.defaultSerializer
+import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
+import kotlinx.serialization.serializerOrNull
 import kotlin.collections.set
 import kotlin.reflect.KClass
 
@@ -39,6 +40,7 @@ class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Seriali
         } as KSerializer<T>
     }
 
+    @OptIn(ImplicitReflectionSerializer::class)
     @Suppress("UNCHECKED_CAST")
     fun <T : Any> findByClass(klass: KClass<T>): KSerializer<T> {
 
@@ -46,7 +48,7 @@ class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Seriali
             throw RuntimeException("For top-level Lists, use Shelf.Item.getList() instead of Shelf.Item.get()")
 
         return serializers[klass]?.let { return it as KSerializer<T> }
-            ?: klass.defaultSerializer()
+            ?: klass.serializerOrNull()
             ?: throw RuntimeException("No serializer for: $klass.  Use KotlinxSerializer.register() to add one")
     }
 }

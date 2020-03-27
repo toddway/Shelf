@@ -44,7 +44,7 @@ kotlin {
         }
         iosMain {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                //implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version"
             }
         }
@@ -57,7 +57,7 @@ kotlin {
         }
         jsMain {
             dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
+                implementation kotlin('stdlib-js')
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serialization_version"
             }
         }
@@ -84,7 +84,7 @@ configurations {
     }
 }
 
-task iosTest {
+task iosTests {
     def device = project.findProperty("iosDevice")?.toString() ?: "iPhone XR"
     dependsOn 'linkTestDebugExecutableIos'
     group = JavaBasePlugin.VERIFICATION_GROUP

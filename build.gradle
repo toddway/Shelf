@@ -2,12 +2,12 @@
 
 buildscript {
     repositories {
-        maven { url "https://kotlin.bintray.com/kotlinx" }
         google()
         jcenter()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.3.2'
+        classpath 'com.android.tools.build:gradle:3.6.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45"
@@ -23,9 +23,9 @@ plugins {
 
 allprojects {
     repositories {
-        maven { url "https://kotlin.bintray.com/kotlinx" }
         google()
         jcenter()
+        maven { url "https://kotlin.bintray.com/kotlinx" }
     }
 }
 

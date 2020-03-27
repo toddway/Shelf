@@ -9,7 +9,7 @@ class ShelfTests {
     val clock = ManualClock()
     val shelf = Shelf(
         DiskStorage(),
-        KotlinxSerializer().apply { register(Obj.serializer()) },
+        KotlinxSerializer(),
         clock
     )
 

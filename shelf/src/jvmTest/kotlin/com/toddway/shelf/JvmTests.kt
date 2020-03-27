@@ -15,8 +15,8 @@ import io.ktor.client.response.readText
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializer
+import kotlinx.serialization.builtins.list
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
 import java.io.File
 import java.util.*
 import kotlin.test.*

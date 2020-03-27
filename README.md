@@ -50,15 +50,18 @@ shelf.all().filter { it.olderThan(60) }.forEach { it.remove() }
 
 ## Serialization
 The default serializer for Shelf depends on the [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization) library.
-Primitive type classes work automatically.
-For custom classes, annotate with `@Serializable`, and register with Shelf:
+For custom classes, annotate with `@Serializable`.
 ```kotlin
 @Serializable
 data class Thing(...)
 
 @Serializable
 data class Whatever(...)
+```
 
+If you don't want to register serializers the experimental ImplicitReflectionSerializer should do this for you automatically.
+If you have issues or prefer to register your own type serializers, you can do so like this:
+```kotlin
 shelf.serializer = KotlinxSerializer().apply {
     register(Thing.serializer())
     register(Whatever.serializer())
