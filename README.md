@@ -65,7 +65,7 @@ shelf.serializer = KotlinxSerializer().apply {
 }
 ```
 
-For JVM targets, there is also a `MoshiSerializer` for [Moshi](https://github.com/square/moshi).
+For JVM targets, there is also a `MoshiSerializer` for [Moshi](https://github.com/square/moshi) and a `GsonSerializer` for [Gson]()https://github.com/google/gson.
 
 ## Storage
 The `DiskStorage` class depends on delegates for each platform.

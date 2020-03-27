@@ -19,7 +19,11 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
 import java.io.File
 import java.util.*
-import kotlin.test.*
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
 
 class JvmTests {
     val key = "aKey"
@@ -39,7 +43,7 @@ class JvmTests {
 
     @Test
     fun `test_with_ktor`() {
-        shelf.serializer = MoshiSerializer()
+        shelf.serializer = GsonSerializer()
 
         runBlocking {
             shelf.clear()
@@ -71,6 +75,40 @@ class JvmTests {
             put(list)
 
             assertTrue(has(list))
+            assertTrue(getList<Obj>()?.let { has(it) } ?: false)
+
+            val list2 = listOf("ASDfadf")
+            put(list2)
+
+            assertTrue(has(list2))
+            assertTrue(getList<String>()?.let { has(it) } ?: false)
+        }
+
+        shelf.item("test").put(listOf(Thing("asdfd")))
+        println(shelf.item("test").get<List<Thing>>())
+    }
+
+    @Test fun gson() {
+        shelf.serializer = GsonSerializer()
+
+        with(shelf.item(key)) {
+            put(value)
+
+            assertTrue(has(value))
+            assertTrue(get<Obj>()?.let { has(it) } ?: false)
+        }
+    }
+
+    @Test
+    fun `gson_lists`() {
+        shelf.serializer = GsonSerializer()
+
+        with(shelf.item(key)) {
+            val list = listOf(Obj(1), Obj(2))
+            put(list)
+
+            assertTrue(has(list))
+            println(getList<Obj>())
             assertTrue(getList<Obj>()?.let { has(it) } ?: false)
 
             val list2 = listOf("ASDfadf")

@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id "com.toddway.buildchecks" version "1.7"
+    id "com.toddway.buildchecks" version "1.12"
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
     id "com.jfrog.bintray" version "1.8.3"
 }
@@ -50,6 +50,4 @@ buildChecks {
     jacocoReports = "$projectDir/shelf/build/reports/coverage/coverage.xml"
     checkstyleReports = "$projectDir/shelf/build/reports/detekt-checkstyle.xml"
 }
-
-printChecks.dependsOn('shelf:check')
 

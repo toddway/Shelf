@@ -30,6 +30,7 @@ kotlin {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
                 implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
                 implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
+                implementation 'com.google.code.gson:gson:2.8.6'
             }
         }
         jvmTest {
@@ -123,4 +124,6 @@ buildkonfig {
         buildConfigField 'STRING', 'url', project.getProp('URL')
     }
 }
+
+check.finalizedBy ':postChecks'
 
