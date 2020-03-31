@@ -26,6 +26,11 @@ import kotlin.test.assertTrue
 
 
 class JvmTests {
+    val serializers = listOf(
+        KotlinxSerializer().apply { register(ThingSerializer) },
+        MoshiSerializer(),
+        GsonSerializer()
+    )
     val key = "aKey"
     var value = Obj(1)
     val clock = ManualClock()
@@ -42,84 +47,47 @@ class JvmTests {
     }
 
     @Test
-    fun `test_with_ktor`() {
-        shelf.serializer = GsonSerializer()
-
-        runBlocking {
+    fun `when_using_any_serializer_then_any_returned_values_match_the_stored_values`() {
+        serializers.forEach { serializer ->
             shelf.clear()
-            val start = Date().time
-            println(KtorThingService(shelf).getThingList())
-            println(KtorThingService(shelf).getThingList())
-            println(Date().time-start)
+            shelf.serializer = serializer.also { println("\n" + serializer::class.simpleName) }
+
+            listOf(1, true, "adsf", Thing("ADf")).forEach { value ->
+                shelf.item(key).apply {
+                    assertEquals(value, put(value).run { get(value::class) }.also { println("  $value") })
+                    assertTrue(has(value))
+                }
+
+                listOf(
+                    listOf(value, value, value),
+                    listOf()
+                ).forEach { list ->
+                    shelf.item(key).apply {
+                        assertEquals(list, put(list).run { getList(value::class) }.also { println("  $list") })
+                        assertTrue(has(list))
+                    }
+                }
+            }
+
+
+
+            Unit
         }
     }
+
 
     @Test
-    fun `when_using_MoshiSerializer_then_returned_values_match_the_stored_values`() {
-        shelf.serializer = MoshiSerializer()
-
-        with(shelf.item(key)) {
-            put(value)
-
-            assertTrue(has(value))
-            assertTrue(get<Obj>()?.let { has(it) } ?: false)
+    fun `test_with_ktor`() {
+        serializers.forEach {
+            runBlocking {
+                shelf.clear()
+                shelf.serializer = it
+                val start = Date().time
+                println(KtorThingService(shelf).getThingList())
+                println(KtorThingService(shelf).getThingList())
+                println(Date().time-start)
+            }
         }
-    }
-
-    @Test
-    fun `moshi_lists`() {
-        shelf.serializer = MoshiSerializer()
-
-        with(shelf.item(key)) {
-            val list = listOf(Obj(1), Obj(2))
-            put(list)
-
-            assertTrue(has(list))
-            assertTrue(getList<Obj>()?.let { has(it) } ?: false)
-
-            val list2 = listOf("ASDfadf")
-            put(list2)
-
-            assertTrue(has(list2))
-            assertTrue(getList<String>()?.let { has(it) } ?: false)
-        }
-
-        shelf.item("test").put(listOf(Thing("asdfd")))
-        println(shelf.item("test").get<List<Thing>>())
-    }
-
-    @Test fun gson() {
-        shelf.serializer = GsonSerializer()
-
-        with(shelf.item(key)) {
-            put(value)
-
-            assertTrue(has(value))
-            assertTrue(get<Obj>()?.let { has(it) } ?: false)
-        }
-    }
-
-    @Test
-    fun `gson_lists`() {
-        shelf.serializer = GsonSerializer()
-
-        with(shelf.item(key)) {
-            val list = listOf(Obj(1), Obj(2))
-            put(list)
-
-            assertTrue(has(list))
-            println(getList<Obj>())
-            assertTrue(getList<Obj>()?.let { has(it) } ?: false)
-
-            val list2 = listOf("ASDfadf")
-            put(list2)
-
-            assertTrue(has(list2))
-            assertTrue(getList<String>()?.let { has(it) } ?: false)
-        }
-
-        shelf.item("test").put(listOf(Thing("asdfd")))
-        println(shelf.item("test").get<List<Thing>>())
     }
 
     @Test
@@ -153,7 +121,7 @@ class KtorThingService(val shelf : Shelf) {
     suspend fun newThingList2() = client.response(request).readText()
     suspend fun getThingList() =
         shelf.item(request.url.buildString())
-            .apply { if (olderThan(60)) put(newThingList2()) }
+            .apply { if (olderThan(60)) { putRaw(newThingList2()) } }
             .getList<Thing>()
 }
 

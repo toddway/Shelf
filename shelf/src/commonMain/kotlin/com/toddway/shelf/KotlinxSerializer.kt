@@ -10,8 +10,7 @@ import kotlin.reflect.KClass
 class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer {
 
     override fun <T : Any> fromType(value: T): String {
-        return if (value is String) value
-        else json.stringify(findByValue(value), value)
+        return json.stringify(findByValue(value), value)
     }
 
     override fun <T : Any> toType(string: String, klass: KClass<T>): T {
@@ -33,7 +32,7 @@ class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Seriali
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> findByValue(value: T): KSerializer<T> {
         return if (value is List<*>) {
-            value.find { it != null }?.let { findByClass(it::class).list }
+            (value.firstOrNull()?.let { it::class } ?: String::class).let { findByClass(it).list }
         } else {
             findByClass(value::class)
         } as KSerializer<T>

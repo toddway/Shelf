@@ -17,8 +17,8 @@ open class Shelf(var storage : Storage, var serializer: Serializer, var clock : 
         fun <T : Any> has(value : T) = getRaw().equals(shelf.serializer.fromType(value))
         fun remove() = shelf.storage.remove(key)
         fun age() : Long? = try { shelf.storage.timestamp(key)?.let { shelf.clock.now() - it } } catch (e : Throwable) { null }
-        private fun getRaw() : String? = try { shelf.storage.get(key) } catch (e : Throwable) { null }
-        private fun putRaw(string : String) = shelf.storage.put(key, string, shelf.clock.now())
+        fun getRaw() : String? = try { shelf.storage.get(key) } catch (e : Throwable) { null }
+        fun putRaw(string : String) = shelf.storage.put(key, string, shelf.clock.now())
     }
 
     interface Storage {

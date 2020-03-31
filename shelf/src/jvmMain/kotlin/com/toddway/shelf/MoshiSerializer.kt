@@ -11,15 +11,14 @@ class MoshiSerializer(private val moshi : Moshi = Moshi.Builder().add(KotlinJson
 
     override fun <T : Any> fromType(value: T): String {
         return when (value) {
-            is String -> return value
-            is List<*> -> value.find { it != null }
-                ?.let { moshi.adapter<List<*>>(listType(it.javaClass)).toJson(value) }
-                ?: throw RuntimeException("Moshi toJson for List returned null")
+            is List<*> -> (value.firstOrNull()?.javaClass ?: String::class.java)
+                .let { moshi.adapter<List<*>>(listType(it)).toJson(value) }
             else -> moshi.adapter(value.javaClass).toJson(value)
         }
     }
 
     override fun <T : Any> toType(string: String, klass: KClass<T>): T {
+        @Suppress("UNCHECKED_CAST")
         return moshi.adapter(klass.java).fromJson(string)
             ?: throw RuntimeException("Moshi fromJson returned null")
     }
