@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MoshiSerializer.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shelf</a> &gt; <a href="index.source.html" class="el_package">com.toddway.shelf</a> &gt; <span class="el_source">MoshiSerializer.kt</span></div><h1>MoshiSerializer.kt</h1><pre class="source lang-java linenums">package com.toddway.shelf
+
+import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import java.lang.RuntimeException
+import kotlin.reflect.KClass
+
+<span class="fc" id="L9">class MoshiSerializer(private val moshi : Moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()) :</span>
+    Shelf.Serializer {
+
+    override fun &lt;T : Any&gt; fromType(value: T): String {
+<span class="fc" id="L13">        return when (value) {</span>
+<span class="pc bpc" id="L14" title="1 of 6 branches missed.">            is List&lt;*&gt; -&gt; (value.firstOrNull()?.javaClass ?: String::class.java)</span>
+<span class="fc" id="L15">                .let { moshi.adapter&lt;List&lt;*&gt;&gt;(listType(it)).toJson(value) }</span>
+<span class="fc" id="L16">            else -&gt; moshi.adapter(value.javaClass).toJson(value)</span>
+        }
+    }
+
+    override fun &lt;T : Any&gt; toType(string: String, klass: KClass&lt;T&gt;): T {
+        @Suppress(&quot;UNCHECKED_CAST&quot;)
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">        return moshi.adapter(klass.java).fromJson(string)</span>
+<span class="pc" id="L23">            ?: throw RuntimeException(&quot;Moshi fromJson returned null&quot;)</span>
+    }
+
+    override fun &lt;T : Any&gt; toTypeList(string: String, klass: KClass&lt;T&gt;): List&lt;T&gt; {
+<span class="pc bpc" id="L27" title="1 of 2 branches missed.">        return moshi.adapter&lt;List&lt;T&gt;&gt;(listType(klass.java)).fromJson(string)</span>
+<span class="pc" id="L28">            ?: throw RuntimeException(&quot;Moshi fromJson returned null&quot;)</span>
+    }
+
+    private fun &lt;T : Any&gt; listType(type : Class&lt;T&gt;) =
+<span class="fc" id="L32">        Types.newParameterizedType(List::class.java, type)</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>

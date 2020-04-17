@@ -1,0 +1,7 @@
+TooGenericExceptionCaught - [e] at /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:19:105 - Signature=Shelf.kt$Shelf.Item$e : Throwable
+TooGenericExceptionCaught - [e] at /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:20:72 - Signature=Shelf.kt$Shelf.Item$e : Throwable
+TooGenericExceptionThrown - [findByClass] at /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/KotlinxSerializer.kt:45:13 - Signature=KotlinxSerializer.kt$KotlinxSerializer$throw RuntimeException("For top-level Lists, use Shelf.Item.getList() instead of Shelf.Item.get()")
+TooGenericExceptionThrown - [findByClass] at /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/KotlinxSerializer.kt:49:16 - Signature=KotlinxSerializer.kt$KotlinxSerializer$throw RuntimeException("No serializer for: $klass. Use KotlinxSerializer.register() to add one")
+TooGenericExceptionThrown - [toType] at /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/MoshiSerializer.kt:23:16 - Signature=MoshiSerializer.kt$MoshiSerializer$throw RuntimeException("Moshi fromJson returned null")
+TooGenericExceptionThrown - [toTypeList] at /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/MoshiSerializer.kt:28:16 - Signature=MoshiSerializer.kt$MoshiSerializer$throw RuntimeException("Moshi fromJson returned null")
+NewLineAtEndOfFile - [GsonSerializer.kt] at /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/GsonSerializer.kt:22:1 - Signature=GsonSerializer.kt$com.toddway.shelf.GsonSerializer.kt

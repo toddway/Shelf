@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<checkstyle version="4.3">
+<file name="/Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt">
+	<error line="19" column="105" severity="error" message="Caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled." source="detekt.TooGenericExceptionCaught" />
+	<error line="20" column="72" severity="error" message="Caught exception is too generic. Prefer catching specific exceptions to the case that is currently handled." source="detekt.TooGenericExceptionCaught" />
+</file>
+<file name="/Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/KotlinxSerializer.kt">
+	<error line="45" column="13" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="49" column="16" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+</file>
+<file name="/Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/MoshiSerializer.kt">
+	<error line="23" column="16" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+	<error line="28" column="16" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
+</file>
+<file name="/Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/GsonSerializer.kt">
+	<error line="22" column="1" severity="warning" message="The file GsonSerializer.kt is not ending with a new line." source="detekt.NewLineAtEndOfFile" />
+</file>
+</checkstyle>

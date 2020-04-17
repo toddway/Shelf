@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Shelf.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shelf</a> &gt; <a href="index.source.html" class="el_package">com.toddway.shelf</a> &gt; <span class="el_source">Shelf.kt</span></div><h1>Shelf.kt</h1><pre class="source lang-java linenums">package com.toddway.shelf
+
+import kotlin.native.concurrent.ThreadLocal
+import kotlin.reflect.KClass
+
+<span class="pc" id="L6">open class Shelf(var storage : Storage, var serializer: Serializer, var clock : Clock = Clock()) {</span>
+<span class="fc" id="L7">    fun item(key: String) = Item(key, this)</span>
+<span class="fc" id="L8">    fun all() = storage.keys().map { item(it) }.toSet()</span>
+<span class="fc" id="L9">    fun clear() = all().forEach { it.remove() }</span>
+
+<span class="fc" id="L11">    @ThreadLocal companion object : Shelf(DiskStorage(), KotlinxSerializer())</span>
+
+<span class="fc" id="L13">    class Item(val key: String, val shelf: Shelf) {</span>
+<span class="fc bfc" id="L14" title="All 2 branches covered.">        fun &lt;T : Any&gt; get(type : KClass&lt;T&gt;) : T? = getRaw()?.let { shelf.serializer.toType(it, type) }</span>
+<span class="pc bpc" id="L15" title="1 of 2 branches missed.">        fun &lt;T : Any&gt; getList(type : KClass&lt;T&gt;) : List&lt;T&gt;? = getRaw()?.let { shelf.serializer.toTypeList(it, type) }</span>
+<span class="fc" id="L16">        fun &lt;T : Any&gt; put(value : T) : T = putRaw(shelf.serializer.fromType(value)).let { return value }</span>
+<span class="fc" id="L17">        fun &lt;T : Any&gt; has(value : T) = getRaw().equals(shelf.serializer.fromType(value))</span>
+<span class="fc" id="L18">        fun remove() = shelf.storage.remove(key)</span>
+<span class="pc bfc" id="L19" title="All 2 branches covered.">        fun age() : Long? = try { shelf.storage.timestamp(key)?.let { shelf.clock.now() - it } } catch (e : Throwable) { null }</span>
+<span class="fc" id="L20">        fun getRaw() : String? = try { shelf.storage.get(key) } catch (e : Throwable) { null }</span>
+<span class="fc" id="L21">        fun putRaw(string : String) = shelf.storage.put(key, string, shelf.clock.now())</span>
+    }
+
+    interface Storage {
+        fun get(key: String): String?
+        fun put(key: String, value: String, timestamp : Long)
+        fun timestamp(key: String) : Long?
+        fun keys(): Set&lt;String&gt;
+        fun remove(key: String)
+    }
+
+    interface Serializer {
+        fun &lt;T : Any&gt; fromType(value : T) : String
+        fun &lt;T : Any&gt; toType(string : String, klass : KClass&lt;T&gt;) : T
+        fun &lt;T : Any&gt; toTypeList(string: String, klass: KClass&lt;T&gt;): List&lt;T&gt;
+    }
+}
+
+expect open class DiskStorage : Shelf.Storage
+
+expect open class Clock {
+    open fun now() : Long
+}
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">fun Collection&lt;String&gt;.toShelfKeys() = filter { it.endsWith(&quot;.shelf&quot;) }.map { it.replace(&quot;.shelf&quot;, &quot;&quot;) }.toSet()</span>
+<span class="fc" id="L46">fun String.dotShelf() = &quot;$this.shelf&quot;</span>
+<span class="nc" id="L47">fun String.dotDate() = &quot;$this.date&quot;</span>
+
+<span class="pc bpc" id="L49" title="1 of 4 branches missed.">fun Shelf.Item.olderThan(seconds : Long) = age()?.let { it &gt; seconds } ?: true</span>
+
+<span class="nc" id="L51">inline fun &lt;reified T : Any&gt; Shelf.Item.get() : T? = get(T::class)</span>
+<span class="nc" id="L52">inline fun &lt;reified T : Any&gt; Shelf.Item.getList() : List&lt;T&gt;? = getList(T::class)</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.3.201901230119</span></div></body></html>
