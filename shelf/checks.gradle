@@ -47,5 +47,30 @@ detekt {
     }
 }
 
+apply plugin: 'cpd'
+cpd {
+    language = 'kotlin'
+    toolVersion = '6.13.0'
+}
+
+cpdCheck {
+    group = "verification"
+
+    ignoreFailures true
+
+    def classes = fileTree("$projectDir/src/jvmMain/kotlin")
+    classes += fileTree("$projectDir/src/commonMain/kotlin")
+    source = classes
+
+    skipLexicalErrors true
+
+    reports {
+        text.enabled = true
+        xml.enabled = true
+    }
+}
+
 check.dependsOn(coverage)
 check.dependsOn(detektCheck)
+check.dependsOn(':cpdCheck')
+check.finalizedBy ':printChecks'

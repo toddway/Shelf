@@ -124,6 +124,3 @@ buildkonfig {
         buildConfigField 'STRING', 'url', project.getProp('URL')
     }
 }
-
-check.finalizedBy ':postChecks'
-

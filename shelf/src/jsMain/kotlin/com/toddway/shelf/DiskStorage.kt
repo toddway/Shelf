@@ -35,7 +35,7 @@ open class LocalStorage(private val delegate : Storage = localStorage) : Shelf.S
     }
 }
 
-actual open class Clock actual constructor() {
+actual open class Clock {
     actual open fun now() = Date.now().toLong() / 1000
 }
 

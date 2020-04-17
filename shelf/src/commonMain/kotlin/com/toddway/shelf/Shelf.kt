@@ -36,9 +36,9 @@ open class Shelf(var storage : Storage, var serializer: Serializer, var clock : 
     }
 }
 
-expect open class DiskStorage() : Shelf.Storage
+expect open class DiskStorage : Shelf.Storage
 
-expect open class Clock() {
+expect open class Clock {
     open fun now() : Long
 }
 

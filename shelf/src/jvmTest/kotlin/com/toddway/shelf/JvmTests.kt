@@ -52,26 +52,26 @@ class JvmTests {
             shelf.clear()
             shelf.serializer = serializer.also { println("\n" + serializer::class.simpleName) }
 
-            listOf(1, true, "adsf", Thing("ADf")).forEach { value ->
-                shelf.item(key).apply {
-                    assertEquals(value, put(value).run { get(value::class) }.also { println("  $value") })
-                    assertTrue(has(value))
-                }
-
-                listOf(
-                    listOf(value, value, value),
-                    listOf()
-                ).forEach { list ->
-                    shelf.item(key).apply {
-                        assertEquals(list, put(list).run { getList(value::class) }.also { println("  $list") })
-                        assertTrue(has(list))
-                    }
-                }
-            }
-
-
+            listOf(1, true, "adsf", Thing("ADf")).forEach { v -> assertValue(v) }
 
             Unit
+        }
+    }
+
+    fun assertValue(v : Any) {
+        shelf.item(key).apply {
+            assertEquals(v, put(v).run { get(v::class) }.also { println("  $v") })
+            assertTrue(has(v))
+        }
+
+        listOf(
+            listOf(v, v, v),
+            listOf()
+        ).forEach { list ->
+            shelf.item(key).apply {
+                assertEquals(list, put(list).run { getList(v::class) }.also { println("  $list") })
+                assertTrue(has(list))
+            }
         }
     }
 

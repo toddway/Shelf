@@ -3,6 +3,7 @@ package com.toddway.shelf
 import kotlinx.serialization.Serializable
 import kotlin.test.*
 
+@Suppress("TooManyFunctions")
 class ShelfTests {
     val key = "aKey"
     var value = Obj(1)
@@ -188,8 +189,6 @@ class ShelfTests {
             assertTrue(getList<String>()?.let { has(it) } ?: false)
         }
     }
-
-    //todo test not registered
 }
 
 open class MemoryStorage : Shelf.Storage {

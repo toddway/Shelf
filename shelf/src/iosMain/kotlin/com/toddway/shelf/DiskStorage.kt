@@ -30,6 +30,6 @@ open class UserDefaultsStorage(private val delegate: NSUserDefaults = NSUserDefa
     }
 }
 
-actual open class Clock actual constructor() {
+actual open class Clock {
     actual open fun now() = NSDate().timeIntervalSince1970.toLong()
 }
