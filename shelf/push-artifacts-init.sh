@@ -1,18 +1,24 @@
 #!/bin/bash
 
-# run this from the root directory of your git working copy
+######
+# Run this script from the root directory of the git working copy
+######
 
-TEMP_CLONE_PATH=/tmp/artifacts
+######
 ROOT=$PWD
-ROOT_HASH=$(git rev-parse HEAD)
-ROOT_URL_FULL=$(git config --get remote.origin.url)
-ROOT_URL=${ROOT_URL_FULL%.git*}
+
+# If you use SSH in your config, you will need to manually set this to the HTTPS path
+REMOTE_ORIGIN_FULL=$(git config --get remote.origin.url)
+
+# The temporary folder where the orphan branch will be cloned
+TEMP_CLONE_PATH=/tmp/artifacts
+######
 
 echo "✓ Create temp clone and checkout artifacts branch..."
 rm -rf $TEMP_CLONE_PATH
 mkdir $TEMP_CLONE_PATH
 cd $TEMP_CLONE_PATH
-git clone $ROOT_URL_FULL $TEMP_CLONE_PATH --depth 1
+git clone $REMOTE_ORIGIN_FULL $TEMP_CLONE_PATH --depth 1
 git checkout --orphan artifacts
 
 echo "✓ Remove old files from temp clone..."
@@ -65,12 +71,14 @@ cat > $TEMP_CLONE_PATH/index.html <<'EOF'
 EOF
 
 echo "✓ Commit and push new files..."
+ROOT_HASH=$(git rev-parse HEAD)
 cd $TEMP_CLONE_PATH
 git add .
-git commit -m "from push-artifacts-init.sh $ROOT_HASH"
-git push --set-upstream origin artifacts
+#git commit -m "from push-artifacts-init.sh $ROOT_HASH"
+#git push --set-upstream origin artifacts
 
 echo "✓ Echo links to commit..."
+REMOTE_ORIGIN=${REMOTE_ORIGIN_FULL%.git*}
 NEW_HASH=$(git rev-parse HEAD)
-echo "Web:" $ROOT_URL/tree/$NEW_HASH
-echo "Download:" $ROOT_URL/archive/$NEW_HASH.zip
+echo "Web:" $REMOTE_ORIGIN/tree/$NEW_HASH
+echo "Download:" $REMOTE_ORIGIN/archive/$NEW_HASH.zip
