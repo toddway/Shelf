@@ -34,8 +34,8 @@ echo "✓ Commit and push new files..."
 ROOT_HASH=$(git rev-parse HEAD)
 cd $TEMP_CLONE_PATH
 git add .
-#git commit -m "from push-artifacts.sh $ROOT_HASH"
-#git push
+git commit -m "from push-artifacts.sh $ROOT_HASH"
+git push
 
 echo "✓ Echo links to commit..."
 cd $TEMP_CLONE_PATH

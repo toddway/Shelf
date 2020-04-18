@@ -74,8 +74,8 @@ echo "✓ Commit and push new files..."
 ROOT_HASH=$(git rev-parse HEAD)
 cd $TEMP_CLONE_PATH
 git add .
-#git commit -m "from push-artifacts-init.sh $ROOT_HASH"
-#git push --set-upstream origin artifacts
+git commit -m "from push-artifacts-init.sh $ROOT_HASH"
+git push --set-upstream origin artifacts
 
 echo "✓ Echo links to commit..."
 REMOTE_ORIGIN=${REMOTE_ORIGIN_FULL%.git*}
