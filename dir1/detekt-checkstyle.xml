@@ -12,7 +12,4 @@
 	<error line="23" column="16" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
 	<error line="28" column="16" severity="error" message="RuntimeException is a too generic Exception. Prefer throwing specific exceptions that indicate a specific error case." source="detekt.TooGenericExceptionThrown" />
 </file>
-<file name="/Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/GsonSerializer.kt">
-	<error line="22" column="1" severity="warning" message="The file GsonSerializer.kt is not ending with a new line." source="detekt.NewLineAtEndOfFile" />
-</file>
 </checkstyle>
