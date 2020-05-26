@@ -5,17 +5,23 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 ## Basic usage
 
-Store any type to disk
+Initialize a shelf
+```kotlin
+val shelf = Shelf(FileStorage(...), KotlinxSerializer())
+```
+
+Store an object instance
 ```kotlin
 data class Thing(val id : Int, val name : String) //my custom type
-val shelf = Shelf(FileStorage(...), KotlinxSerializer())
+
 shelf.item("thing").put(Thing(1, "thing 1"))
 ```
 
 Get a previously stored item
 ```kotlin
 val thing = shelf.item("thing").get<Thing>()
-print(thing.name) //prints: thing 1
+
+print(thing.name) //prints "thing 1"
 ```
 
 Store and get typed lists
@@ -94,6 +100,8 @@ val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
 repositories {
     jcenter()
 }
+
+def shelf_version = "x.y.z"
 ```
 
 Android/JVM source set
