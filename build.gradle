@@ -16,7 +16,7 @@ buildscript {
 }
 
 plugins {
-    id "com.toddway.buildchecks" version "1.12"
+    id "com.toddway.buildchecks" version "2.10"
     id "io.gitlab.arturbosch.detekt" version "1.0.0.RC8"
     id 'de.aaschmid.cpd' version '2.0'
     id "com.jfrog.bintray" version "1.8.3"
@@ -35,22 +35,11 @@ task clean(type: Delete) {
 }
 
 def getProp(name) {
-    Properties properties = new Properties()
-    def propertiesFile = project.rootProject.file('local.properties')
-    if (propertiesFile.exists()) {
-        properties.load(propertiesFile.newDataInputStream())
-    }
-    return properties.getProperty(name)
+    Properties props = new Properties()
+    def file = project.rootProject.file('local.properties')
+    if (file.exists()) props.load(file.newDataInputStream())
+    return props.getProperty(name)
 }
 
+apply from: 'gradle/buildChecks.gradle'
 
-buildChecks {
-    baseUrl = getProp("baseUrl")
-    authorization = getProp("auth")
-    buildUrl = getProp("buildUrl")
-    jacocoReports = "$projectDir/shelf/build/reports/coverage/coverage.xml"
-    checkstyleReports = "$projectDir/shelf/build/reports/detekt-checkstyle.xml"
-    cpdReports = "$projectDir/shelf/build/reports/cpd/cpdCheck.xml"
-}
-
-postChecks.dependsOn('shelf:check')

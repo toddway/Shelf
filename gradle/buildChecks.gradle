@@ -1,0 +1,9 @@
+apply plugin: 'com.toddway.buildchecks'
+
+buildChecks {
+    baseUrl = project.getProp("buildChecks.baseUrl")
+    authorization = project.getProp("buildChecks.auth")
+    buildUrl = project.getProp("buildChecks.buildUrl")
+    reports = "$projectDir/shelf/build/reports"
+    artifactsBranch = "artifacts"
+}
