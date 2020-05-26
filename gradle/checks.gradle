@@ -41,7 +41,7 @@ detekt {
     version = "1.0.0.RC8"
     profile("main") {
         input = "$projectDir"
-        config = "$projectDir/detekt.yml"
+        config = "$projectDir/../gradle/detekt.yml"
         filters = ".*test.*,.*/resources/.*,.*/tmp/.*"
         output = "$projectDir/build/reports"
     }
@@ -70,7 +70,9 @@ cpdCheck {
     }
 }
 
-check.dependsOn(coverage)
-check.dependsOn(detektCheck)
-check.dependsOn(':cpdCheck')
-check.finalizedBy ':printChecks'
+task checks {
+    dependsOn 'coverage'
+    dependsOn 'detektCheck'
+    dependsOn 'cpdCheck'
+    finalizedBy ':printChecks'
+}

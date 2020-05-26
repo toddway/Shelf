@@ -5,24 +5,26 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 ## Basic usage
 
-Store an object
+Store any type to disk
 ```kotlin
-val shelf = Shelf(FileStorage(File(...)), KotlinxSerializer())
-shelf.item("thing").put(Thing(...))
+data class Thing(val id : Int, val name : String) //my custom type
+val shelf = Shelf(FileStorage(...), KotlinxSerializer())
+shelf.item("thing").put(Thing(1, "thing 1"))
 ```
 
-Get it
+Get a previously stored item
 ```kotlin
 val thing = shelf.item("thing").get<Thing>()
+print(thing.name) //prints: thing 1
 ```
 
-Get typed lists
+Store and get typed lists
 ```kotlin
 shelf.item("things").put(listOf(Thing(...), Thing(...))
 val things = shelf.item("things").getList<Thing>()
 ```
 
-If data is older than 60 seconds, load new
+Get a previously stored item from disk unless it is older than 60 seconds
 ```kotlin
 fun newListOfThings() : List<Thing> = ...
 
@@ -32,12 +34,12 @@ fun getListOfThings() =
         .getList<Thing>()
 ```
 
-Remove it
+Remove an item
 ```kotlin
 shelf.item("thing").remove()
 ```
 
-Remove all
+Remove all items
 ```kotlin
 shelf.clear()
 ```
@@ -65,7 +67,7 @@ shelf.serializer = KotlinxSerializer().apply {
 }
 ```
 
-For JVM targets, there is also a `MoshiSerializer` for [Moshi](https://github.com/square/moshi) and a `GsonSerializer` for [Gson]()https://github.com/google/gson.
+For JVM targets, there is also a `MoshiSerializer` for [Moshi](https://github.com/square/moshi) and a `GsonSerializer` for [Gson](https://github.com/google/gson).
 
 ## Storage
 The `DiskStorage` class depends on delegates for each platform.
@@ -92,7 +94,14 @@ val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
 repositories {
     jcenter()
 }
-```    
+```
+
+Android/JVM source set
+```groovy
+dependencies {
+    implementation 'com.toddway.shelf:shelf-jvm:$shelf_version'
+}
+```
 
 Common multiplatform source set
 ```groovy
@@ -105,13 +114,6 @@ iOS/Native source set
 ```groovy
 dependencies {
     implementation 'com.toddway.shelf:shelf-ios:$shelf_version'
-}
-```
-
-Android/JVM source set
-```groovy
-dependencies {
-    implementation 'com.toddway.shelf:shelf-jvm:$shelf_version'
 }
 ```
 
