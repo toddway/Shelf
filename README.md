@@ -141,16 +141,10 @@ The library has common tests that can be run (and should pass) on a local JVM:
 ./gradlew jvmTest
 ```
  
-a local iOS simulator:
+and a local iOS simulator:
 ```
 ./gradlew iosTest
 ```
-  
-and a local web browser:
-```
-./gradlew karma-run-single
-```
-
 
 License
 -------
