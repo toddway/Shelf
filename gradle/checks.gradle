@@ -73,6 +73,6 @@ cpdCheck {
 task checks {
     dependsOn 'coverage'
     dependsOn 'detektCheck'
-    dependsOn 'cpdCheck'
+    dependsOn ':cpdCheck'
     finalizedBy ':printChecks'
 }

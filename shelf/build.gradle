@@ -90,26 +90,12 @@ task iosTest {
     }
 }
 
-apply plugin: 'org.jetbrains.kotlin.frontend'
-kotlinFrontend {
-    npm {
-        devDependency("karma")
-    }
-
-    sourceMaps = true
-
-    webpackBundle {
-        bundleName = "main"
-        proxyUrl = "http://localhost:8080"
-    }
-}
-
 apply plugin: 'com.codingfeline.buildkonfig'
 buildkonfig {
     packageName = 'com.toddway.shelf'
     defaultConfigs {
-        buildConfigField 'STRING', 'token', project.getProp('TOKEN')
-        buildConfigField 'STRING', 'url', project.getProp('URL')
+        buildConfigField 'STRING', 'token', project.getProp('TOKEN') ?: ""
+        buildConfigField 'STRING', 'url', project.getProp('URL') ?: "http://localhost"
     }
 }
 

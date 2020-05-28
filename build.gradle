@@ -10,7 +10,6 @@ buildscript {
         classpath 'com.android.tools.build:gradle:3.3.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-serialization:$kotlin_version"
-        classpath "org.jetbrains.kotlin:kotlin-frontend-plugin:0.0.45"
         classpath 'com.codingfeline.buildkonfig:buildkonfig-gradle-plugin:0.3.1'
     }
 }

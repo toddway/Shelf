@@ -19,10 +19,7 @@ import kotlinx.serialization.json.Json
 import kotlinx.serialization.list
 import java.io.File
 import java.util.*
-import kotlin.test.BeforeTest
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 
 class JvmTests {
@@ -77,6 +74,7 @@ class JvmTests {
 
 
     @Test
+    @Ignore
     fun `test_with_ktor`() {
         serializers.forEach {
             runBlocking {
