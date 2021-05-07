@@ -1,0 +1,24 @@
+apply plugin: 'io.gitlab.arturbosch.detekt'
+
+def getIncludeFiles() {
+    return project.ext.changeList != null
+            ? files(project.changeList.size == 0
+                ? "$projectDir/src/main/res"
+                : project.changeList.collect{ value -> "$rootDir/$value"})
+            : files("$projectDir/src/main/java", "$projectDir/src/main/kotlin")
+}
+
+detekt {
+    input = getIncludeFiles()
+    config = files("$projectDir/../gradle/detekt-config.yml")
+    reports {
+        xml {
+            enabled = true
+            destination = file("$projectDir/build/reports/detekt.xml")
+        }
+        html {
+            enabled = true
+            destination = file("$projectDir/build/reports/detekt.html")
+        }
+    }
+}

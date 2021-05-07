@@ -1,24 +1,27 @@
 package com.toddway.shelf
 
+
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.internal.defaultSerializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
-import kotlin.collections.set
+import kotlinx.serialization.serializerOrNull
 import kotlin.reflect.KClass
 
-class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Serializer {
+
+@InternalSerializationApi
+class KotlinxSerializer(private val json: Json = Json.Default) : Shelf.Serializer {
 
     override fun <T : Any> fromType(value: T): String {
-        return json.stringify(findByValue(value), value)
+        return json.encodeToString(findByValue(value), value)
     }
 
     override fun <T : Any> toType(string: String, klass: KClass<T>): T {
-        return json.parse(findByClass(klass), string)
+        return json.decodeFromString(findByClass(klass), string)
     }
 
     override fun <T : Any> toTypeList(string: String, klass: KClass<T>): List<T> {
-        return json.parse(findByClass(klass).list, string)
+        return json.decodeFromString(ListSerializer(findByClass(klass)), string)
     }
 
     private val serializers: MutableMap<KClass<*>, KSerializer<*>> = mutableMapOf()
@@ -32,7 +35,7 @@ class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Seriali
     @Suppress("UNCHECKED_CAST")
     private fun <T : Any> findByValue(value: T): KSerializer<T> {
         return if (value is List<*>) {
-            (value.firstOrNull()?.let { it::class } ?: String::class).let { findByClass(it).list }
+            ListSerializer(findByClass((value.firstOrNull()?.let { it::class } ?: String::class)))
         } else {
             findByClass(value::class)
         } as KSerializer<T>
@@ -45,7 +48,7 @@ class KotlinxSerializer(private val json: Json = Json.nonstrict) : Shelf.Seriali
             throw RuntimeException("For top-level Lists, use Shelf.Item.getList() instead of Shelf.Item.get()")
 
         return serializers[klass]?.let { return it as KSerializer<T> }
-            ?: klass.defaultSerializer()
+            ?: klass.serializerOrNull()
             ?: throw RuntimeException("No serializer for: $klass.  Use KotlinxSerializer.register() to add one")
     }
 }
