@@ -2,15 +2,14 @@
 <style>body {font-family: Helvetica, Arial, sans-serif;line-height:160%;padding:20px} a:link{text-decoration:none}</style>
 <body>
 <h1>Build Summary</h1>
-✔ 0.09s for gradle pushArtifacts<br/>
-✔ 86.96% coverage (115 lines+branches)<br/>
-✔ 6 violations (6 error)<br/>
-<ul><li><a href="dir1/detekt-report.html">dir1/detekt-report.html</a></li>
+✔ 0.19s for gradle pushArtifacts<br/>
+✔ 87.4% coverage (127 lines+branches)<br/>
+✔ 0 violations<br/>
+<ul><li><a href="dir1/tests/jsTest/index.html">dir1/tests/jsTest</a></li>
 <li><a href="dir1/tests/jvmTest/index.html">dir1/tests/jvmTest</a></li>
-<li><a href="dir1/cpd/cpdCheck.text">dir1/cpd/cpdCheck.text</a></li>
-<li><a href="dir1/detekt-plain.txt">dir1/detekt-plain.txt</a></li>
-<li><a href="dir1/coverage/html/index.html">dir1/coverage/html</a></li>
-<li><a href="dir1/coverage/html/jacoco-sessions.html">dir1/coverage/html/jacoco-sessions.html</a></li></ul>
+<li><a href="dir1/tests/allTests/index.html">dir1/tests/allTests</a></li>
+<li><a href="dir1/jvmTestCoverage/html/index.html">dir1/jvmTestCoverage/html</a></li>
+<li><a href="dir1/jvmTestCoverage/html/jacoco-sessions.html">dir1/jvmTestCoverage/html/jacoco-sessions.html</a></li></ul>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
 <canvas id="myChart" style="max-width:1000px"></canvas>
@@ -20,10 +19,10 @@ function unixDate(stamp) {
 	return moment.unix(stamp).format(timeFormat);
 }
 
-var coverageData = [{ x:unixDate("1587226861"), y:86.96 }];
-var linePlusBranchData = [{ x:unixDate("1587226861"), y:115 }];
-var durationData = [{ x:unixDate("1587226861"), y:0.09 }];
-var violationData = [{ x:unixDate("1587226861"), y:6 }];
+var coverageData = [{ x:unixDate("1587226861"), y:86.96 },{ x:unixDate("1620397942"), y:87.4 }];
+var linePlusBranchData = [{ x:unixDate("1587226861"), y:115 },{ x:unixDate("1620397942"), y:127 }];
+var durationData = [{ x:unixDate("1587226861"), y:0.09 },{ x:unixDate("1620397942"), y:0.15 }];
+var violationData = [{ x:unixDate("1587226861"), y:6 },{ x:unixDate("1620397942"), y:0 }];
 
 window.chartColor = {
 	red: 'rgb(255, 99, 132)',
@@ -138,8 +137,8 @@ var config = {
 var chart = new Chart(document.getElementById('myChart').getContext('2d'), config);
 </script>
 <p style="color:grey;font-size:11px">
-Generated using a010919 multiplatform at 4/18/20 11:21 AM 
-from dir1/detekt-checkstyle.xml, dir1/cpd/cpdCheck.xml, dir1/coverage/coverage.xml
+Generated using 7422452 multiplatform at 5/7/21, 9:32 AM 
+from dir1/jvmTestCoverage/jvmTestCoverage.xml
 </p>
 </body>
 </html>

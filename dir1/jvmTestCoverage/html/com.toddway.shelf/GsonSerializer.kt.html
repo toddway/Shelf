@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GsonSerializer.kt</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">shelf</a> &gt; <a href="index.source.html" class="el_package">com.toddway.shelf</a> &gt; <span class="el_source">GsonSerializer.kt</span></div><h1>GsonSerializer.kt</h1><pre class="source lang-java linenums">package com.toddway.shelf
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import kotlin.reflect.KClass
+
+<span class="pc" id="L7">class GsonSerializer(val gson : Gson = Gson()) : Shelf.Serializer {</span>
+    override fun &lt;T : Any&gt; fromType(value: T): String {
+<span class="fc" id="L9">        return gson.toJson(value)</span>
+    }
+
+    override fun &lt;T : Any&gt; toType(string: String, klass: KClass&lt;T&gt;): T {
+<span class="fc" id="L13">        return gson.fromJson(string, klass.java)</span>
+    }
+
+    override fun &lt;T : Any&gt; toTypeList(string: String, klass: KClass&lt;T&gt;): List&lt;T&gt; {
+<span class="fc" id="L17">        return gson.fromJson&lt;List&lt;T&gt;&gt;(string, listType(klass.java))</span>
+    }
+
+    private fun &lt;T : Any&gt; listType(type : Class&lt;T&gt;) =
+<span class="fc" id="L21">        TypeToken.getParameterized(List::class.java, type).type</span>
+<span class="fc" id="L22">}</span>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
