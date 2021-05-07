@@ -1,9 +1,9 @@
 apply plugin: 'com.toddway.buildchecks'
 
 buildChecks {
-    baseUrl = project.getProp("buildChecks.baseUrl") ?: "http://localhost/"
-    authorization = project.getProp("buildChecks.auth") ?: ""
-    buildUrl = project.getProp("buildChecks.buildUrl") ?: "http://localhost/"
+    baseUrl = buildChecksBaseUrl ?: "http://localhost/"
+    authorization = buildChecksAuth ?: ""
+    buildUrl = buildChecksBuildUrl ?: "http://localhost/"
     reports = "$projectDir/shelf/build/reports"
     artifactsBranch = "artifacts"
 }

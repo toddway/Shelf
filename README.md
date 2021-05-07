@@ -98,7 +98,7 @@ val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
 
 ```groovy
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 def shelf_version = "x.y.z"
@@ -132,19 +132,24 @@ dependencies {
 }
 ```
 
+## For library developers
 
+### Build checks
+The following command runs all configured tests and code analyzers.  The output is a summary of
+results with a link to view HTML reports in a browser
+```
+./gradlew checks
+```
 
-## Running tests
-The library has common tests that can be run (and should pass) on a local JVM:
-
+### Publishing
+This library now publishes to Sonatype/Maven Central using the [gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin#where-to-upload-to).  
+It was previously published to Bintray/JCenter until that service was retired.
+To publish a new version, update the VERSION_NAME in [gradle.properties](gradle.properties), then run:
 ```
-./gradlew jvmTest
+./gradlew publish --no-daemon --no-parallel
+./gradlew closeAndReleaseRepository
 ```
- 
-and a local iOS simulator:
-```
-./gradlew iosTest
-```
+  
 
 License
 -------

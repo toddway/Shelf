@@ -72,7 +72,6 @@ class JvmTests {
         }
     }
 
-
     @Test
     fun `test_with_ktor`() {
         serializers.forEach {
