@@ -1,0 +1,6 @@
+Properties props = new Properties()
+def file = file("$rootDir/local.properties")
+if (file.exists()) {
+    props.load(file.newDataInputStream())
+    props.each { prop -> ext.set(prop.key, prop.value)}
+}

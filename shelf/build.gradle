@@ -1,6 +1,6 @@
 apply plugin: 'kotlin-multiplatform'
 apply plugin: 'kotlinx-serialization'
-apply from: '../gradle/publish.gradle'
+apply plugin: "com.vanniktech.maven.publish"
 
 kotlin {
     iosX64('ios')
@@ -62,46 +62,19 @@ kotlin {
     }
 }
 
-
-
-// workaround for https://youtrack.jetbrains.com/issue/KT-27170
-configurations {
-    compileClasspath
-}
-
-[compileKotlinJs, compileTestKotlinJs]*.configure {
-    kotlinOptions {
-        moduleKind = "umd"
-    }
-}
-
-task iosTests {
-    def device = project.findProperty("iosDevice")?.toString() ?: "iPhone XR"
-    dependsOn 'linkTestDebugExecutableIos'
-    group = JavaBasePlugin.VERIFICATION_GROUP
-    description = "Runs tests for target 'ios' on an iOS simulator"
-
-    doLast {
-        def binary = kotlin.targets.ios.binaries.getExecutable('test', 'DEBUG').outputFile
-        println(binary.absolutePath)
-        exec {
-            commandLine 'xcrun', 'simctl', 'spawn', device, binary.absolutePath
-        }
-    }
-}
-
 apply plugin: 'com.codingfeline.buildkonfig'
 buildkonfig {
     packageName = 'com.toddway.shelf'
     defaultConfigs {
-        buildConfigField 'STRING', 'token', project.getProp('TOKEN') ?: ""
-        buildConfigField 'STRING', 'url', project.getProp('URL') ?: "http://localhost"
+        buildConfigField 'STRING', 'token', buildkonfigToken ?: ""
+        buildConfigField 'STRING', 'url', buildkonfigUrl ?: "http://localhost"
     }
 }
 
 apply from: '../gradle/checks.gradle'
 task checks {
     dependsOn 'allTests'
+    dependsOn 'jvmTestCoverage'
     dependsOn 'cpdCheck'
     dependsOn 'detekt'
     finalizedBy ':printChecks'
