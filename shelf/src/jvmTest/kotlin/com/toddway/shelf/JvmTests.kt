@@ -14,9 +14,10 @@ import io.ktor.client.response.HttpResponse
 import io.ktor.client.response.readText
 import io.ktor.http.HttpHeaders
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializer
+import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.list
 import java.io.File
 import java.util.*
 import kotlin.test.*
@@ -24,7 +25,6 @@ import kotlin.test.*
 
 class JvmTests {
     val serializers = listOf(
-        KotlinxSerializer().apply { register(ThingSerializer) },
         MoshiSerializer(),
         GsonSerializer()
     )
@@ -33,7 +33,7 @@ class JvmTests {
     val clock = ManualClock()
     val shelf = Shelf(
         FileStorage(File("/tmp")),
-        KotlinxSerializer().apply { register(ThingSerializer) },
+        MoshiSerializer(),
         clock
     )
     val invalidKey = "Here.Is-An\uD83D\uDC4D\uD83C\uDFFDInvalid.:%$&$^:\"File_Name!!!"
@@ -74,7 +74,6 @@ class JvmTests {
 
 
     @Test
-    @Ignore
     fun `test_with_ktor`() {
         serializers.forEach {
             runBlocking {
@@ -94,7 +93,8 @@ class JvmTests {
         assertEquals("Here.Is-An__Invalid.________File_Name___.shelf", result.name)
     }
 
-    @Test fun `when_item_is_put_and_the_key_has_invalid_characters_then_the_same_invalid_key_can_be_used_to_get_the_value`() {
+    @Test
+    fun `when_item_is_put_and_the_key_has_invalid_characters_then_the_same_invalid_key_can_be_used_to_get_the_value`() {
         shelf.serializer = MoshiSerializer()
         shelf.item(invalidKey).put(value)
         assertEquals(value, shelf.item(invalidKey).get()!!)
@@ -115,7 +115,7 @@ class KtorThingService(val shelf : Shelf) {
         header(HttpHeaders.CacheControl, "no-cache")
     }
 
-    suspend fun newThingList() = Json.nonstrict.parse(ThingSerializer.list, newThingList2())
+    suspend fun newThingList() = Json.Default.decodeFromString(ListSerializer(ThingSerializer), newThingList2())
     suspend fun newThingList2() = client.response(request).readText()
     suspend fun getThingList() =
         shelf.item(request.url.buildString())

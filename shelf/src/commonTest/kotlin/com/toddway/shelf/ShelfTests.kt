@@ -1,8 +1,10 @@
 package com.toddway.shelf
 
+import kotlinx.serialization.InternalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlin.test.*
 
+@InternalSerializationApi
 @Suppress("TooManyFunctions")
 class ShelfTests {
     val key = "aKey"

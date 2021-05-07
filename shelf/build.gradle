@@ -6,12 +6,15 @@ kotlin {
     iosX64('ios')
     jvm()
     js()
+    js {
+        browser()
+    }
 
     sourceSets {
         commonMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serialization_version"
+                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
             }
         }
         commonTest {
@@ -23,7 +26,6 @@ kotlin {
         jvmMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serialization_version"
                 implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
                 implementation 'com.google.code.gson:gson:2.8.6'
             }
@@ -41,7 +43,6 @@ kotlin {
         iosMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version"
             }
         }
         iosTest {
@@ -51,7 +52,6 @@ kotlin {
         jsMain {
             dependencies {
                 implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serialization_version"
             }
         }
         jsTest {
@@ -75,7 +75,7 @@ configurations {
     }
 }
 
-task iosTest {
+task iosTests {
     def device = project.findProperty("iosDevice")?.toString() ?: "iPhone XR"
     dependsOn 'linkTestDebugExecutableIos'
     group = JavaBasePlugin.VERIFICATION_GROUP
@@ -100,3 +100,9 @@ buildkonfig {
 }
 
 apply from: '../gradle/checks.gradle'
+task checks {
+    dependsOn 'allTests'
+    dependsOn 'cpdCheck'
+    dependsOn 'detekt'
+    finalizedBy ':printChecks'
+}

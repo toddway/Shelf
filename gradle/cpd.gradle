@@ -1,0 +1,24 @@
+apply plugin: 'cpd'
+
+cpd {
+    language = 'kotlin'
+}
+
+def getIncludeFiles() {
+    return project.ext.changeList != null ?
+            fileTree(dir: "$rootDir", includes:project.changeList.size == 0 ? [""] : project.changeList)
+            : fileTree("$projectDir/src/main/java") + fileTree("$projectDir/src/main/kotlin")
+}
+
+cpdCheck {
+    group = "verification"
+    ignoreFailures true
+    skipLexicalErrors true
+    source = getIncludeFiles()
+    reports {
+        text.enabled = true
+        xml.enabled = true
+    }
+}
+
+

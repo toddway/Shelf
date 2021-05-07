@@ -1,6 +1,6 @@
 package com.toddway.shelf
 
-import kotlin.native.concurrent.ThreadLocal
+import kotlinx.serialization.InternalSerializationApi
 import kotlin.reflect.KClass
 
 open class Shelf(var storage : Storage, var serializer: Serializer, var clock : Clock = Clock()) {
@@ -8,7 +8,8 @@ open class Shelf(var storage : Storage, var serializer: Serializer, var clock : 
     fun all() = storage.keys().map { item(it) }.toSet()
     fun clear() = all().forEach { it.remove() }
 
-    @ThreadLocal companion object : Shelf(DiskStorage(), KotlinxSerializer())
+    @InternalSerializationApi
+    companion object : Shelf(DiskStorage(), KotlinxSerializer())
 
     class Item(val key: String, val shelf: Shelf) {
         fun <T : Any> get(type : KClass<T>) : T? = getRaw()?.let { shelf.serializer.toType(it, type) }

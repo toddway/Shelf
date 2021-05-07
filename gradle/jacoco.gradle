@@ -1,0 +1,116 @@
+apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.8.7"
+    reportsDir = file("$buildDir/reports")
+}
+
+tasks.withType(Test) {
+    jacoco.includeNoLocationClasses = true
+    jacoco.excludes = ['jdk.internal.*']
+}
+
+project.afterEvaluate {
+    if (project.hasProperty('android')) {
+        if (android.hasProperty('applicationVariants')) {
+            android.applicationVariants.all { variant -> createCoverageTask(variant) } //android app module
+        } else if (android.hasProperty('libraryVariants')) {
+            android.libraryVariants.all { variant -> createCoverageTask(variant) } //android library module
+        }
+    } else if (project.hasProperty('kotlin')) {
+        createCoverageTask('jvm')
+    } else {
+        createCoverageTask(null) //java library module
+    }
+}
+
+
+def createCoverageTask(variant) {
+    def excludes = [
+            /*Android*/
+            '**/R.class',
+            '**/R$*.class',
+            '**/BuildConfig.*',
+            '**/Manifest*.*',
+            'androidx/**/*.*',
+            'android/**/*.*',
+
+            /*Binding*/
+            '**/*DataBinder*.*',
+            '**/*DataBinding*.*',
+            '**/*Binding*.*',
+            '**/BR.class',
+
+            /*Kodein*/
+            '**/*ModuleKt*.*',
+
+            /*AndroidAnnotations*/
+            '**/*_.*',
+            '**/*_$*',
+
+            /*Dagger*/
+            '**/*_Provide*/**',
+            '**/*_*Factory*/**',
+            '**/*_MembersInjector.class',
+            '**/*Dagger*',
+
+            /*Realm*/
+            'io/realm/**/*.*',
+
+            /*Tests*/
+            '**/*Mock*.*',
+            '**/*Test*.*',
+            '**/*Null*.*'
+    ]
+    def variantName
+    def testTaskName
+    def javaClasses
+    def kotlinClasses
+    if (variant == null) {
+        variantName = ""
+        testTaskName = "test"
+        javaClasses = fileTree(dir: "${buildDir}/classes/java/${variantName}")
+        kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/${variantName}")
+    } else if (!variant.hasProperty('name')) {
+        variantName = variant
+        testTaskName = "${variantName}Test"
+        javaClasses = fileTree(dir: "${buildDir}/classes/java/${variantName}/main")
+        kotlinClasses = fileTree(dir: "${buildDir}/classes/kotlin/${variantName}/main")
+    } else {
+        variantName = variant.name
+        testTaskName = "test${variantName.capitalize()}UnitTest"
+        javaClasses = fileTree(dir: variant.javaCompiler.destinationDir)
+        kotlinClasses = fileTree(dir: "${buildDir}/tmp/kotlin-classes/${variantName}")
+    }
+    javaClasses.exclude(excludes)
+    kotlinClasses.exclude(excludes)
+    if (project.ext.changeList != null) {
+        def includes = project.ext.changeList.size == 0
+                ? ["**/IncludeNothing*"]
+                : project.changeList.collect { value -> "**/${value.tokenize("/").last().tokenize(".").first()}*"}
+        javaClasses.include(includes)
+        kotlinClasses.include(includes)
+    }
+
+    tasks.create(name: "${testTaskName}Coverage", type: JacocoReport, dependsOn: "$testTaskName") {
+        group = "Reporting"
+        description = "Generate Jacoco coverage reports for the ${variantName.capitalize()} build."
+
+        reports {
+            html.enabled = true
+            xml.enabled = true
+        }
+
+        classDirectories.from = files([javaClasses, kotlinClasses])
+
+        sourceDirectories.from = files([
+                "$project.projectDir/src/main/java",
+                "$project.projectDir/src/${variantName}/java",
+                "$project.projectDir/src/main/kotlin",
+                "$project.projectDir/src/${variantName}/kotlin",
+                "$project.projectDir/src/commonMain/kotlin",
+                "$project.projectDir/src/jvmMain/kotlin",
+        ])
+
+        executionData.from = files("${project.buildDir}/jacoco/${testTaskName}.exec")
+    }
+}
