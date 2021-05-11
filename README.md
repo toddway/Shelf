@@ -1,7 +1,7 @@
 # Shelf
 Key/value object store for Kotlin. Persist any serializable object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf)
 
 ## Basic usage
 
