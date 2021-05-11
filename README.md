@@ -100,35 +100,11 @@ val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
 repositories {
     mavenCentral()
 }
-
-def shelf_version = "x.y.z"
 ```
 
-Android/JVM source set
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:Shelf-jvm:$shelf_version'
-}
-```
-
-Common multiplatform source set
-```groovy
-dependencies {
-    implementation 'com.toddway.shelf:Shelf:$shelf_version'
-}
-```
-
-iOS/Native source set
-```groovy
-dependencies {
-    implementation 'com.toddway.shelf:Shelf-ios:$shelf_version'
-}
-```
-
-Javascript source set
-```groovy
-dependencies {
-    implementation 'com.toddway.shelf:Shelf-js:$shelf_version'
+    implementation 'com.toddway.shelf:Shelf:x.y.z'
 }
 ```
 
