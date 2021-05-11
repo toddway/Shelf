@@ -7,7 +7,7 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 Initialize a shelf
 ```kotlin
-val shelf = Shelf(FileStorage(...), KotlinxSerializer())
+val shelf = Shelf(FileStorage(applicationContext.cacheDir), MoshiSerializer())
 ```
 
 Store an object instance
