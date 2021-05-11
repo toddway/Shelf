@@ -1,7 +1,7 @@
 # Shelf
 Key/value object store for Kotlin. Persist any serializable object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.
 
-[ ![Download](https://api.bintray.com/packages/toddway/maven/shelf/images/download.svg) ](https://bintray.com/toddway/maven/shelf/_latestVersion)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/cz.jirutka.rsql/rsql-parser)
 
 ## Basic usage
 
@@ -107,28 +107,28 @@ def shelf_version = "x.y.z"
 Android/JVM source set
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:shelf-jvm:$shelf_version'
+    implementation 'com.toddway.shelf:Shelf-jvm:$shelf_version'
 }
 ```
 
 Common multiplatform source set
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:shelf:$shelf_version'
+    implementation 'com.toddway.shelf:Shelf:$shelf_version'
 }
 ```
 
 iOS/Native source set
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:shelf-ios:$shelf_version'
+    implementation 'com.toddway.shelf:Shelf-ios:$shelf_version'
 }
 ```
 
 Javascript source set
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:shelf-js:$shelf_version'
+    implementation 'com.toddway.shelf:Shelf-js:$shelf_version'
 }
 ```
 
