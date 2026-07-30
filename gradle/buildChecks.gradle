@@ -1,9 +1,0 @@
-apply plugin: 'com.toddway.buildchecks'
-
-buildChecks {
-    baseUrl = buildChecksBaseUrl ?: "http://localhost/"
-    authorization = buildChecksAuth ?: ""
-    buildUrl = buildChecksBuildUrl ?: "http://localhost/"
-    reports = "$projectDir/shelf/build/reports"
-    artifactsBranch = "artifacts"
-}

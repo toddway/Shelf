@@ -1,0 +1,25 @@
+# buildchecks baseline v2
+# findings: 17
+# coverage: 88.20
+# origin  .  jacoco
+# origin  shelf  checkstyle
+# origin  shelf  junit
+# origin  shelf-coroutines  checkstyle
+# origin  shelf-coroutines  junit
+02a3a78cc2db0ffd  checkstyle  detekt.MagicNumber  /Users/tway/dev/Shelf/shelf/src/jsMain/kotlin/com/toddway/shelf/DiskStorage.kt:39  This expression contains a magic number. Consider defining
+0321206123ef4c4c  checkstyle  detekt.EmptyFunctionBlock  /Users/tway/dev/Shelf/shelf/src/jsMain/kotlin/com/toddway/shelf/Lock.kt:5  This empty block of code can be removed.
+31977f6664e98608  checkstyle  detekt.MagicNumber  /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/DiskStorage.kt:38  This expression contains a magic number. Consider defining
+40461fa5690336f8  checkstyle  detekt.TooGenericExceptionThrown  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/KotlinxSerializer.kt:52  RuntimeException is a too generic Exception. Prefer throwing
+4441301f0da8a8ff  checkstyle  detekt.MaxLineLength  /Users/tway/dev/Shelf/shelf/src/iosMain/kotlin/com/toddway/shelf/DiskStorage.kt:9  Line detected, which is longer than the defined
+59e4831f4acb5f78  checkstyle  detekt.SwallowedException  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:21  The caught exception is swallowed. The original exception
+5d11d29cd65992f1  checkstyle  detekt.TooGenericExceptionCaught  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:21  The caught exception is too generic. Prefer catching
+664450cc8e10cf5e  checkstyle  detekt.TooGenericExceptionThrown  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/KotlinxSerializer.kt:48  RuntimeException is a too generic Exception. Prefer throwing
+83a55afe64c8d2b3  checkstyle  detekt.TooGenericExceptionCaught  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:20  The caught exception is too generic. Prefer catching
+c965430d0d92d0cf  checkstyle  detekt.TooGenericExceptionThrown  /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/MoshiSerializer.kt:23  RuntimeException is a too generic Exception. Prefer throwing
+cb740e27d4fad4e2  checkstyle  detekt.TooGenericExceptionThrown  /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/MoshiSerializer.kt:28  RuntimeException is a too generic Exception. Prefer throwing
+d38c5b416782f1dd  checkstyle  detekt.SwallowedException  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:20  The caught exception is swallowed. The original exception
+d7193af2343f9187  checkstyle  detekt.ReturnCount  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/CachingStorage.kt:41  Function get has 3 return statements which exceeds
+d7f40a42bcb7fa85  checkstyle  detekt.EmptyFunctionBlock  /Users/tway/dev/Shelf/shelf/src/jsMain/kotlin/com/toddway/shelf/Lock.kt:6  This empty block of code can be removed.
+dd1ce961694ea23c  checkstyle  detekt.MagicNumber  /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/DiskStorage.kt:31  This expression contains a magic number. Consider defining
+e26962121e96902f  checkstyle  detekt.MaxLineLength  /Users/tway/dev/Shelf/shelf/src/commonMain/kotlin/com/toddway/shelf/Shelf.kt:20  Line detected, which is longer than the defined
+f75850355fb4278a  checkstyle  detekt.MagicNumber  /Users/tway/dev/Shelf/shelf/src/jvmMain/kotlin/com/toddway/shelf/DiskStorage.kt:22  This expression contains a magic number. Consider defining

@@ -191,6 +191,59 @@ GitHub Actions steps instead of Bitrise). Remove the old `com.toddway.buildcheck
 > constant is the only literal). The v3.3 token still lives in git history on `dev`, so it should still be
 > **revoked**, but there's nothing to re-fix on the migration branch. Shelf's config is `GITHUB_TOKEN`-only.
 
+### Phase 2 & 3 — execution notes (done)
+
+Done together on branch `feature/phase-2-3-ci-buildchecks` off `multiplatform` (per the sequencing).
+Verified locally on an Apple-Silicon Mac (JDK 21; CI pins JDK 17): full clean
+`build :koverXmlReport detekt buildchecks` is green, the gate reports **HIGH confidence, 114 tests
+(0 failed), coverage 88.20%, 0 new findings**. Deviations from the plan above, and why:
+
+- **CI runner = `macos-latest`, single job (plan left the OS open).** `toddway/Shelf` is public, and
+  standard GitHub-hosted runners — including macOS — are **free for public repos** (the 10× macOS
+  multiplier only bills against *private* repos' included minutes). Free removes the only reason to
+  avoid macOS, so one macOS job builds jvm + js + iOS with full parity to the Phase 1 local green — no
+  host-gating of the iOS targets, no matrix, simplest YAML. Revisit only if faster jvm/js feedback is
+  wanted (add a Linux leg for those, keep macOS for iOS).
+- **Coverage = Kover, not JaCoCo (open decision #6 → Kover).** Applied at the root and aggregated over
+  both modules (`kover(project(...))`). **Caveat unchanged by the tool choice:** Kover, like JaCoCo,
+  instruments only JVM bytecode, so 88.20% reflects the `jvmTest` suites; js/native tests contribute no
+  coverage.
+- **Kover→JaCoCo DOCTYPE shim (new; not anticipated).** The v4 CLI identifies a coverage report by the
+  JaCoCo `<!DOCTYPE … JACOCO … >` declaration, which Kover's XML omits — so the raw Kover report logs
+  `not understood` and the coverage gate sees no data. A `koverJacocoDoctype` finalizer on
+  `:koverXmlReport` injects that DOCTYPE in place; verified the CLI then ingests it as `jacoco`. This is
+  the concrete cost of picking Kover over JaCoCo here.
+- **CI runs the root `:koverXmlReport` only.** The bare `koverXmlReport` task also emits per-module
+  reports the CLI can't read (they'd show as `not understood` and drop confidence to MEDIUM). The
+  colon-qualified root task produces just the single aggregated, doctored report → HIGH confidence.
+- **Coverage floor self-calibrates.** `buildchecks baseline` pinned the coverage gate to **88.10%**
+  (ratcheted from current), overriding the `min_coverage_percent = 52.0` placeholder in
+  `buildchecks.toml` — coverage can no longer regress. Stricter than the plan's number, by the tool's
+  design.
+- **detekt modernized inline (plan said "existing `gradle/detekt.gradle`").** The 2023 helper was
+  Android/Groovy-era (referenced `src/main/kotlin`, a missing `detekt-config.yml`, Android variants) and
+  doesn't run on Gradle 8.14 / K2 MPP. Replaced with detekt **1.23.7** applied per-module, pointed at the
+  real MPP source sets, `buildUponDefaultConfig = true`, `ignoreFailures = true` (the BuildChecks gate —
+  not detekt — decides pass/fail against the baseline). 17 findings captured into
+  `buildchecks-baseline.txt`.
+- **Legacy verification helpers deleted (Phase 1 left them dormant).** Removed `gradle/`{`jacoco.gradle`
+  (→ Kover), `detekt.gradle` (→ inline), `cpd.gradle`, `checks.gradle`, `buildChecks.gradle`,
+  `detekt.yml`, `addLocalProps.gradle`}. **cpd (copy-paste detection) dropped** — it isn't in v4's ingest
+  set (JUnit + JaCoCo + detekt/checkstyle), and nothing else referenced it.
+- **`buildchecks` task is a pure gate-runner (no `dependsOn build`).** So CI runs build+reports and the
+  gate as *separate* steps: the gate reports on whatever reports exist even when the build/test step
+  failed (a `dependsOn build` would instead try to rebuild in the gate step). Local convenience one-liner
+  is documented in `build.gradle`.
+- **PR base ref** is passed to the CLI on `pull_request` events via Gradle `--args="check --base-ref
+  origin/<base>"` (verified the flag + the `--args` override work); on `push` the changed-line-coverage
+  gate self-skips (no base). `actions/checkout` uses `fetch-depth: 0` so the base ref is present.
+- **Not done (deferred by request — "local only, then stop"):** nothing was pushed and no PR opened, so
+  the three things that only exist on GitHub are **still unvalidated**: the Actions run itself, the
+  `buildchecks` **commit status**, and the sticky **PR comment** (`gh api` / `gh pr comment` steps). The
+  local gate, report generation, and YAML syntax are verified; the GitHub-posting path needs a first
+  branch push + PR to confirm. The v3.3 token revocation called out below is likewise still the user's to
+  do.
+
 ## Phase 4 — Publishing like BuildChecks 4.x (gh-pages Maven repo, no Sonatype)
 
 Swap `com.vanniktech.maven.publish` + Sonatype for the core `maven-publish` plugin writing to a local

@@ -1,0 +1,7 @@
+[reports]
+output_dir = "build/reports/buildChecks"
+
+[gates]
+min_coverage_percent = 52.0
+max_new_findings = 0
+min_changed_line_coverage = 80
