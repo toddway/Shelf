@@ -6,6 +6,12 @@ BuildChecks 4.x: GitHub Actions for CI, a **gh-pages Maven repo** for publishing
 `GITHUB_TOKEN` — no Sonatype, no signing keys), and BuildChecks itself posting a commit status +
 sticky PR comment.
 
+> **Scope of "match BuildChecks":** this means adopting BuildChecks' **GitHub-based CI + publishing
+> pattern** — not matching its toolchain versions. Shelf's Kotlin/Gradle are chosen on their own merits
+> (see "Versioning & toolchain policy" below). BuildChecks 4.x is no longer a Gradle plugin; it's a **CLI**
+> resolved as a Maven artifact and run via `JavaExec` (see Phase 3), which is why nothing about its build
+> constrains Shelf.
+
 ## Current state (2023-era, blocks everything)
 
 - Gradle **6.8.3** (won't run on JDK 17/21 — forced JDK 11 during this work).
@@ -217,17 +223,56 @@ it drops the current Maven Central presence (`com.toddway.shelf:Shelf` on Centra
 the primary consumer and can add one repo line, this matches the BuildChecks simplification. Keep Maven
 Central only if public/global discoverability (no repo line for strangers) is a hard requirement.
 
-## Open decisions to confirm before executing
+## Versioning & toolchain policy (decided)
 
-1. **Kotlin target:** 2.0.21 (recommended) vs 1.9.24 (lower churn).
-2. **Networking test:** remove `JvmTests` + ktor + buildkonfig (recommended) vs keep and fix.
-3. **Build script format:** convert to `.kts` + version catalog now (matches BuildChecks) vs later.
-4. **Publishing target:** gh-pages Maven repo (recommended, matches BuildChecks) vs stay on Maven Central.
-5. **iOS targets:** confirm the `iosMain` actuals (`DiskStorage`, `Clock`) compile for
-   `iosArm64`/`iosSimulatorArm64`, not just the legacy single `iosX64('ios')`.
-6. **Coverage tool** BuildChecks 4.x ingests for MPP: JaCoCo XML vs Kover — confirm.
+- **Next published version = `3.0.0`** (major), set at Phase 4 — not the `2.1.0` currently in
+  `gradle.properties`. Rationale: even though the new API is purely additive, this release (a) raises the
+  minimum consumer Kotlin from 1.5 → 2.0 and (b) changes distribution (Maven Central → gh-pages, and
+  normalizes the artifactId, below). Both break a drop-in upgrade, so signal it as major.
+  **`VERSION_NAME` stays `2.1.0` until Phase 4** — it has no effect until publish, and the number is
+  decided together with the publishing/coordinate questions in one place.
+- **artifactId normalization:** fold `Shelf` → lowercase `shelf` (+ `shelf-coroutines`) into the same
+  3.0.0 / gh-pages cutover, since coordinates are changing anyway.
+- **Shelf is a broadly-consumed public artifact**, so keep the **published Kotlin conservative** (stay on
+  the 2.0.x baseline). For a library, the *published* Kotlin sets the **minimum Kotlin a consumer must
+  have** — bumping it narrows reach. Do **not** chase latest Kotlin for Shelf's publish version.
+  (`languageVersion`/`apiVersion` can hold an older target on a newer compiler, but for MPP klibs the floor
+  tracks the compiler fairly tightly — verify the emitted metadata version rather than assume.)
+- **Shelf's Gradle is invisible to consumers** (they resolve a Maven artifact, they never run Shelf's
+  build), so it's free to move to latest stable: **Gradle 8-latest now, Gradle 9 only after Phase 3's
+  quality tooling is confirmed 9-clean** (the current build already warns it's 9-incompatible).
+- **BuildChecks 4.x imposes no Kotlin/Gradle floor on Shelf** — it's a forked-JVM CLI (`JavaExec`), not a
+  plugin, so its own Kotlin/Gradle are free to be latest. The only consumer-facing constraint is the **CLI
+  jar's JDK/bytecode target**, which must be ≤ the JDK the consuming build's `JavaExec` runs (JDK 17 in
+  CI); pin a Java toolchain on the task if you ever need to decouple that.
+- **Any Kotlin/Gradle latest-stable bump is a post-Phase-4 step**, done on its own branch — not folded into
+  Phases 1–4.
+
+## Open decisions
+
+Resolved this pass:
+
+1. ~~**Kotlin target:** 2.0.21 vs 1.9.24.~~ → **2.0.21** (done in Phase 1); keep the published version
+   conservative going forward per the policy above.
+2. ~~**Networking test:** remove vs keep.~~ → **removed** (`JvmTests` + ktor + buildkonfig gone).
+3. ~~**Build script format:** `.kts` + version catalog now vs later.~~ → **later** (deferred; still Groovy
+   `.gradle`). Its own step, post-Phase-1.
+5. ~~**iOS targets:** confirm actuals compile for arm64/sim.~~ → **confirmed**: `iosX64`/`iosArm64`/
+   `iosSimulatorArm64` all compile, and `iosSimulatorArm64Test` runs green (36/36).
+
+Still open:
+
+4. **Publishing target:** gh-pages Maven repo (recommended) vs stay on Maven Central — decided at Phase 4,
+   together with 3.0.0 + the artifactId normalization above.
+6. **Coverage tool** BuildChecks 4.x ingests for MPP: JaCoCo XML (JVM-only coverage) vs Kover
+   (MPP-aggregated) — decide in Phase 3.
 
 ## Sequencing
 
 Phase 1 (green build on modern JDK) → Phase 2/3 together (CI + BuildChecks status/comment) → Phase 4
 (release workflow + publishing). Each phase is an independent, reviewable checkpoint.
+
+> **CI/iOS note for Phase 2:** Kotlin/Native Apple targets only build on a **macOS host** — a Linux CI
+> runner builds jvm + js only. Gating iOS in CI requires a `macos-*` runner (has Xcode + simulators). The
+> Phase 1 all-platform green was verified locally on Apple Silicon; treat that as the iOS/JS confidence
+> check and decide CI runner OS in Phase 2.
