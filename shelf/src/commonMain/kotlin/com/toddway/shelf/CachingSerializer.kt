@@ -1,7 +1,5 @@
 package com.toddway.shelf
 
-import kotlinx.atomicfu.locks.SynchronizedObject
-import kotlinx.atomicfu.locks.synchronized
 import kotlin.reflect.KClass
 
 /**
@@ -27,16 +25,16 @@ class CachingSerializer(
 
     private data class Key(val klass: KClass<*>, val list: Boolean, val string: String)
 
-    private val lock = SynchronizedObject()
+    private val lock = Lock()
     private val cache = LinkedHashMap<Key, Any>()
 
-    private fun cached(key: Key): Any? = synchronized(lock) {
-        val value = cache.remove(key) ?: return@synchronized null
+    private fun cached(key: Key): Any? = lock.withLock {
+        val value = cache.remove(key) ?: return@withLock null
         cache[key] = value // move to most-recently-used
         value
     }
 
-    private fun store(key: Key, value: Any) = synchronized(lock) {
+    private fun store(key: Key, value: Any) = lock.withLock {
         cache.remove(key)
         cache[key] = value
         while (cache.size > capacity) {

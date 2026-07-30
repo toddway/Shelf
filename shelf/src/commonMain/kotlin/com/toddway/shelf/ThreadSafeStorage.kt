@@ -1,8 +1,5 @@
 package com.toddway.shelf
 
-import kotlinx.atomicfu.locks.SynchronizedObject
-import kotlinx.atomicfu.locks.synchronized
-
 /**
  * Makes any [Shelf.Storage] safe for concurrent use by serializing every operation behind a
  * single reentrant lock.
@@ -14,16 +11,16 @@ import kotlinx.atomicfu.locks.synchronized
  * underlying storage is rare.
  */
 class ThreadSafeStorage(private val delegate: Shelf.Storage) : Shelf.Storage {
-    private val lock = SynchronizedObject()
+    private val lock = Lock()
 
-    override fun get(key: String): String? = synchronized(lock) { delegate.get(key) }
+    override fun get(key: String): String? = lock.withLock { delegate.get(key) }
 
     override fun put(key: String, value: String, timestamp: Long): Unit =
-        synchronized(lock) { delegate.put(key, value, timestamp) }
+        lock.withLock { delegate.put(key, value, timestamp) }
 
-    override fun remove(key: String): Unit = synchronized(lock) { delegate.remove(key) }
+    override fun remove(key: String): Unit = lock.withLock { delegate.remove(key) }
 
-    override fun keys(): Set<String> = synchronized(lock) { delegate.keys() }
+    override fun keys(): Set<String> = lock.withLock { delegate.keys() }
 
-    override fun timestamp(key: String): Long? = synchronized(lock) { delegate.timestamp(key) }
+    override fun timestamp(key: String): Long? = lock.withLock { delegate.timestamp(key) }
 }

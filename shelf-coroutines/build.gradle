@@ -1,58 +1,25 @@
-apply plugin: 'kotlin-multiplatform'
-apply plugin: "com.vanniktech.maven.publish"
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
 
 kotlin {
-    iosX64('ios')
     jvm()
-    js()
-    js {
+    // Browser only, matching :shelf (the JS DiskStorage depends on the browser's localStorage).
+    js(IR) {
         browser()
     }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                api project(':shelf')
-                api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-            }
+        commonMain.dependencies {
+            api project(':shelf')
+            api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         }
-        commonTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
-            }
+        commonTest.dependencies {
+            implementation kotlin('test')
         }
-        jvmMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        jvmTest {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-            }
-        }
-        iosMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        iosTest {
-            dependencies {
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        jsTest {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-js'
-            }
+        jvmTest.dependencies {
+            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         }
     }
 }

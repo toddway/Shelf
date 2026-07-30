@@ -1,8 +1,5 @@
 package com.toddway.shelf
 
-import kotlinx.atomicfu.locks.SynchronizedObject
-import kotlinx.atomicfu.locks.synchronized
-
 /**
  * A read-through LRU cache in front of another [Shelf.Storage].
  *
@@ -22,7 +19,7 @@ class CachingStorage(
 
     private data class Entry(val value: String, val timestamp: Long)
 
-    private val lock = SynchronizedObject()
+    private val lock = Lock()
     private val cache = LinkedHashMap<String, Entry>()
 
     // Must be called while holding [lock]. Moves the entry to the most-recently-used position.
@@ -42,29 +39,29 @@ class CachingStorage(
     }
 
     override fun get(key: String): String? {
-        synchronized(lock) { touch(key) }?.let { return it.value }
+        lock.withLock { touch(key) }?.let { return it.value }
         // Miss: read through outside the lock so a slow delegate doesn't block other keys.
         val value = delegate.get(key) ?: return null
         val entry = Entry(value, delegate.timestamp(key) ?: 0L)
-        synchronized(lock) { store(key, entry) }
+        lock.withLock { store(key, entry) }
         return entry.value
     }
 
     override fun put(key: String, value: String, timestamp: Long) {
         delegate.put(key, value, timestamp)
-        synchronized(lock) { store(key, Entry(value, timestamp)) }
+        lock.withLock { store(key, Entry(value, timestamp)) }
     }
 
     override fun remove(key: String) {
         delegate.remove(key)
-        synchronized(lock) { cache.remove(key) }
+        lock.withLock { cache.remove(key) }
     }
 
     // Delegate is the source of truth for the full key set.
     override fun keys(): Set<String> = delegate.keys()
 
     override fun timestamp(key: String): Long? {
-        synchronized(lock) { touch(key) }?.let { return it.timestamp }
+        lock.withLock { touch(key) }?.let { return it.timestamp }
         return delegate.timestamp(key)
     }
 }

@@ -1,85 +1,36 @@
-apply plugin: 'kotlin-multiplatform'
-apply plugin: 'kotlinx-serialization'
-apply plugin: 'kotlinx-atomicfu'
-apply plugin: "com.vanniktech.maven.publish"
+apply plugin: 'org.jetbrains.kotlin.multiplatform'
+apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
 
 kotlin {
-    iosX64('ios')
+    // DiskStorage/Clock/Lock are expect/actual classes (Beta in K2); this enables their
+    // actualization (incl. via inherited fake-overrides) and silences the Beta warning.
+    compilerOptions {
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
+
     jvm()
-    js()
-    js {
+    // Browser only: the JS DiskStorage is backed by the browser's localStorage, which has no Node
+    // equivalent. Add nodejs() only alongside a Node-compatible storage backend.
+    js(IR) {
         browser()
     }
+    iosX64()
+    iosArm64()
+    iosSimulatorArm64()
 
     sourceSets {
-        commonMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
-                // Multiplatform reentrant lock (kotlinx.atomicfu.locks) used by the storage/serializer
-                // decorators (MemoryStorage, ThreadSafeStorage, CachingStorage, CachingSerializer).
-                implementation "org.jetbrains.kotlinx:atomicfu:$atomicfu_version"
-            }
+        commonMain.dependencies {
+            implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:$serialization_version"
         }
-        commonTest {
-            dependencies {
-                implementation "org.jetbrains.kotlin:kotlin-test-common"
-                implementation "org.jetbrains.kotlin:kotlin-test-annotations-common"
-            }
+        commonTest.dependencies {
+            implementation kotlin('test')
         }
-        jvmMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-                implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
-                implementation 'com.google.code.gson:gson:2.8.6'
-            }
+        jvmMain.dependencies {
+            implementation "com.squareup.moshi:moshi-kotlin:1.6.0"
+            implementation 'com.google.code.gson:gson:2.8.6'
         }
-        jvmTest {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test'
-                implementation 'org.jetbrains.kotlin:kotlin-test-junit'
-                implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
-                implementation "io.ktor:ktor-client-android:$ktor_version"
-                implementation "io.ktor:ktor-client-logging-jvm:$ktor_version"
-                implementation "ch.qos.logback:logback-classic:1.2.3"
-            }
-        }
-        iosMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        iosTest {
-            dependencies {
-            }
-        }
-        jsMain {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-stdlib'
-            }
-        }
-        jsTest {
-            dependencies {
-                implementation 'org.jetbrains.kotlin:kotlin-test-js'
-            }
+        jvmTest.dependencies {
+            implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         }
     }
-}
-
-apply plugin: 'com.codingfeline.buildkonfig'
-buildkonfig {
-    packageName = 'com.toddway.shelf'
-    defaultConfigs {
-        buildConfigField 'STRING', 'token', buildkonfigToken ?: ""
-        buildConfigField 'STRING', 'url', buildkonfigUrl ?: "http://localhost"
-    }
-}
-
-apply from: '../gradle/checks.gradle'
-task checks {
-    dependsOn 'allTests'
-    dependsOn 'jvmTestCoverage'
-    dependsOn 'cpdCheck'
-    dependsOn 'detekt'
-    finalizedBy ':printChecks'
 }

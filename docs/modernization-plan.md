@@ -47,6 +47,39 @@ Work on a branch off `feature/storage-serializer-decorators` (or after it merges
 
 Checkpoint: `./gradlew build` green on JDK 17 for jvm + js + ios (metadata at minimum), all 26 new tests pass.
 
+### Phase 1 — execution notes (done)
+
+Completed on branch `feature/phase-1-toolchain` off `multiplatform`. `./gradlew clean build` is green on
+JDK 17: `shelf` jvmTest 37 / jsBrowserTest 36 / iosSimulatorArm64Test 36, `shelf-coroutines` jvmTest 5 —
+all 0 failures. Deviations from the plan above, and why:
+
+- **atomicfu dropped entirely** (plan step 2 kept it). Once tests actually ran (see the collision note
+  below), it was clear Shelf uses locks but no `atomic()` fields, and atomicfu's `synchronized` inline
+  only returns the block value where its Gradle plugin transforms it (JVM) — it misbehaves on the JS/Native
+  IR backends. Replaced with a dependency-free `expect`/`actual` `Lock` + `withLock` inline
+  (`ReentrantLock` on JVM, `NSRecursiveLock` on Apple, no-op on JS). Core is now fully dependency-free. See
+  ADR 0001's updated §1.
+- **Latent duplicate `MemoryStorage`** removed from `commonTest` (`ShelfTests.kt`). A pre-existing test-only
+  `MemoryStorage` collided (same FQN) with the new `commonMain` decorator; under K2 the `commonTest`
+  reference bound to the fake, so the decorator tests silently exercised the wrong class (this is what made
+  it look like a lock miscompilation). Deleting the fake let the reference bind to the real decorator.
+- **JS is browser-only** (`js(IR) { browser() }`; plan step 5 said `browser(); nodejs()`). The JS
+  `DiskStorage` is backed by browser `localStorage`, which has no Node equivalent. Add `nodejs()` only
+  alongside a Node-compatible storage backend. `kotlin-js-store/yarn.lock` is committed so
+  `kotlinStoreYarnLock` is stable.
+- **Legacy verification/publishing machinery unwired, not deleted.** The `com.toddway.buildchecks` 2.13
+  plugin, `com.vanniktech.maven.publish`, cpd, and detekt don't run on Gradle 8.14 and are slated for
+  replacement in Phases 3–4, so their plugin applications / `apply from` lines were removed to reach a green
+  `build`. The `gradle/*.gradle` helpers (`buildChecks.gradle`, `checks.gradle`, `cpd.gradle`,
+  `jacoco.gradle`, `detekt.gradle`) are left **on disk, dormant** for Phase 3 to modernize.
+- **`-Xexpect-actual-classes`** compiler arg added (expect/actual classes are Beta in K2; also enables
+  `DiskStorage`/`Clock` actualization via inherited fake-overrides).
+- **CI/iOS reality (for Phase 2):** iOS Apple targets only build on a macOS host — a Linux CI runner builds
+  jvm + js only. Gating iOS in CI requires a `macos-*` runner. The all-platform green above was verified
+  locally on an Apple-Silicon Mac; treat that as the iOS/JS confidence check and decide CI runner OS in
+  Phase 2.
+- **Not done (deferred):** plan step 7 (`.kts` + version catalog) — left as its own step as the plan allows.
+
 ## Phase 2 — GitHub CI (`.github/workflows/ci.yml`) — mirror BuildChecks
 
 Direct port of BuildChecks' `ci.yml`. Triggers on push to `main` + PRs.

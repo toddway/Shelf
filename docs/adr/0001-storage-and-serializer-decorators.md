@@ -53,9 +53,18 @@ dependency-free core stays dependency-free.
 
 ### 1. Multiplatform concurrency primitive
 
-Add `kotlinx-atomicfu` to the core `shelf` module's `commonMain` and use
-`kotlinx.atomicfu.locks` for all shared-state synchronization. This replaces the JVM-only
-`ReentrantReadWriteLock`/`synchronized` with a single multiplatform reentrant lock.
+Provide a minimal `expect`/`actual` `Lock` in the core `shelf` module's `commonMain` (with a
+`withLock` inline) and use it for all shared-state synchronization. This replaces the JVM-only
+`ReentrantReadWriteLock`/`synchronized` with a single multiplatform reentrant lock, backed by
+`java.util.concurrent.locks.ReentrantLock` on the JVM, `NSRecursiveLock` on Apple targets, and a
+no-op on single-threaded JS.
+
+> **Update (Kotlin 2.0 toolchain migration):** the original design used `kotlinx-atomicfu`'s
+> `kotlinx.atomicfu.locks.synchronized`. That was dropped in favor of the `expect`/`actual` `Lock`
+> above: it keeps the core dependency-free (no `kotlinx-atomicfu` artifact, no Gradle plugin), and
+> atomicfu's `synchronized` inline only returns the block's value correctly where its Gradle plugin
+> transforms it (JVM), which added plugin/toolchain coupling for no benefit here since Shelf uses
+> locks but no `atomic()` fields.
 
 We accept a **single reentrant lock** (no reader/writer distinction) rather than an
 `expect`/`actual` read-write lock. It is far simpler and truly multiplatform; the read-write
@@ -69,7 +78,7 @@ overwhelming majority of reads from memory. A JVM-specialized RW lock can be add
   `ConcurrentModificationException` under concurrent iteration). Doubles as the base storage
   for the library's own tests, making them fast and hermetic.
 - **`ThreadSafeStorage`** — locking decorator that makes any `Storage` (notably the unsafe
-  `FileStorage`) safe for concurrent use, using the atomicfu reentrant lock.
+  `FileStorage`) safe for concurrent use, using the multiplatform reentrant `Lock`.
 - **`CachingStorage`** — read-through LRU cache decorator. Replaces the JVM access-order
   `LinkedHashMap` constructor with a small multiplatform LRU (insertion-order `LinkedHashMap`
   with remove-then-reinsert on access) guarded by the lock.
@@ -108,10 +117,9 @@ Once published, the app deletes its copies of all six decorators **and its dupli
 
 - **Positive:** Every Shelf consumer gets production-grade caching, thread-safety, encryption,
   an in-memory storage, and a reactive list API out of the box. The two correctness bugs are
-  fixed once, in the library, instead of being copied across apps. Core stays dependency-free
-  apart from a small atomicfu addition.
+  fixed once, in the library, instead of being copied across apps. Core stays fully
+  dependency-free (the multiplatform `Lock` uses only platform primitives).
 - **Negative / trade-offs:**
-  - The core module gains a dependency on `kotlinx-atomicfu`.
   - `ThreadSafeStorage` serializes all storage operations (single lock); acceptable given the
     fronting cache, revisitable via `expect`/`actual` later.
   - `CachingSerializer` is safe only for immutable types — a documented contract, not an

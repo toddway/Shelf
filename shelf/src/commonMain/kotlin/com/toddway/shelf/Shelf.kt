@@ -37,7 +37,13 @@ open class Shelf(var storage : Storage, var serializer: Serializer, var clock : 
     }
 }
 
-expect open class DiskStorage() : Shelf.Storage
+expect open class DiskStorage() : Shelf.Storage {
+    override fun get(key: String): String?
+    override fun put(key: String, value: String, timestamp: Long)
+    override fun timestamp(key: String): Long?
+    override fun keys(): Set<String>
+    override fun remove(key: String)
+}
 
 expect open class Clock() {
     open fun now() : Long

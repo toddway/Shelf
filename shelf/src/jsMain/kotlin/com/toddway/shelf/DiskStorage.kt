@@ -3,7 +3,7 @@ package com.toddway.shelf
 import org.w3c.dom.Storage
 import org.w3c.dom.get
 import org.w3c.dom.set
-import kotlin.browser.localStorage
+import kotlinx.browser.localStorage
 import kotlin.js.Date
 
 actual open class DiskStorage : Shelf.Storage, LocalStorage()

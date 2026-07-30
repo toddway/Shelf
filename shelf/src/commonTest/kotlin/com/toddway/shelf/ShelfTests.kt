@@ -193,21 +193,6 @@ class ShelfTests {
     }
 }
 
-open class MemoryStorage : Shelf.Storage {
-    override fun remove(key: String) {
-        map.remove(key)
-    }
-
-    override fun keys(): Set<String> = map.keys
-    override fun timestamp(key: String): Long = 0
-    override fun get(key: String): String? = map[key]
-    override fun put(key: String, value: String, timestamp: Long) {
-        map[key] = value
-    }
-
-    private val map: MutableMap<String, String> = mutableMapOf()
-}
-
 class ManualClock : Clock() {
 
     var offset: Long = 0
