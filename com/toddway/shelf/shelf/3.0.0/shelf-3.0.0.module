@@ -1,0 +1,332 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.toddway.shelf",
+    "module": "shelf",
+    "version": "3.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "metadataApiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.7.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-metadata-3.0.0.jar",
+          "url": "shelf-3.0.0.jar",
+          "size": 7938,
+          "sha512": "17fbba5bf1526f7943192f9c3510261eacc4fe5fc5c535a7babd390b40f7ca5bead37deef9321bbc214a5e4b713430a8f10723c46595a8ce8a98f65cf1b057a1",
+          "sha256": "cb1a06a0d260cf92ba03d21f90f3d4942ae56920c914915810380878124479ba",
+          "sha1": "4196e068f2013a21dad0a0706a1be238df6838f6",
+          "md5": "5189d0cf8c69b467442d06e5b2e2fdab"
+        }
+      ]
+    },
+    {
+      "name": "metadataSourcesElements",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.platform.type": "common"
+      },
+      "files": [
+        {
+          "name": "shelf-kotlin-3.0.0-sources.jar",
+          "url": "shelf-3.0.0-sources.jar",
+          "size": 9536,
+          "sha512": "35ea9a19b2510d420250b77d6ddc23e2742dce02ab054b829b4388bf63a131b0638f7ff84ed842a52bbf30385fea16bacac1c3259f59307b5ba5b11c7933f7c4",
+          "sha256": "ba727f9a294573aa462b747df14c64d303787801b95cca977508550ce6394e3e",
+          "sha1": "65dd04a1b3d89c66d0b93c15b1b3e3655c337476",
+          "md5": "cfe28ac6f7bad830c1d4c1d5aa35d2cf"
+        }
+      ]
+    },
+    {
+      "name": "iosArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosarm64/3.0.0/shelf-iosarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosarm64/3.0.0/shelf-iosarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosarm64/3.0.0/shelf-iosarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iossimulatorarm64/3.0.0/shelf-iossimulatorarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iossimulatorarm64/3.0.0/shelf-iossimulatorarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosSimulatorArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iossimulatorarm64/3.0.0/shelf-iossimulatorarm64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iossimulatorarm64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosX64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosx64/3.0.0/shelf-iosx64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosx64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosX64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosx64/3.0.0/shelf-iosx64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosx64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "iosX64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_x64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "available-at": {
+        "url": "../../shelf-iosx64/3.0.0/shelf-iosx64-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-iosx64",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jsApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../shelf-js/3.0.0/shelf-js-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-js",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jsRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../shelf-js/3.0.0/shelf-js-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-js",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jsSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "available-at": {
+        "url": "../../shelf-js/3.0.0/shelf-js-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-js",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../shelf-jvm/3.0.0/shelf-jvm-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-jvm",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../shelf-jvm/3.0.0/shelf-jvm-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-jvm",
+        "version": "3.0.0"
+      }
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "available-at": {
+        "url": "../../shelf-jvm/3.0.0/shelf-jvm-3.0.0.module",
+        "group": "com.toddway.shelf",
+        "module": "shelf-jvm",
+        "version": "3.0.0"
+      }
+    }
+  ]
+}

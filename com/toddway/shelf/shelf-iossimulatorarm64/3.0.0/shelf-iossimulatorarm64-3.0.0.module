@@ -1,0 +1,118 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../shelf/3.0.0/shelf-3.0.0.module",
+    "group": "com.toddway.shelf",
+    "module": "shelf",
+    "version": "3.0.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "iosSimulatorArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.7.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf.klib",
+          "url": "shelf-iossimulatorarm64-3.0.0.klib",
+          "size": 39721,
+          "sha512": "51db5dd193dfa387c6490c2a69f490a418f141db15200a9b4f6dfe49fb7ddf4e36e4e1e7cf33b649cd0e0c694e239fcfdeec4cebd17bb25f34d3463416828184",
+          "sha256": "5e11f7b9dcc0a0bf8178b34bd5888b667bad80bacfd35912bf2a97583ddc9c7e",
+          "sha1": "4288a1608350b44b6fd58a8f80d266f54e7f52b9",
+          "md5": "7a5d98a669ff65a344926083e8679725"
+        }
+      ]
+    },
+    {
+      "name": "iosSimulatorArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "files": [
+        {
+          "name": "shelf-iossimulatorarm64-3.0.0-sources.jar",
+          "url": "shelf-iossimulatorarm64-3.0.0-sources.jar",
+          "size": 9536,
+          "sha512": "77a8d70b15790dec2445374679f8ed96aa36a21bfdc38847d5286d807fd963d0f63ac18e7a6c1bdf2da83892595b4ae4abba8708e5f7892b8f1f3161cde13b41",
+          "sha256": "d0f2f47ab90ebe23b5967755ead8b032de280f5f411e3dc3d3024c9e6819e873",
+          "sha1": "8e2bb268a01a3a22c739e4b392104e9588a4e034",
+          "md5": "5bc878bb918f43d6110ab1fb96ec6d84"
+        }
+      ]
+    },
+    {
+      "name": "iosSimulatorArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.7.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-iossimulatorarm64-3.0.0-metadata.jar",
+          "url": "shelf-iossimulatorarm64-3.0.0-metadata.jar",
+          "size": 3162,
+          "sha512": "ab3854aee86e71dc21f09cf1370743778de547e8b527874a7feca70f27829f38281f07f2147e1f6e855e9c9a4b2fe2fea0152cd8707e3e68461e52fa9a638fe0",
+          "sha256": "12f5829289eb21045a6d7287684ec8ecd8a0954e43b75f9a71fdc6be5214d538",
+          "sha1": "08ecb9c19362d32137b82869fdfbaa49f3da91cd",
+          "md5": "aaf07f84d169a5ddeeb2e918fd5cde25"
+        }
+      ]
+    }
+  ]
+}

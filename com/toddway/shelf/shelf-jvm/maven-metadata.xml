@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+  <groupId>com.toddway.shelf</groupId>
+  <artifactId>shelf-jvm</artifactId>
+  <versioning>
+    <latest>3.0.0</latest>
+    <release>3.0.0</release>
+    <versions>
+      <version>3.0.0</version>
+    </versions>
+    <lastUpdated>20260730205633</lastUpdated>
+  </versioning>
+</metadata>
