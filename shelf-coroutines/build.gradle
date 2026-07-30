@@ -1,6 +1,7 @@
 apply plugin: 'org.jetbrains.kotlin.multiplatform'
 apply plugin: 'org.jetbrains.kotlinx.kover'
 apply plugin: 'io.gitlab.arturbosch.detekt'
+apply plugin: 'maven-publish'
 
 kotlin {
     jvm()
@@ -40,5 +41,40 @@ tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach {
         txt.required = false
         sarif.required = false
         md.required = false
+    }
+}
+
+// See :shelf for the publishing model. Publishes into the same root build/maven-repo layout.
+publishing {
+    repositories {
+        maven {
+            name = 'pages'
+            url = rootProject.layout.buildDirectory.dir('maven-repo')
+        }
+    }
+    publications.withType(MavenPublication).configureEach {
+        pom {
+            name = 'Shelf Coroutines'
+            description = 'Coroutine/Flow extensions for Shelf (ShelfList).'
+            url = POM_URL
+            licenses {
+                license {
+                    name = POM_LICENCE_NAME
+                    url = POM_LICENCE_URL
+                }
+            }
+            developers {
+                developer {
+                    id = POM_DEVELOPER_ID
+                    name = POM_DEVELOPER_NAME
+                    url = POM_DEVELOPER_URL
+                }
+            }
+            scm {
+                url = POM_SCM_URL
+                connection = POM_SCM_CONNECTION
+                developerConnection = POM_SCM_DEV_CONNECTION
+            }
+        }
     }
 }

@@ -276,6 +276,39 @@ it drops the current Maven Central presence (`com.toddway.shelf:Shelf` on Centra
 the primary consumer and can add one repo line, this matches the BuildChecks simplification. Keep Maven
 Central only if public/global discoverability (no repo line for strangers) is a hard requirement.
 
+### Phase 4 — execution notes (done)
+
+Done on branch `feature/phase-4-publishing`. Publishing verified locally by running
+`publishAllPublicationsToPagesRepository` into `build/maven-repo` and inspecting the output.
+Deviations from the plan above, and why:
+
+- **Decision #4 → gh-pages** (the plan's recommendation). Publishes to `https://toddway.github.io/Shelf`
+  with `GITHUB_TOKEN` only; **Maven Central presence is dropped** — consumers add the one repo URL.
+- **Coordinates:** `com.toddway.shelf:shelf` and `:shelf-coroutines`, version **3.0.0**. The lowercase
+  artifactId "normalization" needed no rename — core `maven-publish` derives the artifactId from the
+  (already lowercase) project names; the capital `Shelf` was only the old vanniktech/Central default,
+  gone with the switch. KMP auto-creates a publication per target, so each module publishes
+  `…:shelf`, `…:shelf-jvm`, `…:shelf-js`, `…:shelf-iosx64`, `…:shelf-iosarm64`,
+  `…:shelf-iossimulatorarm64` (the simulator publication is included — harmless; consumers select by
+  target). POMs are populated from the existing `POM_*` values in `gradle.properties`; verified
+  `shelf-coroutines` declares its `api` dependency on `shelf`.
+- **Both modules publish into one repo:** the `pages` repository points at `rootProject`'s
+  `build/maven-repo` (not each module's own build dir), so `publishAllPublicationsToPagesRepository`
+  fills a single layout the release workflow copies to `gh-pages`.
+- **`release.sh` — single-command release, modeled on BuildChecks'** `release.sh` (which the user
+  asked to match): guards (clean tree, on `multiplatform`, tag unused) → bump `VERSION_NAME` → verify
+  `./gradlew build` → commit → tag → **stop before push** (`--push` to go public). Adapted: bumps
+  `VERSION_NAME` in `gradle.properties` (not a `.kts` `version` line), default branch is
+  `multiplatform`, and there's **no fat jar / no Homebrew formula** — Shelf is a consumed library, not
+  a CLI, so those steps don't apply.
+- **`release.yml`** (on `v*` tag) runs on **`macos-latest`** — a macOS host is required to build the
+  Kotlin/Native iOS klibs being published (BuildChecks published a JVM-only jar on ubuntu). Steps:
+  `publishAllPublicationsToPagesRepository` → check out `gh-pages` in a worktree (orphan on first
+  release, `.nojekyll`, versions accumulate) → push → `gh release create --generate-notes`.
+- **README updated:** gh-pages repo + new coordinates, the `buildchecks` command (the old `./gradlew
+  checks` task is gone), the `./release.sh` flow, and the dead Maven Central badge → a GitHub release
+  badge.
+
 ## Versioning & toolchain policy (decided)
 
 - **Next published version = `3.0.0`** (major), set at Phase 4 — not the `2.1.0` currently in
@@ -313,12 +346,16 @@ Resolved this pass:
 5. ~~**iOS targets:** confirm actuals compile for arm64/sim.~~ → **confirmed**: `iosX64`/`iosArm64`/
    `iosSimulatorArm64` all compile, and `iosSimulatorArm64Test` runs green (36/36).
 
+Resolved at Phase 4:
+
+4. ~~**Publishing target:** gh-pages vs Maven Central.~~ → **gh-pages** (done). Published to
+   `https://toddway.github.io/Shelf` via `GITHUB_TOKEN` only; Maven Central presence dropped.
+6. ~~**Coverage tool:** JaCoCo vs Kover.~~ → **Kover** (done in Phase 3), aggregated, with the
+   JaCoCo-DOCTYPE shim so the CLI ingests it.
+
 Still open:
 
-4. **Publishing target:** gh-pages Maven repo (recommended) vs stay on Maven Central — decided at Phase 4,
-   together with 3.0.0 + the artifactId normalization above.
-6. **Coverage tool** BuildChecks 4.x ingests for MPP: JaCoCo XML (JVM-only coverage) vs Kover
-   (MPP-aggregated) — decide in Phase 3.
+- *(none)*
 
 ## Sequencing
 
