@@ -1,4 +1,6 @@
 apply plugin: 'org.jetbrains.kotlin.multiplatform'
+apply plugin: 'org.jetbrains.kotlinx.kover'
+apply plugin: 'io.gitlab.arturbosch.detekt'
 
 kotlin {
     jvm()
@@ -21,5 +23,22 @@ kotlin {
         jvmTest.dependencies {
             implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         }
+    }
+}
+
+// Static analysis. detekt only emits the findings report; the BuildChecks gate decides pass/fail.
+detekt {
+    buildUponDefaultConfig = true
+    ignoreFailures = true
+    source.setFrom("src/commonMain/kotlin")
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach {
+    reports {
+        xml.required = true
+        html.required = true
+        txt.required = false
+        sarif.required = false
+        md.required = false
     }
 }

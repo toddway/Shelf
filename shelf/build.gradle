@@ -1,5 +1,7 @@
 apply plugin: 'org.jetbrains.kotlin.multiplatform'
 apply plugin: 'org.jetbrains.kotlin.plugin.serialization'
+apply plugin: 'org.jetbrains.kotlinx.kover'
+apply plugin: 'io.gitlab.arturbosch.detekt'
 
 kotlin {
     // DiskStorage/Clock/Lock are expect/actual classes (Beta in K2); this enables their
@@ -32,5 +34,28 @@ kotlin {
         jvmTest.dependencies {
             implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
         }
+    }
+}
+
+// Static analysis. detekt only emits the findings report here; the BuildChecks gate decides
+// pass/fail (against buildchecks-baseline.txt), so failures are ignored at the detekt level.
+detekt {
+    buildUponDefaultConfig = true
+    ignoreFailures = true
+    source.setFrom(
+        "src/commonMain/kotlin",
+        "src/jvmMain/kotlin",
+        "src/jsMain/kotlin",
+        "src/iosMain/kotlin",
+    )
+}
+
+tasks.withType(io.gitlab.arturbosch.detekt.Detekt).configureEach {
+    reports {
+        xml.required = true
+        html.required = true
+        txt.required = false
+        sarif.required = false
+        md.required = false
     }
 }

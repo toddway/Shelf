@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main, multiplatform]
+  pull_request:
+
+permissions:
+  contents: read
+  statuses: write # post the `buildchecks` commit status
+  pull-requests: write # post/update the summary comment on PRs
+
+jobs:
+  build:
+    name: build + buildchecks
+    # A macOS host is required to build the Kotlin/Native iOS targets (jvm + js build anywhere).
+    # Standard GitHub-hosted runners, incl. macOS, are free for public repositories.
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so BuildChecks can diff against the base ref
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      # Produces JUnit XML (jvm/js/ios), Kover coverage XML, and detekt findings XML.
+      # continue-on-error: a failure here (e.g. a failing test) must still reach the gate + reporting
+      # steps below; the final step turns build/gate outcomes into the job's pass/fail.
+      - name: Build, test, and generate reports
+        id: build
+        continue-on-error: true
+        run: ./gradlew build :koverXmlReport detekt --console=plain
+
+      - name: BuildChecks gate
+        id: gate
+        if: always()
+        continue-on-error: true
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew buildchecks --console=plain --args="check --base-ref origin/${{ github.base_ref }}"
+          else
+            ./gradlew buildchecks --console=plain
+          fi
+
+      - name: Upload BuildChecks report
+        if: always()
+        id: report
+        uses: actions/upload-artifact@v4
+        with:
+          name: buildchecks-report
+          path: build/reports/buildChecks
+
+      - name: Job summary
+        if: always()
+        run: |
+          if [ -f build/reports/buildChecks/summary.md ]; then
+            cat build/reports/buildChecks/summary.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "BuildChecks produced no summary (build failed before reporting)." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      # Fork PRs receive a read-only token, so posting a status/comment would 403 — self-skip those.
+      - name: Post BuildChecks commit status
+        if: always() && github.event.pull_request.head.repo.fork != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          state="failure"
+          if [ "${{ steps.build.outcome }}" = "success" ] && [ "${{ steps.gate.outcome }}" = "success" ]; then
+            state="success"
+          fi
+          desc="BuildChecks"
+          if [ -f build/reports/buildChecks/summary.txt ]; then
+            desc="$(head -c 140 build/reports/buildChecks/summary.txt)"
+          fi
+          gh api -X POST "repos/${{ github.repository }}/statuses/${{ github.event.pull_request.head.sha || github.sha }}" \
+            -f state="$state" \
+            -f context="buildchecks" \
+            -f description="$desc" \
+            -f target_url="${{ steps.report.outputs.artifact-url }}"
+
+      - name: Post BuildChecks PR comment
+        if: always() && github.event_name == 'pull_request' && github.event.pull_request.head.repo.fork != true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ -f build/reports/buildChecks/summary.md ]; then
+            cp build/reports/buildChecks/summary.md comment.md
+          else
+            echo "BuildChecks produced no summary (build failed before reporting)." > comment.md
+          fi
+          printf '\n📦 **[Download full HTML report](%s)**\n' "${{ steps.report.outputs.artifact-url }}" >> comment.md
+          gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md --edit-last --create-if-none
+
+      - name: Fail if build or gate failed
+        if: always()
+        run: |
+          if [ "${{ steps.build.outcome }}" != "success" ] || [ "${{ steps.gate.outcome }}" != "success" ]; then
+            echo "build=${{ steps.build.outcome }} gate=${{ steps.gate.outcome }} — failing job"
+            exit 1
+          fi

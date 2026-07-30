@@ -3,10 +3,91 @@
 plugins {
     id 'org.jetbrains.kotlin.multiplatform' version "$kotlin_version" apply false
     id 'org.jetbrains.kotlin.plugin.serialization' version "$kotlin_version" apply false
+    // Kover is applied to the root so it can aggregate module coverage into one report.
+    id 'org.jetbrains.kotlinx.kover' version '0.9.1'
+    // detekt is applied per-module (see each module's build.gradle); declared here for the classpath.
+    id 'io.gitlab.arturbosch.detekt' version '1.23.7' apply false
 }
 
 allprojects {
     repositories {
         mavenCentral()
     }
+}
+
+// --- Coverage: Kover, aggregated across both modules -----------------------------------------
+// Kover emits a JaCoCo-format XML report, which is what the BuildChecks CLI ingests. Note that
+// Kover (like JaCoCo) can only instrument JVM bytecode, so the aggregated coverage reflects the
+// jvmTest suites; js/native tests have no standard coverage instrumentation.
+dependencies {
+    kover project(':shelf')
+    kover project(':shelf-coroutines')
+}
+
+kover {
+    reports {
+        total {
+            xml {
+                // Emitted at build/reports/kover/report.xml (JaCoCo XML schema).
+            }
+        }
+    }
+}
+
+// Kover's XML is structurally JaCoCo, but omits the JaCoCo DOCTYPE that the BuildChecks CLI uses
+// to recognize a coverage report (verified: without it the CLI logs "not understood"; with it the
+// report is ingested as jacoco). This finalizer injects that DOCTYPE in place so the aggregated
+// Kover report counts toward the coverage gate. Run `:koverXmlReport` (which is finalized by this).
+def jacocoDoctype = '<!DOCTYPE report PUBLIC "-//JACOCO//DTD Report 1.1//EN" "report.dtd">'
+tasks.register('koverJacocoDoctype') {
+    def reportFile = layout.buildDirectory.file('reports/kover/report.xml')
+    inputs.file(reportFile)
+    outputs.file(reportFile)
+    doLast {
+        def f = reportFile.get().asFile
+        def text = f.text
+        if (!text.contains('JACOCO')) {
+            f.text = text.replaceFirst(/(<\?xml[^?]*\?>\s*)/, '$1' + jacocoDoctype + '\n')
+        }
+    }
+}
+tasks.named('koverXmlReport') { finalizedBy('koverJacocoDoctype') }
+
+// --- BuildChecks 4.x CLI ---------------------------------------------------------------------
+// The v4 CLI is a plain Maven artifact on BuildChecks' own gh-pages Maven repo (no jar to vendor).
+// It is resolved into a dedicated configuration and run via JavaExec, exactly as SW's v4 build does,
+// which also gives a local `./gradlew buildchecks`.
+repositories {
+    maven { url = 'https://toddway.github.io/BuildChecks' }
+}
+
+configurations {
+    buildchecks
+}
+
+dependencies {
+    buildchecks 'com.toddway:buildchecks:4.0.12'
+}
+
+// Pure gate-runner over already-generated reports (no build dependency), so CI can run it as a
+// separate step that reports on existing reports even when the build/test step failed.
+// Local one-liner: `./gradlew build :koverXmlReport detekt buildchecks` (root-only :koverXmlReport
+// produces the single aggregated coverage report; the bare task also emits per-module reports the
+// CLI can't read).
+tasks.register('buildchecks', JavaExec) {
+    group = 'verification'
+    description = 'Run the BuildChecks v4 gate over the build reports (build first).'
+    workingDir = rootProject.projectDir
+    classpath = configurations.buildchecks
+    mainClass = 'buildchecks.cli.MainKt'
+    args 'check' // add '--open' for a local run that opens the HTML report
+}
+
+tasks.register('buildchecksBaseline', JavaExec) {
+    group = 'verification'
+    description = 'Regenerate buildchecks-baseline.txt from the current findings.'
+    workingDir = rootProject.projectDir
+    classpath = configurations.buildchecks
+    mainClass = 'buildchecks.cli.MainKt'
+    args 'baseline'
 }
