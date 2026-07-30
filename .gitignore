@@ -16,3 +16,6 @@ local.properties
 
 # OSX files
 .DS_Store
+
+# Claude Code local settings
+.claude/
