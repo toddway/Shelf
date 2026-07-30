@@ -19,3 +19,4 @@ pluginManagement {
 enableFeaturePreview("GRADLE_METADATA")
 
 include ':shelf'
+include ':shelf-coroutines'
