@@ -1,0 +1,61 @@
+name: Release
+
+# Cut a release with `./release.sh <version> --push` (or prep, then `git push origin multiplatform <tag>`).
+# release.sh bumps VERSION_NAME, verifies the build, commits, and tags. On the v* tag this workflow
+# publishes every KMP artifact (kotlinMultiplatform metadata + jvm + js + iOS) to the gh-pages Maven
+# repo — served at https://toddway.github.io/Shelf, where consumers resolve com.toddway.shelf:* — and
+# creates a GitHub Release. A macOS runner is required to build the Kotlin/Native iOS targets.
+# Everything authenticates with the built-in GITHUB_TOKEN — no signing keys or Sonatype tokens.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Publish all KMP artifacts to the local Maven layout
+        run: ./gradlew publishAllPublicationsToPagesRepository --console=plain
+
+      - name: Publish the Maven repo to the gh-pages branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Check out gh-pages in a separate worktree, creating it as an orphan on the first release.
+          if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+            git fetch origin gh-pages
+            git worktree add pages gh-pages
+          else
+            git worktree add --detach pages
+            git -C pages checkout --orphan gh-pages
+            git -C pages rm -rf . >/dev/null 2>&1 || true
+          fi
+
+          # Merge the new artifacts in (previous versions accumulate); .nojekyll keeps GitHub Pages
+          # from mangling the Maven metadata files.
+          touch pages/.nojekyll
+          cp -R build/maven-repo/. pages/
+          git -C pages add -A
+          git -C pages commit -m "Publish Maven artifacts for ${GITHUB_REF_NAME}" \
+            || { echo "nothing new to publish"; exit 0; }
+          git -C pages push origin gh-pages
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "$GITHUB_REF_NAME"
+          --repo "$GITHUB_REPOSITORY"
+          --title "$GITHUB_REF_NAME"
+          --generate-notes

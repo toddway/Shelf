@@ -1,7 +1,7 @@
 # Shelf
 Key/value object store for Kotlin. Persist any serializable object.  Multiplatform compatible - JVM, Android, JS, Native, iOS.
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.toddway.shelf/Shelf)
+[![Release](https://img.shields.io/github/v/release/toddway/Shelf)](https://github.com/toddway/Shelf/releases)
 
 ## Basic usage
 
@@ -96,36 +96,43 @@ val shelf = Shelf(MyOwnStorage(...), MyOwnSerializer(...))
 
 ## Gradle
 
+Shelf is published to a GitHub Pages Maven repo, so add that repository:
+
 ```groovy
 repositories {
-    mavenCentral()
+    maven { url = uri("https://toddway.github.io/Shelf/") }
 }
 ```
 
 ```groovy
 dependencies {
-    implementation 'com.toddway.shelf:Shelf:x.y.z'
+    implementation 'com.toddway.shelf:shelf:3.0.0'
+    implementation 'com.toddway.shelf:shelf-coroutines:3.0.0' // optional: ShelfList (coroutines/Flow)
 }
 ```
 
 ## For library developers
 
 ### Build checks
-The following command runs all configured tests and code analyzers.  The output is a summary of
-results with a link to view HTML reports in a browser
+The following command runs the tests and code analyzers and prints a gated summary with a link to
+the HTML report ([BuildChecks](https://github.com/toddway/BuildChecks)):
 ```
-./gradlew checks
+./gradlew build :koverXmlReport detekt buildchecks
 ```
+CI runs the same gate on every push and pull request (see [.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
 ### Publishing
-This library now publishes to Sonatype/Maven Central using the [gradle-maven-publish-plugin](https://github.com/vanniktech/gradle-maven-publish-plugin#where-to-upload-to).  
-It was previously published to Bintray/JCenter until that service was retired.
-To publish a new version, update the VERSION_NAME in [gradle.properties](gradle.properties), then run:
+Releases publish every Kotlin Multiplatform artifact to a [GitHub Pages Maven repo](https://toddway.github.io/Shelf)
+using only the built-in `GITHUB_TOKEN` — no signing keys or Sonatype account. Cut a release with a
+single command:
 ```
-./gradlew publish --no-daemon --no-parallel
-./gradlew closeAndReleaseRepository
+./release.sh 3.0.1 --push
 ```
-  
+This bumps `VERSION_NAME`, verifies the build, commits, and tags `v3.0.1`; the tag triggers
+[.github/workflows/release.yml](.github/workflows/release.yml), which publishes the artifacts to the
+`gh-pages` branch and creates a GitHub Release. Omit `--push` to prepare the commit/tag and inspect it
+before pushing.
+
 
 License
 -------
