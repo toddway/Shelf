@@ -5,9 +5,32 @@ Key/value object store for Kotlin. Persist any serializable object.  Multiplatfo
 
 ## Basic usage
 
-Initialize a shelf
+Initialize a shelf. `fastShelf()` gives you a ready-to-use, high-performance shelf — an in-memory
+LRU cache and thread-safe access over the platform's default storage, plus cached serialization:
 ```kotlin
-val shelf = Shelf(FileStorage(applicationContext.cacheDir), MoshiSerializer())
+val shelf = fastShelf()
+```
+
+To run more than one shelf in the same app, give each a name so their keys don't collide:
+```kotlin
+val userShelf = fastShelf("user")
+val appShelf = fastShelf("app")
+```
+
+On the JVM you'll usually want to choose where files live. `File.fastShelf(name)` stores each named
+shelf in its own subdirectory:
+```kotlin
+val shelf = context.cacheDir.fastShelf("user")
+```
+
+Pass a `Cipher` to encrypt values at rest, or a configured `Json` to control serialization:
+```kotlin
+val shelf = fastShelf("user", cipher = myCipher)
+```
+
+For full control, compose a `Shelf` from any `Shelf.Storage` and `Shelf.Serializer` yourself:
+```kotlin
+val shelf = Shelf(FileStorage(context.cacheDir), MoshiSerializer())
 ```
 
 Store an object instance

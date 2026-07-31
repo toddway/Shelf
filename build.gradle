@@ -95,3 +95,22 @@ tasks.register('buildchecksBaseline', JavaExec) {
     mainClass = 'buildchecks.cli.MainKt'
     args 'baseline'
 }
+
+// --- Aggregate local gate: `./gradlew checks` ------------------------------------------------
+// One task for the documented one-liner `build :koverXmlReport detekt buildchecks`. Ordering is
+// enforced with mustRunAfter (not dependsOn) so `buildchecks` runs last, over freshly-generated
+// reports, while staying independently runnable — in CI, where it's a separate invocation, the
+// ordering rule is simply inert. Root-only `:koverXmlReport` produces the single aggregated
+// coverage report the CLI reads (the per-module reports the bare task emits are ignored).
+def checksReportTasks = subprojects.collect { "${it.path}:build" } +
+    ':koverXmlReport' +
+    subprojects.collect { "${it.path}:detekt" }
+
+tasks.named('buildchecks') { mustRunAfter(checksReportTasks) }
+
+tasks.register('checks') {
+    group = 'verification'
+    description = 'Build, aggregate coverage, run detekt, then run the BuildChecks gate — the full local check.'
+    dependsOn(checksReportTasks)
+    dependsOn('buildchecks')
+}
