@@ -97,3 +97,98 @@ publishing {
         }
     }
 }
+
+// --- Mutation testing (PIT), diff-scoped, PR-only ---------------------------------------------
+// Why the PIT CLI and not the info.solidsoft Gradle plugin: that plugin keys off the java plugin's
+// `main`/`test` sourceSets, which a Kotlin/Multiplatform module doesn't populate the way it expects
+// — the jvm classes compile to build/classes/kotlin/jvm/{main,test} and the suite runs under
+// `jvmTest`, not `test`. Driving PIT's command line directly points it at the exact KMP outputs with
+// no `withJava()` shim perturbing the publications. Tests here are JUnit 4 (KMP's default for
+// kotlin("test") on jvm — see jvmTestRuntimeClasspath), which PIT supports natively; no junit5 plugin.
+//
+// BuildChecks never runs PIT — it discovers the report (any build/reports/**/*.xml under the root,
+// content-sniffed) and gates the mutation kill rate on the *changed lines only*, intersecting PIT's
+// per-line mutants with the same diff it hands us here. So PIT is kept off the default `checks` path
+// (it's slow); run it explicitly via `:shelf:pitest` or the PR-only CI step.
+configurations {
+    pitest
+}
+
+dependencies {
+    // PIT core + command-line entry point. ASM 9.8 (bundled) reads Java 21 bytecode; JUnit 4 is native.
+    pitest 'org.pitest:pitest-command-line:1.20.0'
+}
+
+tasks.register('pitest', JavaExec) {
+    group = 'verification'
+    description = 'PIT mutation testing on the jvm target, scoped to changed classes ' +
+        '(report → build/reports/pitest/mutations.xml). Override targets with -Ppit.targetClasses.'
+    // Main + test classes must exist for PIT to mutate and to run the covering tests against mutants.
+    dependsOn 'jvmTestClasses'
+    mainClass = 'org.pitest.mutationtest.commandline.MutationCoverageReport'
+    classpath = configurations.pitest
+
+    def reportDir = layout.buildDirectory.dir('reports/pitest').get().asFile
+    def mainClassesDir = layout.buildDirectory.dir('classes/kotlin/jvm/main').get().asFile
+    def testClassesDir = layout.buildDirectory.dir('classes/kotlin/jvm/test').get().asFile
+    def sourceRoots = ['src/commonMain/kotlin', 'src/jvmMain/kotlin']
+        .collect { file(it).absolutePath }.join(',')
+    def rootPackage = 'com.toddway.shelf'
+
+    doFirst {
+        // targetClasses: an explicit -Ppit.targetClasses override (nightly full runs, local probing),
+        // otherwise the changed set BuildChecks reports — mapped path -> class-name glob. The trailing
+        // '*' catches Kotlin's file-level facade (FooKt) and nested classes (Foo$Bar) for a changed
+        // Foo.kt. Empty changed set -> nothing to mutate -> skip cleanly (no report, no gate failure).
+        def targetClasses
+        if (project.hasProperty('pit.targetClasses')) {
+            targetClasses = project.property('pit.targetClasses')
+        } else {
+            def out = new ByteArrayOutputStream()
+            project.javaexec {
+                classpath = rootProject.configurations.buildchecks
+                mainClass = 'buildchecks.cli.MainKt'
+                args 'changed-files'
+                if (project.hasProperty('pit.baseRef')) args '--base-ref', project.property('pit.baseRef')
+                standardOutput = out
+                errorOutput = new ByteArrayOutputStream()
+                ignoreExitValue = true // an unresolved base ref exits 2; treated as "no changed set" below
+            }
+            def globs = out.toString().readLines()*.trim().findAll { it }
+                .findAll { it.endsWith('.kt') }
+                .collect { path ->
+                    ['src/commonMain/kotlin/', 'src/jvmMain/kotlin/'].findResult { prefix ->
+                        def rel = "shelf/$prefix"
+                        path.startsWith(rel) ? path.substring(rel.length()) : null
+                    }
+                }
+                .findAll { it != null }
+                // src/<>Main/kotlin was stripped above, so what remains is the package path itself.
+                .collect { it.replaceAll('\\.kt$', '').replace('/', '.') + '*' }
+                .toSet()
+            if (globs.isEmpty()) {
+                logger.lifecycle('pitest: no changed jvm/common main classes in :shelf — skipping mutation run.')
+                throw new StopExecutionException()
+            }
+            logger.lifecycle("pitest: mutating changed classes ${globs}")
+            targetClasses = globs.join(',')
+        }
+
+        reportDir.mkdirs()
+        def fullClasspath = ([mainClassesDir, testClassesDir] +
+            configurations.jvmTestRuntimeClasspath.files).collect { it.absolutePath }.join(',')
+        args = [
+            '--reportDir', reportDir.absolutePath,
+            '--targetClasses', targetClasses,
+            '--targetTests', "${rootPackage}.*", // whole suite runs against each mutant, per the recipe
+            // The per-file '*' glob (for FooKt facades / Foo$Bar nested classes) also matches sibling
+            // test classes like FastShelfTests — mutating test code is meaningless, so drop the suite by
+            // its naming convention. Test sources are never mutation targets.
+            '--excludedClasses', "${rootPackage}.*Test,${rootPackage}.*Tests",
+            '--sourceDirs', sourceRoots,
+            '--outputFormats', 'XML,HTML',
+            '--timestampedReports', 'false', // stable path: build/reports/pitest/mutations.xml
+            '--classPath', fullClasspath,
+        ]
+    }
+}

@@ -5,3 +5,8 @@ output_dir = "build/reports/buildChecks"
 min_coverage_percent = 52.0
 max_new_findings = 0
 min_changed_line_coverage = 80
+# Changed lines must also survive mutation (tests must *catch* a mutated line, not just run it).
+# Severable — no mutations.xml (e.g. non-PR local `checks`) → skips silently. Starting at 0 to observe
+# the signal without blocking; raise once the PR-only PIT step has a track record. See docs and the
+# `:shelf:pitest` task in shelf/build.gradle.
+min_changed_line_mutation = 0
