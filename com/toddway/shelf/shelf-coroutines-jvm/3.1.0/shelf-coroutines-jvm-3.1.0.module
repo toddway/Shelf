@@ -1,0 +1,130 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../shelf-coroutines/3.1.0/shelf-coroutines-3.1.0.module",
+    "group": "com.toddway.shelf",
+    "module": "shelf-coroutines",
+    "version": "3.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "jvmApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines-jvm-3.1.0.jar",
+          "url": "shelf-coroutines-jvm-3.1.0.jar",
+          "size": 8796,
+          "sha512": "199f5d3afb203f4b77833cfd0514270354d697a5aaf62b10ef63b3dad9959ecb382835a434820d09559baf2ab42a1f565fbadea1f151b6d5fa3a55779d995317",
+          "sha256": "fefcd0dd4831371ce6f3d2cc9b3dea39c25cc0fcd2e9fb8aa7a2533e2f24cd48",
+          "sha1": "bbce68796658fffa0a418c064be0584dda3b8887",
+          "md5": "e347f1e55b134204105296b18d458e27"
+        }
+      ]
+    },
+    {
+      "name": "jvmRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines-jvm-3.1.0.jar",
+          "url": "shelf-coroutines-jvm-3.1.0.jar",
+          "size": 8796,
+          "sha512": "199f5d3afb203f4b77833cfd0514270354d697a5aaf62b10ef63b3dad9959ecb382835a434820d09559baf2ab42a1f565fbadea1f151b6d5fa3a55779d995317",
+          "sha256": "fefcd0dd4831371ce6f3d2cc9b3dea39c25cc0fcd2e9fb8aa7a2533e2f24cd48",
+          "sha1": "bbce68796658fffa0a418c064be0584dda3b8887",
+          "md5": "e347f1e55b134204105296b18d458e27"
+        }
+      ]
+    },
+    {
+      "name": "jvmSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "standard-jvm",
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime",
+        "org.jetbrains.kotlin.platform.type": "jvm"
+      },
+      "files": [
+        {
+          "name": "shelf-coroutines-jvm-3.1.0-sources.jar",
+          "url": "shelf-coroutines-jvm-3.1.0-sources.jar",
+          "size": 1619,
+          "sha512": "66b1d735eb5b2c460cda1aff125a8af70dfc3650ca5598816520776928d7118f734a7838bcc4c56e2d2650d1815685191a872002817f19ad5f00f31b92476622",
+          "sha256": "e24a2120fc3e61a6e7cad8f9f0f4a985f4b9638b2a56238996676a37f8f76b91",
+          "sha1": "be072b848b5c28d64b10e4447350c27806a011b5",
+          "md5": "b3f1e497c446af61cbe96b9b835c7484"
+        }
+      ]
+    }
+  ]
+}

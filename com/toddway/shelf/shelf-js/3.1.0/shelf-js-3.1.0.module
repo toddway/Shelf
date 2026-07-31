@@ -1,0 +1,123 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../shelf/3.1.0/shelf-3.1.0.module",
+    "group": "com.toddway.shelf",
+    "module": "shelf",
+    "version": "3.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "jsApiElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-dom-api-compat",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-js-3.1.0.klib",
+          "url": "shelf-js-3.1.0.klib",
+          "size": 42823,
+          "sha512": "aa97da2085d91b6b26c0cb4d2311d81c987f4c7ea2fbb34bf822b9cd08c9b0c08bb4d69f05c93880574417369a4d7ec7fcc875637ec3e13ca79b304be80690a9",
+          "sha256": "c638c296d5b61594136424c03394af2300eb5eaaab27b0f46bf4ecab438c319e",
+          "sha1": "762ed05a0e6a877871f0a3c0c95ca10abab65b9b",
+          "md5": "3da7c5d8131fc84b9b2e2ce2cb3700af"
+        }
+      ]
+    },
+    {
+      "name": "jsRuntimeElements-published",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "dependencies": [
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-dom-api-compat",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-serialization-json",
+          "version": {
+            "requires": "1.7.3"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-js-3.1.0.klib",
+          "url": "shelf-js-3.1.0.klib",
+          "size": 42823,
+          "sha512": "aa97da2085d91b6b26c0cb4d2311d81c987f4c7ea2fbb34bf822b9cd08c9b0c08bb4d69f05c93880574417369a4d7ec7fcc875637ec3e13ca79b304be80690a9",
+          "sha256": "c638c296d5b61594136424c03394af2300eb5eaaab27b0f46bf4ecab438c319e",
+          "sha1": "762ed05a0e6a877871f0a3c0c95ca10abab65b9b",
+          "md5": "3da7c5d8131fc84b9b2e2ce2cb3700af"
+        }
+      ]
+    },
+    {
+      "name": "jsSourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.js.compiler": "ir",
+        "org.jetbrains.kotlin.platform.type": "js"
+      },
+      "files": [
+        {
+          "name": "shelf-js-3.1.0-sources.jar",
+          "url": "shelf-js-3.1.0-sources.jar",
+          "size": 11572,
+          "sha512": "37985150c46f6aad54c88a728d7d9f134976146ec5c79244bec1c3fad74eacb93e103495be2b9dc99bab2b684de395fa87fc750ba577cb7de8f367fc86e99394",
+          "sha256": "3536bd30b55f1fb49d8601b0f174d2b2e9f68573a050ec5fd9b26b719bdc1270",
+          "sha1": "9beb1c73590c4632d5a8c647f4609a270b434531",
+          "md5": "71c79c774d2a9c2cea6b6d94f5e5be30"
+        }
+      ]
+    }
+  ]
+}

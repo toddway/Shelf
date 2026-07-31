@@ -1,0 +1,132 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../shelf-coroutines/3.1.0/shelf-coroutines-3.1.0.module",
+    "group": "com.toddway.shelf",
+    "module": "shelf-coroutines",
+    "version": "3.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "iosArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines.klib",
+          "url": "shelf-coroutines-iosarm64-3.1.0.klib",
+          "size": 8115,
+          "sha512": "431a6484aa3fc26b180dc4f9817df957d216411c54861503e77083c6b25687a858d735c645214ffb6ca39e55e09666d4ca6e8a65b0c82fd12d1c51c00d370025",
+          "sha256": "a5b66207163352fe5f0fdd87619df93b6340431bfbbf1254b187bc6b0812da5b",
+          "sha1": "45a0772aedb410b4aeaff7bf4d7e67070ec20d41",
+          "md5": "b02e128a1761f3c55b9e5d8c9c80a230"
+        }
+      ]
+    },
+    {
+      "name": "iosArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "files": [
+        {
+          "name": "shelf-coroutines-iosarm64-3.1.0-sources.jar",
+          "url": "shelf-coroutines-iosarm64-3.1.0-sources.jar",
+          "size": 1619,
+          "sha512": "66b1d735eb5b2c460cda1aff125a8af70dfc3650ca5598816520776928d7118f734a7838bcc4c56e2d2650d1815685191a872002817f19ad5f00f31b92476622",
+          "sha256": "e24a2120fc3e61a6e7cad8f9f0f4a985f4b9638b2a56238996676a37f8f76b91",
+          "sha1": "be072b848b5c28d64b10e4447350c27806a011b5",
+          "md5": "b3f1e497c446af61cbe96b9b835c7484"
+        }
+      ]
+    },
+    {
+      "name": "iosArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines-iosarm64-3.1.0-metadata.jar",
+          "url": "shelf-coroutines-iosarm64-3.1.0-metadata.jar",
+          "size": 261,
+          "sha512": "f183a23ef471065cb56658986b426e23275488ca1648422f8442046cc6c7988bb7a4180c2947dbd4a02aecd751fe6626fd298723775b7657eccddd2fcc44a9b2",
+          "sha256": "0a757917da3bb32a0883b0afec45f0621c039c2cfc6c1fc9e445f0d152326f28",
+          "sha1": "ebb09d362e900974c86ce4de5ab25f661a0b8c7a",
+          "md5": "b627243a24ba7a19bed063e5f9338abc"
+        }
+      ]
+    }
+  ]
+}

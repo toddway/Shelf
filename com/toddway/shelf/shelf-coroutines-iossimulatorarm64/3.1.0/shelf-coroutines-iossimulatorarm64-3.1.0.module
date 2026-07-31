@@ -1,0 +1,132 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "url": "../../shelf-coroutines/3.1.0/shelf-coroutines-3.1.0.module",
+    "group": "com.toddway.shelf",
+    "module": "shelf-coroutines",
+    "version": "3.1.0",
+    "attributes": {
+      "org.gradle.status": "release"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "8.14"
+    }
+  },
+  "variants": [
+    {
+      "name": "iosSimulatorArm64ApiElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-api",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines.klib",
+          "url": "shelf-coroutines-iossimulatorarm64-3.1.0.klib",
+          "size": 8201,
+          "sha512": "0ecdd4de515b66390ccfba7bb0013f629f224fb9e899652226f972cd159a2c9262d2b60aec4aeba7ce48e678264bc5e3c22ebf30e9c594076cbf64ca3aa50883",
+          "sha256": "aff108ef0f14c4badbc145231a15accdc21e527582ac6b110fede0de2e211a8e",
+          "sha1": "24ee32655732a65cb9e4f22c7af3989ec1bded23",
+          "md5": "8a3e1244dbfaac6aed8c17424ad0b94b"
+        }
+      ]
+    },
+    {
+      "name": "iosSimulatorArm64SourcesElements-published",
+      "attributes": {
+        "org.gradle.category": "documentation",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.docstype": "sources",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-runtime",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "files": [
+        {
+          "name": "shelf-coroutines-iossimulatorarm64-3.1.0-sources.jar",
+          "url": "shelf-coroutines-iossimulatorarm64-3.1.0-sources.jar",
+          "size": 1619,
+          "sha512": "66b1d735eb5b2c460cda1aff125a8af70dfc3650ca5598816520776928d7118f734a7838bcc4c56e2d2650d1815685191a872002817f19ad5f00f31b92476622",
+          "sha256": "e24a2120fc3e61a6e7cad8f9f0f4a985f4b9638b2a56238996676a37f8f76b91",
+          "sha1": "be072b848b5c28d64b10e4447350c27806a011b5",
+          "md5": "b3f1e497c446af61cbe96b9b835c7484"
+        }
+      ]
+    },
+    {
+      "name": "iosSimulatorArm64MetadataElements-published",
+      "attributes": {
+        "artifactType": "org.jetbrains.kotlin.klib",
+        "org.gradle.category": "library",
+        "org.gradle.jvm.environment": "non-jvm",
+        "org.gradle.usage": "kotlin-metadata",
+        "org.jetbrains.kotlin.native.target": "ios_simulator_arm64",
+        "org.jetbrains.kotlin.platform.type": "native"
+      },
+      "dependencies": [
+        {
+          "group": "com.toddway.shelf",
+          "module": "shelf",
+          "version": {
+            "requires": "3.1.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlinx",
+          "module": "kotlinx-coroutines-core",
+          "version": {
+            "requires": "1.9.0"
+          }
+        },
+        {
+          "group": "org.jetbrains.kotlin",
+          "module": "kotlin-stdlib",
+          "version": {
+            "requires": "2.0.21"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "shelf-coroutines-iossimulatorarm64-3.1.0-metadata.jar",
+          "url": "shelf-coroutines-iossimulatorarm64-3.1.0-metadata.jar",
+          "size": 261,
+          "sha512": "22ec8fe20757b91ecaf0c3045b4ceddcc1c9dae4e2ca5c98d058c27651b3d13b190ec146e5f57a6d14adee0bf8bc0a7e14989bd05b870baaee353d7ab42f258e",
+          "sha256": "e036b3cd6aa5abdc92eda985068d051ae8a2fe721ebd87d59d00b42e4c3dea80",
+          "sha1": "472009c0e69ff791e27df16ad35034d83cfc48df",
+          "md5": "aceb4045a9aca59fabd8c461a60df4d2"
+        }
+      ]
+    }
+  ]
+}
