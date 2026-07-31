@@ -70,7 +70,7 @@ configurations {
 }
 
 dependencies {
-    buildchecks 'com.toddway:buildchecks:4.0.12'
+    buildchecks 'com.toddway:buildchecks:4.0.13'
 }
 
 // Pure gate-runner over already-generated reports (no build dependency), so CI can run it as a

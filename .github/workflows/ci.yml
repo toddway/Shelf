@@ -39,6 +39,16 @@ jobs:
         continue-on-error: true
         run: ./gradlew build :koverXmlReport detekt --console=plain
 
+      # Mutation testing is PR-only (a full run is slow) and scoped to the changed classes, against
+      # the SAME base ref the gate diffs below — so PIT mutates exactly the lines BuildChecks measures
+      # ("one diff, one base, no drift"). A no-op when the PR touches no jvm/common main code (empty
+      # changed set → the task skips, no report written). Non-fatal: the changed-line mutation gate is
+      # severable, so if PIT can't run the gate simply skips rather than failing the job.
+      - name: Mutation testing (PR-only, changed classes)
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
+        run: ./gradlew :shelf:pitest --console=plain -Ppit.baseRef=origin/${{ github.base_ref }}
+
       - name: BuildChecks gate
         id: gate
         if: always()
